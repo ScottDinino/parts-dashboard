@@ -10,8 +10,8 @@ import os
 import json
 from datetime import datetime, date, timedelta
 
-EXCEL_PAST   = "data/parts_report_past.xlsx"
-EXCEL_FUTURE = "data/parts_report_future.xlsx"
+EXCEL_PAST   = "data/Parts Dashboard _Dated 03_23_25 - 03_22_26.xlsx"
+EXCEL_FUTURE = "data/Parts Dashboard _Dated 03_24_26 - 03_23_27.xlsx"
 OUTPUT_FILE  = "index.html"
 
 def get_status(tags_str):
