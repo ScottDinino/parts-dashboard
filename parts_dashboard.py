@@ -124,8 +124,6 @@ def load_file(path, today, seen_jobs):
             "days_since_ord": days_since_ord,
             "revenue":        revenue,
             "tech":           tech,
-            "sold_by":        sold_by,
-            "booked_by":      booked_by,
             "bunit":          bunit,
         })
 
@@ -155,8 +153,7 @@ def build_html(rows, today):
         "days_since_ord": r["days_since_ord"],
         "revenue":        r["revenue"],
         "bunit":          r["bunit"],
-        "sold_by":        r["sold_by"],
-        "booked_by":      r["booked_by"],
+        "sold_by":        r["tech"],
     } for r in rows])
 
     # ── Summary counts ────────────────────────────────────────────────
