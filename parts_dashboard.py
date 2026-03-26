@@ -10,8 +10,8 @@ import os
 import json
 from datetime import datetime, date, timedelta
 
-EXCEL_PAST   = "data/Parts Dashboard _Dated 03_23_25 - 03_22_26.xlsx"
-EXCEL_FUTURE = "data/Parts Dashboard _Dated 03_24_26 - 03_23_27.xlsx"
+EXCEL_PAST   = "data/parts_report_past.xlsx"
+EXCEL_FUTURE = "data/parts_report_future.xlsx"
 OUTPUT_FILE  = "index.html"
 
 def get_status(tags_str):
@@ -83,20 +83,20 @@ def load_file(path, today, seen_jobs):
         if i == 0:
             continue  # skip header
 
-        job_type = row[0]
-        revenue  = float(row[1]) if row[1] else 0.0
-        tags_str = str(row[2]).strip() if row[2] else ""
-        job_num  = str(row[3]).strip() if row[3] else ""
-        sched_dt = row[5]
-        tech     = str(row[6]) if row[6] else ""
-        sold_by  = str(row[8]) if row[8] else ""
-        booked_by= str(row[11]) if row[11] else ""
-        bunit    = str(row[14]) if row[14] else ""
-        customer = str(row[15]) if row[15] else ""
-        # Created Date was col 17 in old export — not present in new files
-        created_dt = row[17] if len(row) > 17 else None
+        job_type   = row[0]
+        revenue    = float(row[1]) if row[1] else 0.0
+        tags_str   = str(row[2]).strip() if row[2] else ""
+        job_num    = str(row[3]).strip() if row[3] else ""
+        sched_dt   = row[5]
+        tech       = str(row[6]) if row[6] else ""
+        bunit      = str(row[8]) if row[8] else ""
+        customer   = str(row[9]) if row[9] else ""
+        created_dt = row[10] if len(row) > 10 else None
 
         if not job_num or not job_type:
+            continue
+        # Skip ServiceTitan summary/footer rows (real job IDs are long, e.g. 463158467)
+        if len(job_num) < 7:
             continue
         if job_num in seen_jobs:
             continue  # deduplicate across files
@@ -124,8 +124,6 @@ def load_file(path, today, seen_jobs):
             "days_since_ord": days_since_ord,
             "revenue":        revenue,
             "tech":           tech,
-            "sold_by":        sold_by,
-            "booked_by":      booked_by,
             "bunit":          bunit,
         })
 
@@ -155,8 +153,7 @@ def build_html(rows, today):
         "days_since_ord": r["days_since_ord"],
         "revenue":        r["revenue"],
         "bunit":          r["bunit"],
-        "sold_by":        r["sold_by"],
-        "booked_by":      r["booked_by"],
+        "sold_by":        r["tech"],
     } for r in rows])
 
     # ── Summary counts ────────────────────────────────────────────────
