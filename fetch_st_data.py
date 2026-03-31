@@ -7,10 +7,10 @@ import json
 import os
 from datetime import datetime, timezone
 
-TENANT_ID = os.environ.get("ST_TENANT_ID", "973792675")
-CLIENT_ID = os.environ.get("ST_CLIENT_ID", "cid.iuqpyeu1p6hablalzrq6jjzf1")
-CLIENT_SECRET = os.environ.get("ST_CLIENT_SECRET", "cs1.i6kdgrqq4dgx7nmf8lv791mwp3udwd37qu6rfbm6v3sphkmf0b")
-APP_KEY = os.environ.get("ST_APP_KEY", "ak1.mm0wsdj7a3lvfu46i30r7qpbe")
+TENANT_ID     = (os.environ.get("ST_TENANT_ID")     or "973792675").strip()
+CLIENT_ID     = (os.environ.get("ST_CLIENT_ID")     or "cid.iuqpyeu1p6hablalzrq6jjzf1").strip()
+CLIENT_SECRET = (os.environ.get("ST_CLIENT_SECRET") or "cs1.i6kdgrqq4dgx7nmf8lv791mwp3udwd37qu6rfbm6v3sphkmf0b").strip()
+APP_KEY       = (os.environ.get("ST_APP_KEY")       or "ak1.mm0wsdj7a3lvfu46i30r7qpbe").strip()
 
 BASE_URL = f"https://api.servicetitan.io/inventory/v2/tenant/{TENANT_ID}"
 
