@@ -12,6 +12,7 @@ from datetime import datetime, date, timedelta
 
 EXCEL_PAST   = "data/parts_report_past.xlsx"
 EXCEL_FUTURE = "data/parts_report_future.xlsx"
+PO_DATA_FILE = "data/po_data.json"
 OUTPUT_FILE  = "index.html"
 
 def get_status(tags_str):
@@ -139,7 +140,168 @@ def load_data():
     print(f"  Total combined: {len(rows)} jobs")
     return rows, today
 
-def build_html(rows, today):
+def load_po_data():
+    """Load purchase order data from ServiceTitan API export."""
+    if not os.path.exists(PO_DATA_FILE):
+        print(f"  No PO data found at {PO_DATA_FILE} — skipping.")
+        return [], {}, ""
+    with open(PO_DATA_FILE, "r", encoding="utf-8") as f:
+        raw = json.load(f)
+    pos = raw.get("purchaseOrders", [])
+    fetched_at = raw.get("fetchedAt", "")
+    print(f"  Loaded {len(pos)} POs (fetched: {fetched_at[:10]})")
+
+    # Build job_id → [POs] lookup (exclude canceled)
+    job_po_map = {}
+    for po in pos:
+        if po["status"] == "Canceled" or not po.get("jobId"):
+            continue
+        job_id = str(po["jobId"])
+        job_po_map.setdefault(job_id, []).append(po)
+
+    linked = sum(1 for po in pos if po.get("jobId") and po["status"] != "Canceled")
+    print(f"  {linked} POs linked to jobs ({len(job_po_map)} unique jobs)")
+    return pos, job_po_map, fetched_at
+
+
+def build_po_summary(pos):
+    """Compute PO summary stats for the dashboard."""
+    active_statuses = {"Pending", "Sent", "PartiallyReceived"}
+    received_statuses = {"Received", "Exported"}
+
+    # Vendor spend breakdown (exclude Canceled)
+    vendor_spend = {}
+    vendor_count = {}
+    for po in pos:
+        if po["status"] == "Canceled":
+            continue
+        v = po["vendorName"] or "Unknown"
+        vendor_spend[v] = vendor_spend.get(v, 0) + (po["total"] or 0)
+        vendor_count[v] = vendor_count.get(v, 0) + 1
+
+    top_vendors = sorted(vendor_spend.items(), key=lambda x: -x[1])[:10]
+
+    total_spend   = sum(po["total"] or 0 for po in pos if po["status"] != "Canceled")
+    active_pos    = [po for po in pos if po["status"] in active_statuses]
+    active_spend  = sum(po["total"] or 0 for po in active_pos)
+    received_pos  = [po for po in pos if po["status"] in received_statuses]
+    received_spend = sum(po["total"] or 0 for po in received_pos)
+    canceled_count = sum(1 for po in pos if po["status"] == "Canceled")
+
+    return {
+        "total_spend":     total_spend,
+        "active_spend":    active_spend,
+        "received_spend":  received_spend,
+        "active_count":    len(active_pos),
+        "received_count":  len(received_pos),
+        "canceled_count":  canceled_count,
+        "total_count":     len(pos),
+        "top_vendors":     top_vendors,
+        "vendor_spend":    vendor_spend,
+        "vendor_count":    vendor_count,
+    }
+
+
+def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
+    # ── PO summary ────────────────────────────────────────────────────
+    pos = pos or []
+    job_po_map = job_po_map or {}
+    po_summary = build_po_summary(pos)
+
+    # Build PO table rows (active first, then received, skip canceled)
+    active_statuses   = {"Pending", "Sent", "PartiallyReceived"}
+    received_statuses = {"Received", "Exported"}
+
+    def po_status_badge(status):
+        cls = {
+            "Pending":           "badge-nto",
+            "Sent":              "badge-ordered",
+            "PartiallyReceived": "badge-ordered",
+            "Received":          "badge-received",
+            "Exported":          "badge-received",
+            "Canceled":          "badge-unknown",
+        }.get(status, "badge-unknown")
+        return f'<span class="badge {cls}">{status}</span>'
+
+    sorted_pos = sorted(pos, key=lambda p: (
+        0 if p["status"] in active_statuses else 1,
+        -(p["total"] or 0)
+    ))
+    po_table_rows = ""
+    for po in sorted_pos[:200]:  # cap at 200 for page size
+        if po["status"] == "Canceled":
+            continue
+        date_str = po["date"][:10] if po["date"] else "—"
+        recv_str = po["receivedOn"][:10] if po.get("receivedOn") else "—"
+        item_count = len(po.get("items", []))
+        item_names = ", ".join(
+            (i.get("description") or i.get("skuName") or "")[:40]
+            for i in po.get("items", [])[:3]
+        )
+        if len(po.get("items", [])) > 3:
+            item_names += f" +{len(po['items'])-3} more"
+        job_link = ""
+        if po.get("jobId"):
+            job_link = f'<a href="https://go.servicetitan.com/#/Job/Index/{po["jobId"]}" target="_blank" class="job-link">#{po["jobId"]}</a>'
+        po_table_rows += f"""
+        <tr>
+          <td><a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/{po['id']}" target="_blank" class="job-link">#{po['number']}</a></td>
+          <td class="td-customer">{po['vendorName']}</td>
+          <td>{po_status_badge(po['status'])}</td>
+          <td>{date_str}</td>
+          <td>{recv_str}</td>
+          <td>{item_count} item{'s' if item_count != 1 else ''}<br><small class="muted">{item_names}</small></td>
+          <td>{job_link or '—'}</td>
+          <td style="text-align:right;font-weight:600;color:var(--accent-green)">${po['total']:,.2f}</td>
+        </tr>"""
+
+    # Top vendor chart data
+    tv_labels = json.dumps([v[0] for v in po_summary["top_vendors"]])
+    tv_data   = json.dumps([round(v[1], 2) for v in po_summary["top_vendors"]])
+
+    # Vendor breakdown table
+    vendor_table_rows = ""
+    for vendor, spend in po_summary["top_vendors"]:
+        cnt = po_summary["vendor_count"].get(vendor, 0)
+        pct = (spend / po_summary["total_spend"] * 100) if po_summary["total_spend"] else 0
+        vendor_table_rows += f"""
+        <tr>
+          <td>{vendor}</td>
+          <td style="text-align:center">{cnt}</td>
+          <td style="text-align:right;font-weight:600;color:var(--accent-green)">${spend:,.2f}</td>
+          <td style="text-align:right;color:var(--text-3)">{pct:.1f}%</td>
+        </tr>"""
+
+    po_fetched_label = po_fetched_at[:10] if po_fetched_at else "N/A"
+
+    def get_job_pos(job_num):
+        """Return list of POs linked to this job."""
+        return job_po_map.get(str(job_num), [])
+
+    def po_cost_for_job(job_num):
+        """Total part cost across all POs for this job."""
+        return sum(po["total"] or 0 for po in get_job_pos(job_num))
+
+    def po_html_for_job(job_num):
+        """Inline HTML snippet showing PO details for a job row."""
+        pos_for_job = get_job_pos(job_num)
+        if not pos_for_job:
+            return ""
+        parts = []
+        for po in pos_for_job:
+            date_str  = po["date"][:10] if po.get("date") else "—"
+            recv_str  = po["receivedOn"][:10] if po.get("receivedOn") else "—"
+            cost_str  = f"${po['total']:,.2f}" if po.get("total") else "—"
+            parts.append(
+                f'<div class="po-inline">'
+                f'<span class="po-num">PO#{po["number"]}</span> '
+                f'<span class="po-vendor">{po["vendorName"]}</span> '
+                f'<span class="po-cost">{cost_str}</span> '
+                f'<span class="muted">Ord: {date_str} · Rcv: {recv_str}</span>'
+                f'</div>'
+            )
+        return "".join(parts)
+
     # ── JSON payload for JS filtering ─────────────────────────────────
     jobs_json = json.dumps([{
         "job_num":        r["job_num"],
@@ -154,6 +316,8 @@ def build_html(rows, today):
         "revenue":        r["revenue"],
         "bunit":          r["bunit"],
         "sold_by":        r["tech"],
+        "po_cost":        po_cost_for_job(r["job_num"]),
+        "po_count":       len(get_job_pos(r["job_num"])),
     } for r in rows])
 
     # ── Summary counts ────────────────────────────────────────────────
@@ -222,6 +386,9 @@ def build_html(rows, today):
         created_str = r["created_date"].strftime("%m/%d/%y") if r["created_date"] else "—"
         sched_str   = r["sched_date"].strftime("%m/%d/%y")   if r["sched_date"]   else "—"
         age = f'{r["days_since_ord"]}d ago' if r["days_since_ord"] is not None else "—"
+        po_html = po_html_for_job(r["job_num"])
+        po_cost = po_cost_for_job(r["job_num"])
+        po_cost_str = f'<span style="color:var(--accent-green);font-weight:600">${po_cost:,.2f}</span>' if po_cost else '—'
         table_rows += f"""
         <tr class="{row_class(r)}">
           <td><a href="https://go.servicetitan.com/#/Job/Index/{r['job_num']}" target="_blank" class="job-link">#{r['job_num']}</a></td>
@@ -231,6 +398,7 @@ def build_html(rows, today):
           <td>{created_str}<br><small class="muted">{age}</small></td>
           <td>{sched_str}</td>
           <td>{countdown_badge(r['days_to_sched'], r['status'])}</td>
+          <td>{po_cost_str}{po_html}</td>
           <td class="tags-cell">{tags_html}</td>
         </tr>"""
 
@@ -312,6 +480,8 @@ def build_html(rows, today):
         cards = ""
         for r in sorted(day_rows, key=lambda x: x["status"]):
             sup_html = f'<div class="card-supplier">{r["supplier"]}</div>' if r["supplier"] else ""
+            po_cost = po_cost_for_job(r["job_num"])
+            po_cost_html = f'<div style="font-size:11px;color:var(--accent-green);font-weight:600;margin-top:2px;">Parts: ${po_cost:,.2f}</div>' if po_cost else ""
             cards += f"""
             <div class="tl-card {tl_cls}">
               <div class="card-top">
@@ -320,6 +490,7 @@ def build_html(rows, today):
               </div>
               <div class="card-customer">{r['customer']}</div>
               {sup_html}
+              {po_cost_html}
             </div>"""
 
         timeline_html += f"""
@@ -358,6 +529,8 @@ def build_html(rows, today):
                 w_cls = "sl-card-wait-crit" if wait >= 5 else ("sl-card-wait-urgent" if wait >= 3 else "sl-card-wait-warn")
                 wait_html = f'<div class="sl-card-wait {w_cls}">{wait}d waiting</div>'
             sup = f'<div class="sl-card-sup">📦 {r["supplier"]}</div>' if r["supplier"] else ""
+            po_cost = po_cost_for_job(r["job_num"])
+            po_cost_html = f'<div style="font-size:11px;color:var(--accent-green);font-weight:600;">Parts: ${po_cost:,.2f}</div>' if po_cost else ""
             col_cards += f"""
             <div class="sl-card">
               <div class="sl-card-top">
@@ -366,6 +539,7 @@ def build_html(rows, today):
               </div>
               <div class="sl-card-customer">{r['customer']}</div>
               {sup}
+              {po_cost_html}
               {wait_html}
             </div>"""
 
@@ -690,6 +864,10 @@ tbody td {{ padding: 12px 16px; vertical-align: middle; }}
 .td-supplier {{ font-weight: 600; color: var(--text-2); font-size: 12px; }}
 .job-link {{ color: var(--blue); text-decoration: none; font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; font-weight: 700; }}
 .job-link:hover {{ color: #93c5fd; text-decoration: underline; }}
+.po-inline {{ font-size: 11px; margin-top: 4px; color: var(--text-2); }}
+.po-num {{ font-family: 'SF Mono','Fira Code',monospace; color: var(--blue); font-weight: 600; }}
+.po-vendor {{ color: var(--text-2); }}
+.po-cost {{ color: var(--accent-green); font-weight: 700; margin: 0 4px; }}
 .muted {{ color: var(--text-3); font-size: 11px; font-weight: 500; }}
 .tags-cell {{ max-width: 260px; }}
 .tag {{
@@ -924,7 +1102,7 @@ tbody td {{ padding: 12px 16px; vertical-align: middle; }}
   <div class="header-inner">
     <div class="header-left">
       <h1>Parts Dashboard</h1>
-      <div class="sub">Nick &amp; Max &nbsp;·&nbsp; {today.strftime("%A, %B %d, %Y")} &nbsp;·&nbsp; Generated {generated}</div>
+      <div class="sub">{today.strftime("%A, %B %d, %Y")} &nbsp;·&nbsp; Generated {generated}</div>
     </div>
     <div class="header-right">
       <span class="header-pill">{len(rows)} Total Jobs</span>
@@ -1100,11 +1278,87 @@ tbody td {{ padding: 12px 16px; vertical-align: middle; }}
         <th>Ordered Date</th>
         <th>Sched Date</th>
         <th>Countdown</th>
+        <th>PO / Cost</th>
         <th>Tags</th>
       </tr>
     </thead>
     <tbody>
       {table_rows}
+    </tbody>
+  </table>
+</div>
+
+<!-- ── PURCHASE ORDERS & COST ──────────────────── -->
+<div class="section-title">Purchase Orders &amp; Cost <small style="font-size:12px;font-weight:400;color:var(--text-3);margin-left:8px;">YTD · Data as of {po_fetched_label}</small></div>
+
+<!-- PO Summary tiles -->
+<div class="stats-row" style="margin-bottom:24px;">
+  <div class="stat-card" style="cursor:default;">
+    <span class="s-icon">📋</span>
+    <div class="label">Total POs</div>
+    <div class="value">{po_summary['total_count']}</div>
+    <div class="delta">YTD (excl. canceled)</div>
+  </div>
+  <div class="stat-card" style="cursor:default;">
+    <span class="s-icon">⏳</span>
+    <div class="label">Outstanding</div>
+    <div class="value">{po_summary['active_count']}</div>
+    <div class="delta">Pending / Sent</div>
+  </div>
+  <div class="stat-card" style="cursor:default;">
+    <span class="s-icon">💸</span>
+    <div class="label">Open PO Value</div>
+    <div class="value rev-value">${po_summary['active_spend']:,.0f}</div>
+    <div class="delta">Not yet received</div>
+  </div>
+  <div class="stat-card" style="cursor:default;">
+    <span class="s-icon">📦</span>
+    <div class="label">Total Spend YTD</div>
+    <div class="value rev-value">${po_summary['total_spend']:,.0f}</div>
+    <div class="delta">All received + open</div>
+  </div>
+</div>
+
+<!-- Vendor breakdown + chart -->
+<div class="top-grid" style="margin-bottom:24px;">
+  <div class="chart-wrap">
+    <canvas id="vendorChart"></canvas>
+  </div>
+  <div style="background:var(--surface);border-radius:16px;padding:20px;border:1px solid var(--border);overflow:auto;max-height:340px;">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:14px;">Top Vendors by Spend</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead>
+        <tr style="color:var(--text-3);font-size:11px;text-transform:uppercase;letter-spacing:.06em;">
+          <th style="text-align:left;padding:4px 8px;">Vendor</th>
+          <th style="text-align:center;padding:4px 8px;">POs</th>
+          <th style="text-align:right;padding:4px 8px;">Spend</th>
+          <th style="text-align:right;padding:4px 8px;">% of Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {vendor_table_rows}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PO detail table -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>PO #</th>
+        <th>Vendor</th>
+        <th>Status</th>
+        <th>Order Date</th>
+        <th>Received</th>
+        <th>Items</th>
+        <th>Job</th>
+        <th style="text-align:right">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {po_table_rows}
     </tbody>
   </table>
 </div>
@@ -1375,6 +1629,41 @@ new Chart(document.getElementById('donutChart').getContext('2d'), {{
     }}
   }}
 }});
+
+/* ── VENDOR CHART ──────────────────────────────── */
+new Chart(document.getElementById('vendorChart').getContext('2d'), {{
+  type: 'bar',
+  data: {{
+    labels: {tv_labels},
+    datasets: [{{
+      label: 'Spend ($)',
+      data: {tv_data},
+      backgroundColor: 'rgba(59,130,246,.7)',
+      borderColor: '#3b82f6',
+      borderWidth: 1,
+      borderRadius: 4,
+    }}]
+  }},
+  options: {{
+    indexAxis: 'y',
+    responsive: true,
+    plugins: {{
+      legend: {{ display: false }},
+      tooltip: {{
+        backgroundColor: '#0e1420',
+        borderColor: '#1c2840',
+        borderWidth: 1,
+        titleColor: '#e8edf5',
+        bodyColor: '#8899b4',
+        callbacks: {{ label: ctx => ' $' + ctx.raw.toLocaleString('en-US', {{minimumFractionDigits:2}}) }}
+      }}
+    }},
+    scales: {{
+      x: {{ grid: {{ color: '#1c2840' }}, ticks: {{ color: '#4a5878', callback: v => '$' + (v/1000).toFixed(0) + 'k' }} }},
+      y: {{ grid: {{ color: '#1c2840' }}, ticks: {{ color: '#8899b4', font: {{ size: 11 }} }} }}
+    }}
+  }}
+}});
 </script>
 
 </body>
@@ -1386,7 +1675,9 @@ def main():
     print("Loading parts data...")
     rows, today = load_data()
     print(f"Found {len(rows)} jobs. Today is {today}")
-    html = build_html(rows, today)
+    print("Loading PO data...")
+    pos, job_po_map, po_fetched_at = load_po_data()
+    html = build_html(rows, today, pos, job_po_map, po_fetched_at)
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"\nDashboard saved to: {OUTPUT_FILE}")
