@@ -87,7 +87,7 @@ def load_file(path, today, seen_jobs):
         job_type   = row[0]
         revenue    = float(row[1]) if row[1] else 0.0
         tags_str   = str(row[2]).strip() if row[2] else ""
-        job_num    = str(row[3]).strip() if row[3] else ""
+        job_num    = str(int(float(row[3]))).strip() if row[3] else ""
         sched_dt   = row[5]
         tech       = str(row[6]) if row[6] else ""
         bunit      = str(row[8]) if row[8] else ""
@@ -152,14 +152,23 @@ def load_po_data():
     print(f"  Loaded {len(pos)} POs (fetched: {fetched_at[:10]})")
 
     # Build job_id → [POs] lookup (exclude canceled)
+    # Match by jobId first, then fall back to PO number prefix (e.g. "587877885-001" → job "587877885")
     job_po_map = {}
     for po in pos:
-        if po["status"] == "Canceled" or not po.get("jobId"):
+        if po["status"] == "Canceled":
             continue
-        job_id = str(po["jobId"])
-        job_po_map.setdefault(job_id, []).append(po)
+        job_id = None
+        if po.get("jobId"):
+            job_id = str(po["jobId"])
+        elif po.get("number"):
+            prefix = po["number"].split("-")[0]
+            if len(prefix) >= 7:
+                job_id = prefix
+        if job_id:
+            job_po_map.setdefault(job_id, []).append(po)
 
-    linked = sum(1 for po in pos if po.get("jobId") and po["status"] != "Canceled")
+    linked = sum(1 for po in pos if po["status"] != "Canceled" and
+                 (po.get("jobId") or (po.get("number") and len(po["number"].split("-")[0]) >= 7)))
     print(f"  {linked} POs linked to jobs ({len(job_po_map)} unique jobs)")
     return pos, job_po_map, fetched_at
 
@@ -376,6 +385,24 @@ def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
         "sold_by":        r["tech"],
         "po_cost":        po_cost_for_job(r["job_num"]),
         "po_count":       len(get_job_pos(r["job_num"])),
+        "pos": [{
+            "id":         po["id"],
+            "number":     po.get("number", ""),
+            "status":     po.get("status", ""),
+            "typeName":   po.get("typeName", ""),
+            "vendorName": po.get("vendorName", ""),
+            "date":       (po.get("date") or "")[:10],
+            "receivedOn": (po.get("receivedOn") or "")[:10],
+            "total":      po.get("total") or 0,
+            "parts": [
+                {
+                    "desc": (item.get("description") or item.get("skuName") or "").strip()[:60],
+                    "qty":  item.get("quantity", 1),
+                    "cost": item.get("cost") or 0,
+                }
+                for item in po.get("items", [])[:4]
+            ],
+        } for po in get_job_pos(r["job_num"])],
     } for r in rows])
 
     # ── Summary counts ────────────────────────────────────────────────
@@ -1333,29 +1360,6 @@ tbody td {{ padding: 12px 16px; vertical-align: middle; }}
   </table>
 </div>
 
-<!-- ── FULL DETAIL TABLE (hidden, kept for JS filter panel) ── -->
-<div style="display:none">
-<div class="table-wrap">
-  <table>
-    <thead>
-      <tr>
-        <th>Job #</th>
-        <th>Customer</th>
-        <th>Status</th>
-        <th>Supplier</th>
-        <th>Ordered Date</th>
-        <th>Sched Date</th>
-        <th>Countdown</th>
-        <th>PO / Cost</th>
-        <th>Tags</th>
-      </tr>
-    </thead>
-    <tbody>
-      {table_rows}
-    </tbody>
-  </table>
-</div>
-</div><!-- /hidden table -->
 
 <div style="height:48px;"></div>
 </div><!-- /container -->
@@ -1486,6 +1490,26 @@ ${{job.revenue > 0 ? `
       <div class="fp-tags">${{supplier}}${{tags}}</div>
       ${{bunit}}
       ${{soldBy}}
+      ${{(job.pos && job.pos.length > 0) ? job.pos.map(po => {{
+        const poStatusCls = ({{Pending:'badge-nto',Sent:'badge-ordered',PartiallyReceived:'badge-ordered',Received:'badge-received',Exported:'badge-received'}})[po.status] || 'badge-unknown';
+        const typeBadge = po.typeName ? `<span class="po-type-badge">${{po.typeName}}</span>` : '';
+        const partLines = po.parts.filter(p => p.desc).map(p =>
+          `<div class="po-part-line">${{p.desc}}${{p.qty && p.qty !== 1 ? ' &times;'+Math.round(p.qty) : ''}}${{p.cost ? ' <span style="color:var(--accent-green)">$'+p.cost.toLocaleString('en-US',{{minimumFractionDigits:2}})+'</span>' : ''}}</div>`
+        ).join('');
+        return `<div class="po-card-block">
+          <div class="po-card-header">
+            ${{typeBadge}}
+            <a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/${{po.id}}" target="_blank" class="po-num">PO#${{po.number}}</a>
+            <span class="badge ${{poStatusCls}}" style="font-size:9px;padding:2px 6px">${{po.status}}</span>
+          </div>
+          <div class="po-vendor-cost-row">
+            <span class="po-vendor-line">${{po.vendorName}}</span>
+            <span class="po-cost">${{po.total ? '$'+po.total.toLocaleString('en-US',{{minimumFractionDigits:2}}) : '—'}}</span>
+          </div>
+          ${{partLines}}
+          <div class="po-dates">Ordered: ${{po.date || '—'}}${{po.receivedOn ? ' &middot; Received: '+po.receivedOn : ' &middot; Not yet received'}}</div>
+        </div>`;
+      }}).join('') : ''}}
     </div>`;
   }}).join('');
 }}
