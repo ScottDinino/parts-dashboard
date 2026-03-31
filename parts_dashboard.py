@@ -288,13 +288,14 @@ def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
         return d[:10]
 
     def po_card_block(job_num):
-        """Rich PO block for timeline/swimlane cards."""
+        """Rich PO block for job cards — only shown on hold jobs."""
         pos_for_job = get_job_pos(job_num)
         if not pos_for_job:
             return ""
         blocks = []
         for po in pos_for_job:
-            po_status = po.get("status", "")
+            po_status  = po.get("status", "")
+            po_type    = po.get("typeName", "").strip()
             status_cls = {
                 "Pending":           "badge-nto",
                 "Sent":              "badge-ordered",
@@ -305,26 +306,35 @@ def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
             date_str = fmt_date_short(po.get("date"))
             recv_str = fmt_date_short(po.get("receivedOn"))
             cost_str = f"${po['total']:,.2f}" if po.get("total") else "—"
-            # First 2 item descriptions
             items = po.get("items", [])
             part_lines = []
-            for item in items[:2]:
+            for item in items[:3]:
                 desc = (item.get("description") or item.get("skuName") or "").strip()
                 qty  = item.get("quantity", 1)
+                cost = item.get("cost", 0)
                 if desc:
-                    part_lines.append(f"{desc[:45]}" + (f" ×{int(qty)}" if qty and qty != 1 else ""))
-            if len(items) > 2:
-                part_lines.append(f"+{len(items)-2} more items")
+                    line = f"{desc[:50]}"
+                    if qty and qty != 1:
+                        line += f" ×{int(qty)}"
+                    if cost:
+                        line += f' <span style="color:var(--accent-green)">${cost:,.2f}/ea</span>'
+                    part_lines.append(line)
+            if len(items) > 3:
+                part_lines.append(f'<span style="color:var(--text-3)">+{len(items)-3} more items</span>')
             parts_html = "".join(f'<div class="po-part-line">{p}</div>' for p in part_lines)
+            type_html  = f'<span class="po-type-badge">{po_type}</span>' if po_type else ""
             blocks.append(f"""<div class="po-card-block">
   <div class="po-card-header">
+    {type_html}
     <a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/{po['id']}" target="_blank" class="po-num">PO#{po['number']}</a>
     <span class="badge {status_cls}" style="font-size:9px;padding:2px 6px">{po_status}</span>
+  </div>
+  <div class="po-vendor-cost-row">
+    <span class="po-vendor-line">{po['vendorName']}</span>
     <span class="po-cost">{cost_str}</span>
   </div>
-  <div class="po-vendor-line">{po['vendorName']}</div>
   {parts_html}
-  <div class="po-dates">Ord: {date_str}{' · Rcv: ' + recv_str if recv_str != '—' else ''}</div>
+  <div class="po-dates">Ordered: {date_str}{' · Received: ' + recv_str if recv_str != '—' else ' · Not yet received'}</div>
 </div>""")
         return "".join(blocks)
 
@@ -527,16 +537,19 @@ def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
 
         cards = ""
         for r in sorted(day_rows, key=lambda x: x["status"]):
-            sup_html = f'<div class="card-supplier">{r["supplier"]}</div>' if r["supplier"] else ""
-            po_block = po_card_block(r["job_num"])
+            sup_html  = f'<div class="card-supplier">{r["supplier"]}</div>' if r["supplier"] else ""
+            meta_html = f'<div class="card-meta">{r["bunit"]} · {r["tech"]}</div>' if r["bunit"] or r["tech"] else ""
+            po_block  = po_card_block(r["job_num"])
             cards += f"""
             <div class="tl-card {tl_cls}">
               <div class="card-top">
-                <span class="card-job">#{r['job_num']}</span>
+                <a href="https://go.servicetitan.com/#/Job/Index/{r['job_num']}" target="_blank" class="job-link">#{r['job_num']}</a>
                 {status_badge(r['status'])}
               </div>
               <div class="card-customer">{r['customer']}</div>
+              {meta_html}
               {sup_html}
+              {countdown_badge(r['days_to_sched'], r['status'])}
               {po_block}
             </div>"""
 
@@ -817,7 +830,8 @@ body {{ font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); 
 .card-top {{ display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }}
 .card-job {{ font-size: 11px; font-weight: 700; color: var(--text-3); font-family: 'SF Mono', 'Fira Code', monospace; }}
 .card-customer {{ font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; }}
-.card-supplier {{ font-size: 11px; color: var(--text-3); margin-top: 5px; font-weight: 500; }}
+.card-supplier {{ font-size: 11px; color: var(--text-3); margin-top: 4px; font-weight: 500; }}
+.card-meta {{ font-size: 10px; color: var(--text-3); margin-top: 3px; }}
 
 /* ── NO AIR ──────────────────────────────────────── */
 .noair-banner {{
@@ -917,9 +931,11 @@ tbody td {{ padding: 12px 16px; vertical-align: middle; }}
 .po-cost {{ color: var(--accent-green); font-weight: 700; margin: 0 4px; }}
 .po-card-block {{ background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; margin-top: 8px; font-size: 11px; }}
 .po-card-header {{ display:flex; align-items:center; gap:6px; margin-bottom:4px; flex-wrap:wrap; }}
-.po-vendor-line {{ color: var(--text-3); font-size: 11px; margin-bottom: 3px; }}
-.po-part-line {{ color: var(--text-2); font-size: 11px; line-height:1.4; }}
-.po-dates {{ color: var(--text-3); font-size: 10px; margin-top: 4px; }}
+.po-vendor-cost-row {{ display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }}
+.po-vendor-line {{ color: var(--text-3); font-size: 11px; }}
+.po-part-line {{ color: var(--text-2); font-size: 11px; line-height:1.5; }}
+.po-dates {{ color: var(--text-3); font-size: 10px; margin-top: 5px; }}
+.po-type-badge {{ background: rgba(139,92,246,.15); color: #a78bfa; border: 1px solid rgba(139,92,246,.3); border-radius: 4px; font-size: 9px; font-weight: 700; padding: 2px 6px; text-transform: uppercase; letter-spacing: .06em; }}
 .muted {{ color: var(--text-3); font-size: 11px; font-weight: 500; }}
 .tags-cell {{ max-width: 260px; }}
 .tag {{
@@ -1317,8 +1333,8 @@ tbody td {{ padding: 12px 16px; vertical-align: middle; }}
   </table>
 </div>
 
-<!-- ── FULL DETAIL TABLE ──────────────────────────── -->
-<div class="section-title">All Jobs — Full Detail</div>
+<!-- ── FULL DETAIL TABLE (hidden, kept for JS filter panel) ── -->
+<div style="display:none">
 <div class="table-wrap">
   <table>
     <thead>
@@ -1339,81 +1355,7 @@ tbody td {{ padding: 12px 16px; vertical-align: middle; }}
     </tbody>
   </table>
 </div>
-
-<!-- ── PURCHASE ORDERS & COST ──────────────────── -->
-<div class="section-title">Purchase Orders &amp; Cost <small style="font-size:12px;font-weight:400;color:var(--text-3);margin-left:8px;">YTD · Data as of {po_fetched_label}</small></div>
-
-<!-- PO Summary tiles -->
-<div class="stats-row" style="margin-bottom:24px;">
-  <div class="stat-card" style="cursor:default;">
-    <span class="s-icon">📋</span>
-    <div class="label">Total POs</div>
-    <div class="value">{po_summary['total_count']}</div>
-    <div class="delta">YTD (excl. canceled)</div>
-  </div>
-  <div class="stat-card" style="cursor:default;">
-    <span class="s-icon">⏳</span>
-    <div class="label">Outstanding</div>
-    <div class="value">{po_summary['active_count']}</div>
-    <div class="delta">Pending / Sent</div>
-  </div>
-  <div class="stat-card" style="cursor:default;">
-    <span class="s-icon">💸</span>
-    <div class="label">Open PO Value</div>
-    <div class="value rev-value">${po_summary['active_spend']:,.0f}</div>
-    <div class="delta">Not yet received</div>
-  </div>
-  <div class="stat-card" style="cursor:default;">
-    <span class="s-icon">📦</span>
-    <div class="label">Total Spend YTD</div>
-    <div class="value rev-value">${po_summary['total_spend']:,.0f}</div>
-    <div class="delta">All received + open</div>
-  </div>
-</div>
-
-<!-- Vendor breakdown + chart -->
-<div class="top-grid" style="margin-bottom:24px;">
-  <div class="chart-wrap">
-    <canvas id="vendorChart"></canvas>
-  </div>
-  <div style="background:var(--surface);border-radius:16px;padding:20px;border:1px solid var(--border);overflow:auto;max-height:340px;">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:14px;">Top Vendors by Spend</div>
-    <table style="width:100%;border-collapse:collapse;font-size:13px;">
-      <thead>
-        <tr style="color:var(--text-3);font-size:11px;text-transform:uppercase;letter-spacing:.06em;">
-          <th style="text-align:left;padding:4px 8px;">Vendor</th>
-          <th style="text-align:center;padding:4px 8px;">POs</th>
-          <th style="text-align:right;padding:4px 8px;">Spend</th>
-          <th style="text-align:right;padding:4px 8px;">% of Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        {vendor_table_rows}
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- PO detail table -->
-<div class="table-wrap">
-  <table>
-    <thead>
-      <tr>
-        <th>PO #</th>
-        <th>Vendor</th>
-        <th>Status</th>
-        <th>Order Date</th>
-        <th>Received</th>
-        <th>Items</th>
-        <th>Job</th>
-        <th style="text-align:right">Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      {po_table_rows}
-    </tbody>
-  </table>
-</div>
+</div><!-- /hidden table -->
 
 <div style="height:48px;"></div>
 </div><!-- /container -->

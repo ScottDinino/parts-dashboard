@@ -63,6 +63,12 @@ def main():
     vendor_map = {v["id"]: v.get("name", "Unknown") for v in vendors_raw}
     print(f"  {len(vendor_map)} vendors loaded.\n")
 
+    # Fetch PO types
+    print("Fetching PO types...")
+    types_raw = fetch_all_pages(f"{BASE_URL}/purchase-order-types", headers)
+    po_type_map = {t["id"]: t.get("name", "").strip() for t in types_raw}
+    print(f"  {len(po_type_map)} PO types loaded: {list(po_type_map.values())}\n")
+
     # Fetch POs from start of current year
     year = datetime.now(timezone.utc).year
     since = f"{year}-01-01T00:00:00Z"
@@ -93,6 +99,8 @@ def main():
             "id": po["id"],
             "number": po.get("number", ""),
             "status": po.get("status", ""),
+            "typeId": po.get("typeId"),
+            "typeName": po_type_map.get(po.get("typeId"), ""),
             "vendorId": po.get("vendorId"),
             "vendorName": vendor_name,
             "jobId": po.get("jobId"),
@@ -111,6 +119,7 @@ def main():
     output = {
         "fetchedAt": datetime.now(timezone.utc).isoformat(),
         "vendorMap": vendor_map,
+        "poTypeMap": po_type_map,
         "purchaseOrders": pos,
     }
 
