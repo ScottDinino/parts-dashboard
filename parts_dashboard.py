@@ -282,22 +282,70 @@ def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
         """Total part cost across all POs for this job."""
         return sum(po["total"] or 0 for po in get_job_pos(job_num))
 
+    def fmt_date_short(d):
+        if not d:
+            return "—"
+        return d[:10]
+
+    def po_card_block(job_num):
+        """Rich PO block for timeline/swimlane cards."""
+        pos_for_job = get_job_pos(job_num)
+        if not pos_for_job:
+            return ""
+        blocks = []
+        for po in pos_for_job:
+            po_status = po.get("status", "")
+            status_cls = {
+                "Pending":           "badge-nto",
+                "Sent":              "badge-ordered",
+                "PartiallyReceived": "badge-ordered",
+                "Received":          "badge-received",
+                "Exported":          "badge-received",
+            }.get(po_status, "badge-unknown")
+            date_str = fmt_date_short(po.get("date"))
+            recv_str = fmt_date_short(po.get("receivedOn"))
+            cost_str = f"${po['total']:,.2f}" if po.get("total") else "—"
+            # First 2 item descriptions
+            items = po.get("items", [])
+            part_lines = []
+            for item in items[:2]:
+                desc = (item.get("description") or item.get("skuName") or "").strip()
+                qty  = item.get("quantity", 1)
+                if desc:
+                    part_lines.append(f"{desc[:45]}" + (f" ×{int(qty)}" if qty and qty != 1 else ""))
+            if len(items) > 2:
+                part_lines.append(f"+{len(items)-2} more items")
+            parts_html = "".join(f'<div class="po-part-line">{p}</div>' for p in part_lines)
+            blocks.append(f"""<div class="po-card-block">
+  <div class="po-card-header">
+    <a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/{po['id']}" target="_blank" class="po-num">PO#{po['number']}</a>
+    <span class="badge {status_cls}" style="font-size:9px;padding:2px 6px">{po_status}</span>
+    <span class="po-cost">{cost_str}</span>
+  </div>
+  <div class="po-vendor-line">{po['vendorName']}</div>
+  {parts_html}
+  <div class="po-dates">Ord: {date_str}{' · Rcv: ' + recv_str if recv_str != '—' else ''}</div>
+</div>""")
+        return "".join(blocks)
+
     def po_html_for_job(job_num):
-        """Inline HTML snippet showing PO details for a job row."""
+        """Compact PO info for the detail table."""
         pos_for_job = get_job_pos(job_num)
         if not pos_for_job:
             return ""
         parts = []
         for po in pos_for_job:
-            date_str  = po["date"][:10] if po.get("date") else "—"
-            recv_str  = po["receivedOn"][:10] if po.get("receivedOn") else "—"
-            cost_str  = f"${po['total']:,.2f}" if po.get("total") else "—"
+            date_str = fmt_date_short(po.get("date"))
+            recv_str = fmt_date_short(po.get("receivedOn"))
+            cost_str = f"${po['total']:,.2f}" if po.get("total") else "—"
+            items = po.get("items", [])
+            desc = (items[0].get("description") or items[0].get("skuName") or "") if items else ""
             parts.append(
                 f'<div class="po-inline">'
-                f'<span class="po-num">PO#{po["number"]}</span> '
+                f'<a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/{po["id"]}" target="_blank" class="po-num">PO#{po["number"]}</a> '
                 f'<span class="po-vendor">{po["vendorName"]}</span> '
-                f'<span class="po-cost">{cost_str}</span> '
-                f'<span class="muted">Ord: {date_str} · Rcv: {recv_str}</span>'
+                f'<span class="po-cost">{cost_str}</span><br>'
+                f'<span class="muted">{desc[:50] + ("…" if len(desc)>50 else "") if desc else ""} · Ord: {date_str}{" · Rcv: "+recv_str if recv_str != "—" else ""}</span>'
                 f'</div>'
             )
         return "".join(parts)
@@ -480,8 +528,7 @@ def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
         cards = ""
         for r in sorted(day_rows, key=lambda x: x["status"]):
             sup_html = f'<div class="card-supplier">{r["supplier"]}</div>' if r["supplier"] else ""
-            po_cost = po_cost_for_job(r["job_num"])
-            po_cost_html = f'<div style="font-size:11px;color:var(--accent-green);font-weight:600;margin-top:2px;">Parts: ${po_cost:,.2f}</div>' if po_cost else ""
+            po_block = po_card_block(r["job_num"])
             cards += f"""
             <div class="tl-card {tl_cls}">
               <div class="card-top">
@@ -490,7 +537,7 @@ def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
               </div>
               <div class="card-customer">{r['customer']}</div>
               {sup_html}
-              {po_cost_html}
+              {po_block}
             </div>"""
 
         timeline_html += f"""
@@ -529,8 +576,7 @@ def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
                 w_cls = "sl-card-wait-crit" if wait >= 5 else ("sl-card-wait-urgent" if wait >= 3 else "sl-card-wait-warn")
                 wait_html = f'<div class="sl-card-wait {w_cls}">{wait}d waiting</div>'
             sup = f'<div class="sl-card-sup">📦 {r["supplier"]}</div>' if r["supplier"] else ""
-            po_cost = po_cost_for_job(r["job_num"])
-            po_cost_html = f'<div style="font-size:11px;color:var(--accent-green);font-weight:600;">Parts: ${po_cost:,.2f}</div>' if po_cost else ""
+            po_block = po_card_block(r["job_num"])
             col_cards += f"""
             <div class="sl-card">
               <div class="sl-card-top">
@@ -539,7 +585,7 @@ def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
               </div>
               <div class="sl-card-customer">{r['customer']}</div>
               {sup}
-              {po_cost_html}
+              {po_block}
               {wait_html}
             </div>"""
 
@@ -865,9 +911,15 @@ tbody td {{ padding: 12px 16px; vertical-align: middle; }}
 .job-link {{ color: var(--blue); text-decoration: none; font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; font-weight: 700; }}
 .job-link:hover {{ color: #93c5fd; text-decoration: underline; }}
 .po-inline {{ font-size: 11px; margin-top: 4px; color: var(--text-2); }}
-.po-num {{ font-family: 'SF Mono','Fira Code',monospace; color: var(--blue); font-weight: 600; }}
+.po-num {{ font-family: 'SF Mono','Fira Code',monospace; color: var(--blue); font-weight: 600; text-decoration:none; }}
+.po-num:hover {{ text-decoration: underline; }}
 .po-vendor {{ color: var(--text-2); }}
 .po-cost {{ color: var(--accent-green); font-weight: 700; margin: 0 4px; }}
+.po-card-block {{ background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; margin-top: 8px; font-size: 11px; }}
+.po-card-header {{ display:flex; align-items:center; gap:6px; margin-bottom:4px; flex-wrap:wrap; }}
+.po-vendor-line {{ color: var(--text-3); font-size: 11px; margin-bottom: 3px; }}
+.po-part-line {{ color: var(--text-2); font-size: 11px; line-height:1.4; }}
+.po-dates {{ color: var(--text-3); font-size: 10px; margin-top: 4px; }}
 .muted {{ color: var(--text-3); font-size: 11px; font-weight: 500; }}
 .tags-cell {{ max-width: 260px; }}
 .tag {{
