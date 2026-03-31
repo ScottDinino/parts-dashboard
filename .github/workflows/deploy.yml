@@ -1,6 +1,8 @@
 name: Deploy Dashboard
 "on":
   workflow_dispatch:
+  schedule:
+    - cron: "0 * * * *"   # runs every hour
   push:
     paths:
       - data/parts_report_past.xlsx
@@ -16,6 +18,13 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -r requirements.txt
+      - name: Fetch PO data from ServiceTitan
+        env:
+          ST_TENANT_ID: ${{ secrets.ST_TENANT_ID }}
+          ST_CLIENT_ID: ${{ secrets.ST_CLIENT_ID }}
+          ST_CLIENT_SECRET: ${{ secrets.ST_CLIENT_SECRET }}
+          ST_APP_KEY: ${{ secrets.ST_APP_KEY }}
+        run: python fetch_st_data.py
       - run: python parts_dashboard.py
       - uses: peaceiris/actions-gh-pages@v4
         with:
