@@ -1,64 +1,60 @@
 #!/usr/bin/env python3
 """
 Parts Dashboard Generator
-Reads the Parts Report Excel and produces a standalone HTML dashboard.
-Run this script any time you want a fresh dashboard.
+Reads job data from ServiceTitan API export (data/jobs.json) and produces
+a standalone HTML dashboard.  Run fetch_st_data.py first to refresh the data.
 """
 
-import openpyxl
 import os
 import json
 from datetime import datetime, date, timedelta
 
-EXCEL_PAST   = "data/parts_report_past.xlsx"
-EXCEL_FUTURE = "data/parts_report_future.xlsx"
-PO_DATA_FILE = "data/po_data.json"
-OUTPUT_FILE  = "index.html"
+JOBS_DATA_FILE = "data/jobs.json"
+PO_DATA_FILE   = "data/po_data.json"
+OUTPUT_FILE    = "index.html"
 
-def get_status(tags_str):
-    if not tags_str:
-        return "Unknown"
-    tags_lower = tags_str.lower()
-    if "received" in tags_lower:
-        return "Received"
-    if "parts ordered" in tags_lower:
-        return "Ordered"
-    if "need to order" in tags_lower or "nto" in tags_lower:
-        return "NTO"
+SUPPLIERS = [
+    "Baker Supply", "Carrier enterprise", "Gemaire", "Trane Supply",
+    "Goodman distribution", "Lennox Supply",
+]
+STATUS_TAGS = {
+    "parts received":           "Received",
+    "parts ordered":            "Ordered",
+    "need to order part (nto)": "NTO",
+}
+
+
+def get_status(tag_names):
+    for tag in tag_names:
+        tl = tag.lower()
+        for kw, val in STATUS_TAGS.items():
+            if kw in tl:
+                return val
     return "Unknown"
 
-def get_supplier(tags_str):
-    if not tags_str:
-        return ""
-    suppliers = ["Baker Supply", "Carrier enterprise", "Gemaire", "Trane Supply",
-                 "Goodman distribution", "Baker Supply"]
-    for s in suppliers:
-        if s.lower() in tags_str.lower():
-            return s
+
+def get_supplier(tag_names):
+    for tag in tag_names:
+        for s in SUPPLIERS:
+            if s.lower() == tag.lower():
+                return s
     return ""
 
-def clean_tags(tags_str):
-    if not tags_str:
-        return []
-    status_keywords = [
-        "need to order part (nto)", "parts ordered", "received",
-        "baker supply", "carrier enterprise", "gemaire", "trane supply",
-        "goodman distribution"
-    ]
-    tags = [t.strip() for t in tags_str.split(",")]
-    cleaned = []
+
+def clean_tags(tag_names):
+    """Return display tags — drop status/supplier tags, deduplicate."""
+    skip_lower = set(STATUS_TAGS.keys()) | {s.lower() for s in SUPPLIERS}
     seen = set()
-    for tag in tags:
+    result = []
+    for tag in tag_names:
         tl = tag.lower()
-        skip = False
-        for kw in status_keywords:
-            if kw in tl:
-                skip = True
-                break
-        if not skip and tl not in seen:
-            cleaned.append(tag)
+        if tl in skip_lower:
+            continue
+        if tl not in seen:
+            result.append(tag)
             seen.add(tl)
-    return cleaned
+    return result
+
 
 def days_label(delta):
     if delta < 0:
@@ -70,52 +66,45 @@ def days_label(delta):
     else:
         return f"In {delta} days"
 
-def load_file(path, today, seen_jobs):
-    """Load one Excel file and return a list of row dicts. Skips duplicate job numbers."""
-    if not os.path.exists(path):
-        print(f"  Skipping (not found): {path}")
-        return []
 
-    wb = openpyxl.load_workbook(path)
-    ws = wb.active
+def load_data():
+    """Load jobs from API JSON export. Returns (rows, today)."""
+    today = date.today()
+
+    if not os.path.exists(JOBS_DATA_FILE):
+        print(f"  No job data found at {JOBS_DATA_FILE} — run fetch_st_data.py first.")
+        return [], today
+
+    with open(JOBS_DATA_FILE, "r", encoding="utf-8") as f:
+        raw = json.load(f)
+
+    fetched_at = raw.get("fetchedAt", "")
+    jobs_raw   = raw.get("jobs", [])
+    print(f"  Loaded {len(jobs_raw)} jobs from API (fetched: {fetched_at[:10]})")
+
     rows = []
-
-    for i, row in enumerate(ws.iter_rows(values_only=True)):
-        if i == 0:
-            continue  # skip header
-
-        job_type   = row[0]
-        revenue    = float(row[1]) if row[1] else 0.0
-        tags_str   = str(row[2]).strip() if row[2] else ""
-        job_num    = str(int(float(row[3]))).strip() if row[3] else ""
-        sched_dt   = row[5]
-        tech       = str(row[6]) if row[6] else ""
-        bunit      = str(row[8]) if row[8] else ""
-        customer   = str(row[9]) if row[9] else ""
-        created_dt = row[10] if len(row) > 10 else None
-
-        if not job_num or not job_type:
+    for j in jobs_raw:
+        job_num = str(j.get("jobNumber", "")).strip()
+        if not job_num or len(job_num) < 7:
             continue
-        # Skip ServiceTitan summary/footer rows (real job IDs are long, e.g. 463158467)
-        if len(job_num) < 7:
-            continue
-        if job_num in seen_jobs:
-            continue  # deduplicate across files
-        seen_jobs.add(job_num)
 
-        sched_date   = sched_dt.date()   if isinstance(sched_dt,   datetime) else sched_dt
-        created_date = created_dt.date() if isinstance(created_dt, datetime) else None
+        tag_names = j.get("tagNames", [])
+        status    = get_status(tag_names)
+        supplier  = get_supplier(tag_names)
+        extra_tags = clean_tags(tag_names)
 
-        status     = get_status(tags_str)
-        supplier   = get_supplier(tags_str)
-        extra_tags = clean_tags(tags_str)
+        sched_str   = j.get("scheduledDate")   # "YYYY-MM-DD" or None
+        created_str = j.get("createdOn")        # "YYYY-MM-DD" or None
+
+        sched_date   = date.fromisoformat(sched_str)   if sched_str   else None
+        created_date = date.fromisoformat(created_str) if created_str else None
 
         days_to_sched  = (sched_date   - today).days if sched_date   else None
         days_since_ord = (today - created_date).days if created_date else None
 
         rows.append({
             "job_num":        job_num,
-            "customer":       customer,
+            "customer":       j.get("customer", ""),
             "status":         status,
             "supplier":       supplier,
             "extra_tags":     extra_tags,
@@ -123,21 +112,12 @@ def load_file(path, today, seen_jobs):
             "created_date":   created_date,
             "days_to_sched":  days_to_sched,
             "days_since_ord": days_since_ord,
-            "revenue":        revenue,
-            "tech":           tech,
-            "bunit":          bunit,
+            "revenue":        float(j.get("total", 0) or 0),
+            "tech":           "",  # not available via current API credentials
+            "bunit":          j.get("businessUnit", ""),
         })
 
-    print(f"  Loaded {len(rows)} rows from {os.path.basename(path)}")
-    return rows
-
-
-def load_data():
-    today    = date.today()
-    seen     = set()
-    rows     = load_file(EXCEL_PAST,   today, seen)
-    rows    += load_file(EXCEL_FUTURE, today, seen)
-    print(f"  Total combined: {len(rows)} jobs")
+    print(f"  {len(rows)} valid jobs loaded.")
     return rows, today
 
 def load_po_data():
