@@ -7,6 +7,8 @@ name: Deploy Dashboard
     paths:
       - data/parts_report_past.xlsx
       - data/parts_report_future.xlsx
+      - fetch_st_data.py
+      - parts_dashboard.py
 permissions:
   contents: write
 jobs:
