@@ -554,12 +554,12 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
   <div class="header-inner">
     <div class="header-left">
       <h1>Parts Dashboard</h1>
-      <div class="sub">Wednesday, April 01, 2026 &nbsp;·&nbsp; Generated 04/01/2026 02:57 PM</div>
+      <div class="sub">Wednesday, April 01, 2026 &nbsp;·&nbsp; Generated 04/01/2026 05:40 PM</div>
     </div>
     <div class="header-right">
-      <span class="header-pill">55 Total Jobs</span>
-      <span class="header-pill" style="color:#fb923c;border-color:rgba(249,115,22,.4)">⚠ 1 NTO</span>
-      <span class="header-pill" style="color:#fca5a5;border-color:rgba(239,68,68,.4)">🔥 27 No Air 48h+</span>
+      <span class="header-pill">50 Total Jobs</span>
+      
+      <span class="header-pill" style="color:#fca5a5;border-color:rgba(239,68,68,.4)">🔥 21 No Air 48h+</span>
     </div>
   </div>
 </div>
@@ -567,10 +567,10 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
 <div class="container">
 
 <!-- ── NTO ALERT ─────────────────────────────────── -->
-<div class="alert-box">
+<div class="alert-box  hidden">
   <div class="alert-icon">⚠️</div>
   <div class="alert-text">
-    <h3>1 Part Need to Be Ordered Right Now</h3>
+    <h3>0 Parts Need to Be Ordered Right Now</h3>
     <p>Order today → arrives next day. Every hour counts for these customers.</p>
   </div>
 </div>
@@ -580,35 +580,35 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
   <div class="stat-card stat-nto"      onclick="filterJobs('nto')"      title="Click to view NTO jobs">
     <span class="s-icon">📦</span>
     <div class="label">Need to Order</div>
-    <div class="value">1</div>
+    <div class="value">0</div>
     <div class="delta">Unordered parts</div>
     <div class="tile-hint">Click to view →</div>
   </div>
   <div class="stat-card stat-ordered"  onclick="filterJobs('ordered')"  title="Click to view ordered jobs">
     <span class="s-icon">🚚</span>
     <div class="label">Parts Ordered</div>
-    <div class="value">31</div>
+    <div class="value">26</div>
     <div class="delta">In transit</div>
     <div class="tile-hint">Click to view →</div>
   </div>
   <div class="stat-card stat-received" onclick="filterJobs('received')" title="Click to view received jobs">
     <span class="s-icon">✅</span>
     <div class="label">At Shop</div>
-    <div class="value">19</div>
+    <div class="value">20</div>
     <div class="delta">Ready to install</div>
     <div class="tile-hint">Click to view →</div>
   </div>
   <div class="stat-card stat-overdue"  onclick="filterJobs('overdue')"  title="Click to view overdue jobs">
     <span class="s-icon">🚨</span>
     <div class="label">Overdue</div>
-    <div class="value">6</div>
+    <div class="value">5</div>
     <div class="delta">Past scheduled date</div>
     <div class="tile-hint">Click to view →</div>
   </div>
   <div class="stat-card stat-today"    onclick="filterJobs('today')"    title="Click to view today's arrivals">
     <span class="s-icon">📬</span>
     <div class="label">Arriving Today</div>
-    <div class="value">13</div>
+    <div class="value">9</div>
     <div class="delta">Expected delivery</div>
     <div class="tile-hint">Click to view →</div>
   </div>
@@ -622,14 +622,14 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
   <div class="stat-card stat-total"    onclick="filterJobs('all')"      title="Click to view all jobs">
     <span class="s-icon">🗂</span>
     <div class="label">Total Jobs</div>
-    <div class="value">55</div>
+    <div class="value">50</div>
     <div class="delta">On hold for parts</div>
     <div class="tile-hint">Click to view →</div>
   </div>
   <div class="stat-card stat-rev"      onclick="filterJobs('pending_rev')" title="Click to view jobs with pending revenue">
     <span class="s-icon">💰</span>
     <div class="label">Rev Pending</div>
-    <div class="value rev-value">$12,151</div>
+    <div class="value rev-value">$9,787</div>
     <div class="delta">NTO + Ordered jobs</div>
     <div class="tile-hint">Click to view →</div>
   </div>
@@ -745,19 +745,8 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
             </div></div>
         </div>
         <div class="tl-group">
-          <div class="tl-header"><span class="tl-label overdue">Tue Mar 31 — 1d OVERDUE</span> <span class="tl-divider"></span><span class="tl-count">2 jobs</span></div>
+          <div class="tl-header"><span class="tl-label overdue">Tue Mar 31 — 1d OVERDUE</span> <span class="tl-divider"></span><span class="tl-count">1 job</span></div>
           <div class="tl-cards">
-            <div class="tl-card tl-overdue">
-              <div class="card-top">
-                <a href="https://go.servicetitan.com/#/Job/Index/554749130" target="_blank" class="job-link">#554749130</a>
-                <span class="badge badge-ordered">Ordered</span>
-              </div>
-              <div class="card-customer">Mildred Rousseau</div>
-              <div class="card-meta">CS - HVAC - Service - 12 · </div>
-              <div class="card-supplier">Carrier enterprise</div>
-              <span class="countdown overdue">1d OVERDUE</span>
-              
-            </div>
             <div class="tl-card tl-overdue">
               <div class="card-top">
                 <a href="https://go.servicetitan.com/#/Job/Index/585388429" target="_blank" class="job-link">#585388429</a>
@@ -783,30 +772,8 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
             </div></div>
         </div>
         <div class="tl-group">
-          <div class="tl-header"><span class="tl-label today">TODAY — Wed Apr 01</span> <span class="tl-divider"></span><span class="tl-count">13 jobs</span></div>
+          <div class="tl-header"><span class="tl-label today">TODAY — Wed Apr 01</span> <span class="tl-divider"></span><span class="tl-count">9 jobs</span></div>
           <div class="tl-cards">
-            <div class="tl-card tl-today">
-              <div class="card-top">
-                <a href="https://go.servicetitan.com/#/Job/Index/588123550" target="_blank" class="job-link">#588123550</a>
-                <span class="badge badge-nto">NTO</span>
-              </div>
-              <div class="card-customer">Susan Mann</div>
-              <div class="card-meta">CS - HVAC - Service - 12 · </div>
-              
-              <span class="countdown today">TODAY</span>
-              
-            </div>
-            <div class="tl-card tl-today">
-              <div class="card-top">
-                <a href="https://go.servicetitan.com/#/Job/Index/478958137" target="_blank" class="job-link">#478958137</a>
-                <span class="badge badge-ordered">Ordered</span>
-              </div>
-              <div class="card-customer">Sergio Bonadona</div>
-              <div class="card-meta">CS - HVAC - Service - 12 · </div>
-              <div class="card-supplier">Carrier enterprise</div>
-              <span class="countdown today">TODAY</span>
-              
-            </div>
             <div class="tl-card tl-today">
               <div class="card-top">
                 <a href="https://go.servicetitan.com/#/Job/Index/587489793" target="_blank" class="job-link">#587489793</a>
@@ -832,29 +799,6 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
             </div>
             <div class="tl-card tl-today">
               <div class="card-top">
-                <a href="https://go.servicetitan.com/#/Job/Index/587806192" target="_blank" class="job-link">#587806192</a>
-                <span class="badge badge-ordered">Ordered</span>
-              </div>
-              <div class="card-customer">Maria Hill</div>
-              <div class="card-meta">CS - HVAC - Service - 12 · </div>
-              <div class="card-supplier">Goodman distribution</div>
-              <span class="countdown today">TODAY</span>
-              <div class="po-card-block">
-  <div class="po-card-header">
-    <span class="po-type-badge">Warranty</span>
-    <a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/587816473" target="_blank" class="po-num">PO#587806192-001</a>
-    <span class="badge badge-ordered" style="font-size:9px;padding:2px 6px">Sent</span>
-  </div>
-  <div class="po-vendor-cost-row">
-    <span class="po-vendor-line">Goodman Distribution, Inc</span>
-    <span class="po-cost">—</span>
-  </div>
-  <div class="po-part-line">warranty valve</div>
-  <div class="po-dates">Ordered: 2026-03-30 · Not yet received</div>
-</div>
-            </div>
-            <div class="tl-card tl-today">
-              <div class="card-top">
                 <a href="https://go.servicetitan.com/#/Job/Index/587820789" target="_blank" class="job-link">#587820789</a>
                 <span class="badge badge-ordered">Ordered</span>
               </div>
@@ -866,37 +810,14 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
   <div class="po-card-header">
     <span class="po-type-badge">Warranty</span>
     <a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/587838603" target="_blank" class="po-num">PO#587820789-001</a>
-    <span class="badge badge-ordered" style="font-size:9px;padding:2px 6px">Sent</span>
+    <span class="badge badge-received" style="font-size:9px;padding:2px 6px">Received</span>
   </div>
   <div class="po-vendor-cost-row">
     <span class="po-vendor-line">Goodman Distribution, Inc</span>
-    <span class="po-cost">$15.27</span>
+    <span class="po-cost">$1,045.52</span>
   </div>
-  <div class="po-part-line">Warrant Compressor <span style="color:var(--accent-green)">$15.27/ea</span></div>
-  <div class="po-dates">Ordered: 2026-03-30 · Not yet received</div>
-</div>
-            </div>
-            <div class="tl-card tl-today">
-              <div class="card-top">
-                <a href="https://go.servicetitan.com/#/Job/Index/587881253" target="_blank" class="job-link">#587881253</a>
-                <span class="badge badge-ordered">Ordered</span>
-              </div>
-              <div class="card-customer">Richard Butcher</div>
-              <div class="card-meta">CS - HVAC - Service - 12 · </div>
-              <div class="card-supplier">Carrier enterprise</div>
-              <span class="countdown today">TODAY</span>
-              <div class="po-card-block">
-  <div class="po-card-header">
-    <span class="po-type-badge">Warranty</span>
-    <a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/587961548" target="_blank" class="po-num">PO#587881253-001</a>
-    <span class="badge badge-ordered" style="font-size:9px;padding:2px 6px">Sent</span>
-  </div>
-  <div class="po-vendor-cost-row">
-    <span class="po-vendor-line">Carrier Sales And Distrubution, LLC</span>
-    <span class="po-cost">—</span>
-  </div>
-  <div class="po-part-line">warranty harnes</div>
-  <div class="po-dates">Ordered: 2026-03-31 · Not yet received</div>
+  <div class="po-part-line">Warrant Compressor <span style="color:var(--accent-green)">$977.12/ea</span></div>
+  <div class="po-dates">Ordered: 2026-03-30 · Received: 2026-04-01</div>
 </div>
             </div>
             <div class="tl-card tl-today">
@@ -1054,29 +975,6 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
           <div class="tl-cards">
             <div class="tl-card tl-tomorrow">
               <div class="card-top">
-                <a href="https://go.servicetitan.com/#/Job/Index/587764352" target="_blank" class="job-link">#587764352</a>
-                <span class="badge badge-ordered">Ordered</span>
-              </div>
-              <div class="card-customer">Edna Parkin</div>
-              <div class="card-meta">CS - HVAC - Service - 12 · </div>
-              <div class="card-supplier">Trane Supply</div>
-              <span class="countdown tomorrow">Tomorrow</span>
-              <div class="po-card-block">
-  <div class="po-card-header">
-    <span class="po-type-badge">Warranty</span>
-    <a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/587826000" target="_blank" class="po-num">PO#587764352-001</a>
-    <span class="badge badge-nto" style="font-size:9px;padding:2px 6px">Pending</span>
-  </div>
-  <div class="po-vendor-cost-row">
-    <span class="po-vendor-line">Trane Parts</span>
-    <span class="po-cost">$623.56</span>
-  </div>
-  <div class="po-part-line">Warranty Motor <span style="color:var(--accent-green)">$623.56/ea</span></div><div class="po-part-line">warranty harnes</div>
-  <div class="po-dates">Ordered: 2026-03-30 · Not yet received</div>
-</div>
-            </div>
-            <div class="tl-card tl-tomorrow">
-              <div class="card-top">
                 <a href="https://go.servicetitan.com/#/Job/Index/587871803" target="_blank" class="job-link">#587871803</a>
                 <span class="badge badge-ordered">Ordered</span>
               </div>
@@ -1166,10 +1064,33 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
   <div class="po-part-line">warranty valve</div>
   <div class="po-dates">Ordered: 2026-04-01 · Not yet received</div>
 </div>
+            </div>
+            <div class="tl-card tl-tomorrow">
+              <div class="card-top">
+                <a href="https://go.servicetitan.com/#/Job/Index/588123550" target="_blank" class="job-link">#588123550</a>
+                <span class="badge badge-ordered">Ordered</span>
+              </div>
+              <div class="card-customer">Susan Mann</div>
+              <div class="card-meta">CS - HVAC - Service - 12 · </div>
+              <div class="card-supplier">Gemaire</div>
+              <span class="countdown tomorrow">Tomorrow</span>
+              <div class="po-card-block">
+  <div class="po-card-header">
+    <span class="po-type-badge">Warranty</span>
+    <a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/588129094" target="_blank" class="po-num">PO#588123550-001</a>
+    <span class="badge badge-ordered" style="font-size:9px;padding:2px 6px">Sent</span>
+  </div>
+  <div class="po-vendor-cost-row">
+    <span class="po-vendor-line">Gemaire Distributors</span>
+    <span class="po-cost">$1.00</span>
+  </div>
+  <div class="po-part-line">Fan Blade <span style="color:var(--accent-green)">$1.00/ea</span></div>
+  <div class="po-dates">Ordered: 2026-04-01 · Not yet received</div>
+</div>
             </div></div>
         </div>
         <div class="tl-group">
-          <div class="tl-header"><span class="tl-label future">Friday, Apr 03</span> <span class="tl-divider"></span><span class="tl-count">4 jobs</span></div>
+          <div class="tl-header"><span class="tl-label future">Friday, Apr 03</span> <span class="tl-divider"></span><span class="tl-count">3 jobs</span></div>
           <div class="tl-cards">
             <div class="tl-card tl-future">
               <div class="card-top">
@@ -1226,29 +1147,6 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
   </div>
   <div class="po-part-line">Warranty Coil <span style="color:var(--accent-green)">$3,116.00/ea</span></div>
   <div class="po-dates">Ordered: 2026-03-24 · Not yet received</div>
-</div>
-            </div>
-            <div class="tl-card tl-future">
-              <div class="card-top">
-                <a href="https://go.servicetitan.com/#/Job/Index/587888212" target="_blank" class="job-link">#587888212</a>
-                <span class="badge badge-ordered">Ordered</span>
-              </div>
-              <div class="card-customer">Serge Janov</div>
-              <div class="card-meta">CS - HVAC - Service - 12 · </div>
-              <div class="card-supplier">Lennox Supply</div>
-              <span class="countdown soon">In 2 days</span>
-              <div class="po-card-block">
-  <div class="po-card-header">
-    <span class="po-type-badge">Warranty</span>
-    <a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/587940996" target="_blank" class="po-num">PO#587888212-001</a>
-    <span class="badge badge-ordered" style="font-size:9px;padding:2px 6px">Sent</span>
-  </div>
-  <div class="po-vendor-cost-row">
-    <span class="po-vendor-line">Lennox Parts Plus</span>
-    <span class="po-cost">$15.27</span>
-  </div>
-  <div class="po-part-line">Warrant Compressor <span style="color:var(--accent-green)">$15.27/ea</span></div>
-  <div class="po-dates">Ordered: 2026-03-31 · Not yet received</div>
 </div>
             </div></div>
         </div>
@@ -1534,19 +1432,9 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
           <div class="sl-col-header">
             <div class="sl-col-dayname">Tue</div>
             <div class="sl-col-date">Mar 31</div>
-            <div class="sl-col-meta"><span class="sl-day-badge sl-badge-overdue">1d OVERDUE</span> <span class="sl-col-count">2</span></div>
+            <div class="sl-col-meta"><span class="sl-day-badge sl-badge-overdue">1d OVERDUE</span> <span class="sl-col-count">1</span></div>
           </div>
           <div class="sl-col-body">
-            <div class="sl-card">
-              <div class="sl-card-top">
-                <span class="badge badge-ordered">Ordered</span>
-                <a href="https://go.servicetitan.com/#/Job/Index/554749130" target="_blank" class="job-link">#554749130</a>
-              </div>
-              <div class="sl-card-customer">Mildred Rousseau</div>
-              <div class="sl-card-sup">📦 Carrier enterprise</div>
-              
-              <div class="sl-card-wait sl-card-wait-crit">114d waiting</div>
-            </div>
             <div class="sl-card">
               <div class="sl-card-top">
                 <span class="badge badge-ordered">Ordered</span>
@@ -1574,29 +1462,9 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
           <div class="sl-col-header">
             <div class="sl-col-dayname">Wed</div>
             <div class="sl-col-date">Apr 01</div>
-            <div class="sl-col-meta"><span class="sl-day-badge sl-badge-today">TODAY</span> <span class="sl-col-count">13</span></div>
+            <div class="sl-col-meta"><span class="sl-day-badge sl-badge-today">TODAY</span> <span class="sl-col-count">9</span></div>
           </div>
           <div class="sl-col-body">
-            <div class="sl-card">
-              <div class="sl-card-top">
-                <span class="badge badge-nto">NTO</span>
-                <a href="https://go.servicetitan.com/#/Job/Index/588123550" target="_blank" class="job-link">#588123550</a>
-              </div>
-              <div class="sl-card-customer">Susan Mann</div>
-              
-              
-              
-            </div>
-            <div class="sl-card">
-              <div class="sl-card-top">
-                <span class="badge badge-ordered">Ordered</span>
-                <a href="https://go.servicetitan.com/#/Job/Index/478958137" target="_blank" class="job-link">#478958137</a>
-              </div>
-              <div class="sl-card-customer">Sergio Bonadona</div>
-              <div class="sl-card-sup">📦 Carrier enterprise</div>
-              
-              <div class="sl-card-wait sl-card-wait-crit">249d waiting</div>
-            </div>
             <div class="sl-card">
               <div class="sl-card-top">
                 <span class="badge badge-ordered">Ordered</span>
@@ -1622,28 +1490,6 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
             <div class="sl-card">
               <div class="sl-card-top">
                 <span class="badge badge-ordered">Ordered</span>
-                <a href="https://go.servicetitan.com/#/Job/Index/587806192" target="_blank" class="job-link">#587806192</a>
-              </div>
-              <div class="sl-card-customer">Maria Hill</div>
-              <div class="sl-card-sup">📦 Goodman distribution</div>
-              <div class="po-card-block">
-  <div class="po-card-header">
-    <span class="po-type-badge">Warranty</span>
-    <a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/587816473" target="_blank" class="po-num">PO#587806192-001</a>
-    <span class="badge badge-ordered" style="font-size:9px;padding:2px 6px">Sent</span>
-  </div>
-  <div class="po-vendor-cost-row">
-    <span class="po-vendor-line">Goodman Distribution, Inc</span>
-    <span class="po-cost">—</span>
-  </div>
-  <div class="po-part-line">warranty valve</div>
-  <div class="po-dates">Ordered: 2026-03-30 · Not yet received</div>
-</div>
-              <div class="sl-card-wait sl-card-wait-warn">2d waiting</div>
-            </div>
-            <div class="sl-card">
-              <div class="sl-card-top">
-                <span class="badge badge-ordered">Ordered</span>
                 <a href="https://go.servicetitan.com/#/Job/Index/587820789" target="_blank" class="job-link">#587820789</a>
               </div>
               <div class="sl-card-customer">Joe Buck</div>
@@ -1652,36 +1498,14 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
   <div class="po-card-header">
     <span class="po-type-badge">Warranty</span>
     <a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/587838603" target="_blank" class="po-num">PO#587820789-001</a>
-    <span class="badge badge-ordered" style="font-size:9px;padding:2px 6px">Sent</span>
+    <span class="badge badge-received" style="font-size:9px;padding:2px 6px">Received</span>
   </div>
   <div class="po-vendor-cost-row">
     <span class="po-vendor-line">Goodman Distribution, Inc</span>
-    <span class="po-cost">$15.27</span>
+    <span class="po-cost">$1,045.52</span>
   </div>
-  <div class="po-part-line">Warrant Compressor <span style="color:var(--accent-green)">$15.27/ea</span></div>
-  <div class="po-dates">Ordered: 2026-03-30 · Not yet received</div>
-</div>
-              <div class="sl-card-wait sl-card-wait-warn">2d waiting</div>
-            </div>
-            <div class="sl-card">
-              <div class="sl-card-top">
-                <span class="badge badge-ordered">Ordered</span>
-                <a href="https://go.servicetitan.com/#/Job/Index/587881253" target="_blank" class="job-link">#587881253</a>
-              </div>
-              <div class="sl-card-customer">Richard Butcher</div>
-              <div class="sl-card-sup">📦 Carrier enterprise</div>
-              <div class="po-card-block">
-  <div class="po-card-header">
-    <span class="po-type-badge">Warranty</span>
-    <a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/587961548" target="_blank" class="po-num">PO#587881253-001</a>
-    <span class="badge badge-ordered" style="font-size:9px;padding:2px 6px">Sent</span>
-  </div>
-  <div class="po-vendor-cost-row">
-    <span class="po-vendor-line">Carrier Sales And Distrubution, LLC</span>
-    <span class="po-cost">—</span>
-  </div>
-  <div class="po-part-line">warranty harnes</div>
-  <div class="po-dates">Ordered: 2026-03-31 · Not yet received</div>
+  <div class="po-part-line">Warrant Compressor <span style="color:var(--accent-green)">$977.12/ea</span></div>
+  <div class="po-dates">Ordered: 2026-03-30 · Received: 2026-04-01</div>
 </div>
               <div class="sl-card-wait sl-card-wait-warn">2d waiting</div>
             </div>
@@ -1838,28 +1662,6 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
             <div class="sl-card">
               <div class="sl-card-top">
                 <span class="badge badge-ordered">Ordered</span>
-                <a href="https://go.servicetitan.com/#/Job/Index/587764352" target="_blank" class="job-link">#587764352</a>
-              </div>
-              <div class="sl-card-customer">Edna Parkin</div>
-              <div class="sl-card-sup">📦 Trane Supply</div>
-              <div class="po-card-block">
-  <div class="po-card-header">
-    <span class="po-type-badge">Warranty</span>
-    <a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/587826000" target="_blank" class="po-num">PO#587764352-001</a>
-    <span class="badge badge-nto" style="font-size:9px;padding:2px 6px">Pending</span>
-  </div>
-  <div class="po-vendor-cost-row">
-    <span class="po-vendor-line">Trane Parts</span>
-    <span class="po-cost">$623.56</span>
-  </div>
-  <div class="po-part-line">Warranty Motor <span style="color:var(--accent-green)">$623.56/ea</span></div><div class="po-part-line">warranty harnes</div>
-  <div class="po-dates">Ordered: 2026-03-30 · Not yet received</div>
-</div>
-              <div class="sl-card-wait sl-card-wait-urgent">4d waiting</div>
-            </div>
-            <div class="sl-card">
-              <div class="sl-card-top">
-                <span class="badge badge-ordered">Ordered</span>
                 <a href="https://go.servicetitan.com/#/Job/Index/587871803" target="_blank" class="job-link">#587871803</a>
               </div>
               <div class="sl-card-customer">FRANCES, ARNOLD</div>
@@ -1944,13 +1746,35 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
   <div class="po-dates">Ordered: 2026-04-01 · Not yet received</div>
 </div>
               
+            </div>
+            <div class="sl-card">
+              <div class="sl-card-top">
+                <span class="badge badge-ordered">Ordered</span>
+                <a href="https://go.servicetitan.com/#/Job/Index/588123550" target="_blank" class="job-link">#588123550</a>
+              </div>
+              <div class="sl-card-customer">Susan Mann</div>
+              <div class="sl-card-sup">📦 Gemaire</div>
+              <div class="po-card-block">
+  <div class="po-card-header">
+    <span class="po-type-badge">Warranty</span>
+    <a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/588129094" target="_blank" class="po-num">PO#588123550-001</a>
+    <span class="badge badge-ordered" style="font-size:9px;padding:2px 6px">Sent</span>
+  </div>
+  <div class="po-vendor-cost-row">
+    <span class="po-vendor-line">Gemaire Distributors</span>
+    <span class="po-cost">$1.00</span>
+  </div>
+  <div class="po-part-line">Fan Blade <span style="color:var(--accent-green)">$1.00/ea</span></div>
+  <div class="po-dates">Ordered: 2026-04-01 · Not yet received</div>
+</div>
+              
             </div></div>
         </div>
         <div class="sl-col sl-col-soon">
           <div class="sl-col-header">
             <div class="sl-col-dayname">Fri</div>
             <div class="sl-col-date">Apr 03</div>
-            <div class="sl-col-meta"><span class="sl-day-badge sl-badge-soon">In 2d</span> <span class="sl-col-count">4</span></div>
+            <div class="sl-col-meta"><span class="sl-day-badge sl-badge-soon">In 2d</span> <span class="sl-col-count">3</span></div>
           </div>
           <div class="sl-col-body">
             <div class="sl-card">
@@ -2006,28 +1830,6 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
   <div class="po-dates">Ordered: 2026-03-24 · Not yet received</div>
 </div>
               <div class="sl-card-wait sl-card-wait-crit">9d waiting</div>
-            </div>
-            <div class="sl-card">
-              <div class="sl-card-top">
-                <span class="badge badge-ordered">Ordered</span>
-                <a href="https://go.servicetitan.com/#/Job/Index/587888212" target="_blank" class="job-link">#587888212</a>
-              </div>
-              <div class="sl-card-customer">Serge Janov</div>
-              <div class="sl-card-sup">📦 Lennox Supply</div>
-              <div class="po-card-block">
-  <div class="po-card-header">
-    <span class="po-type-badge">Warranty</span>
-    <a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/587940996" target="_blank" class="po-num">PO#587888212-001</a>
-    <span class="badge badge-ordered" style="font-size:9px;padding:2px 6px">Sent</span>
-  </div>
-  <div class="po-vendor-cost-row">
-    <span class="po-vendor-line">Lennox Parts Plus</span>
-    <span class="po-cost">$15.27</span>
-  </div>
-  <div class="po-part-line">Warrant Compressor <span style="color:var(--accent-green)">$15.27/ea</span></div>
-  <div class="po-dates">Ordered: 2026-03-31 · Not yet received</div>
-</div>
-              <div class="sl-card-wait sl-card-wait-warn">2d waiting</div>
             </div></div>
         </div>
         <div class="sl-col sl-col-future">
@@ -2235,7 +2037,7 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
 <div class="noair-banner">
   <div class="nb-icon">🔥</div>
   <div class="nb-text">
-    <h3>27 customers are without A/C for 2+ days — needs immediate attention</h3>
+    <h3>21 customers are without A/C for 2+ days — needs immediate attention</h3>
     <p>Sorted by longest wait. Critical (5d+) cards pulse red.</p>
   </div>
 </div>
@@ -2288,21 +2090,6 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
         </div>
         <div class="noair-card noair-critical">
           <div class="noair-wait-row">
-            <div class="noair-wait">249</div>
-            <div class="noair-wait-unit">days</div>
-          </div>
-          <div class="noair-hrs">5976 hours without A/C</div>
-          <div class="noair-divider"></div>
-          <div class="noair-customer">Sergio Bonadona</div>
-          <div class="noair-job">
-            <a href="https://go.servicetitan.com/#/Job/Index/478958137" target="_blank" class="job-link">#478958137</a>
-            <span class="badge badge-ordered">Ordered</span>
-          </div>
-          <div class="noair-detail"><span>Ordered 07/26/25</span><span>·</span><span class="countdown today">TODAY</span></div>
-          <div class="noair-supplier">📦 Carrier enterprise</div>
-        </div>
-        <div class="noair-card noair-critical">
-          <div class="noair-wait-row">
             <div class="noair-wait">156</div>
             <div class="noair-wait-unit">days</div>
           </div>
@@ -2314,21 +2101,6 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
             <span class="badge badge-unknown">Unknown</span>
           </div>
           <div class="noair-detail"><span>Ordered 10/27/25</span><span>·</span><span class="countdown overdue">40d OVERDUE</span></div>
-          <div class="noair-supplier">📦 Carrier enterprise</div>
-        </div>
-        <div class="noair-card noair-critical">
-          <div class="noair-wait-row">
-            <div class="noair-wait">114</div>
-            <div class="noair-wait-unit">days</div>
-          </div>
-          <div class="noair-hrs">2736 hours without A/C</div>
-          <div class="noair-divider"></div>
-          <div class="noair-customer">Mildred Rousseau</div>
-          <div class="noair-job">
-            <a href="https://go.servicetitan.com/#/Job/Index/554749130" target="_blank" class="job-link">#554749130</a>
-            <span class="badge badge-ordered">Ordered</span>
-          </div>
-          <div class="noair-detail"><span>Ordered 12/08/25</span><span>·</span><span class="countdown overdue">1d OVERDUE</span></div>
           <div class="noair-supplier">📦 Carrier enterprise</div>
         </div>
         <div class="noair-card noair-critical">
@@ -2498,21 +2270,6 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
         </div>
         <div class="noair-card noair-urgent">
           <div class="noair-wait-row">
-            <div class="noair-wait">4</div>
-            <div class="noair-wait-unit">days</div>
-          </div>
-          <div class="noair-hrs">96 hours without A/C</div>
-          <div class="noair-divider"></div>
-          <div class="noair-customer">Edna Parkin</div>
-          <div class="noair-job">
-            <a href="https://go.servicetitan.com/#/Job/Index/587764352" target="_blank" class="job-link">#587764352</a>
-            <span class="badge badge-ordered">Ordered</span>
-          </div>
-          <div class="noair-detail"><span>Ordered 03/28/26</span><span>·</span><span class="countdown tomorrow">Tomorrow</span></div>
-          <div class="noair-supplier">📦 Trane Supply</div>
-        </div>
-        <div class="noair-card noair-urgent">
-          <div class="noair-wait-row">
             <div class="noair-wait">3</div>
             <div class="noair-wait-unit">days</div>
           </div>
@@ -2525,21 +2282,6 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
           </div>
           <div class="noair-detail"><span>Ordered 03/29/26</span><span>·</span><span class="countdown future">In 12 days</span></div>
           <div class="noair-supplier">📦 Carrier enterprise</div>
-        </div>
-        <div class="noair-card noair-warn">
-          <div class="noair-wait-row">
-            <div class="noair-wait">2</div>
-            <div class="noair-wait-unit">days</div>
-          </div>
-          <div class="noair-hrs">48 hours without A/C</div>
-          <div class="noair-divider"></div>
-          <div class="noair-customer">Maria Hill</div>
-          <div class="noair-job">
-            <a href="https://go.servicetitan.com/#/Job/Index/587806192" target="_blank" class="job-link">#587806192</a>
-            <span class="badge badge-ordered">Ordered</span>
-          </div>
-          <div class="noair-detail"><span>Ordered 03/30/26</span><span>·</span><span class="countdown today">TODAY</span></div>
-          <div class="noair-supplier">📦 Goodman distribution</div>
         </div>
         <div class="noair-card noair-warn">
           <div class="noair-wait-row">
@@ -2593,36 +2335,6 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
           </div>
           <div class="noair-hrs">48 hours without A/C</div>
           <div class="noair-divider"></div>
-          <div class="noair-customer">Richard Butcher</div>
-          <div class="noair-job">
-            <a href="https://go.servicetitan.com/#/Job/Index/587881253" target="_blank" class="job-link">#587881253</a>
-            <span class="badge badge-ordered">Ordered</span>
-          </div>
-          <div class="noair-detail"><span>Ordered 03/30/26</span><span>·</span><span class="countdown today">TODAY</span></div>
-          <div class="noair-supplier">📦 Carrier enterprise</div>
-        </div>
-        <div class="noair-card noair-warn">
-          <div class="noair-wait-row">
-            <div class="noair-wait">2</div>
-            <div class="noair-wait-unit">days</div>
-          </div>
-          <div class="noair-hrs">48 hours without A/C</div>
-          <div class="noair-divider"></div>
-          <div class="noair-customer">Serge Janov</div>
-          <div class="noair-job">
-            <a href="https://go.servicetitan.com/#/Job/Index/587888212" target="_blank" class="job-link">#587888212</a>
-            <span class="badge badge-ordered">Ordered</span>
-          </div>
-          <div class="noair-detail"><span>Ordered 03/30/26</span><span>·</span><span class="countdown soon">In 2 days</span></div>
-          <div class="noair-supplier">📦 Lennox Supply</div>
-        </div>
-        <div class="noair-card noair-warn">
-          <div class="noair-wait-row">
-            <div class="noair-wait">2</div>
-            <div class="noair-wait-unit">days</div>
-          </div>
-          <div class="noair-hrs">48 hours without A/C</div>
-          <div class="noair-divider"></div>
           <div class="noair-customer">Rebecca Temple</div>
           <div class="noair-job">
             <a href="https://go.servicetitan.com/#/Job/Index/587893406" target="_blank" class="job-link">#587893406</a>
@@ -2667,16 +2379,6 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
     <tbody>
       
         <tr>
-          <td>Susan Mann</td>
-          <td><a href="https://go.servicetitan.com/#/Job/Index/588123550" target="_blank" class="job-link">#588123550</a></td>
-          <td><span class="badge badge-nto">NTO</span></td>
-          <td>—</td>
-          <td>04/01/26</td>
-          <td>04/01/26</td>
-          <td><span class="countdown today">TODAY</span></td>
-          <td><span class="wait-pill">Today</span></td>
-        </tr>
-        <tr>
           <td>Gluck Carolyn</td>
           <td><a href="https://go.servicetitan.com/#/Job/Index/459781920" target="_blank" class="job-link">#459781920</a></td>
           <td><span class="badge badge-ordered">Ordered</span></td>
@@ -2695,26 +2397,6 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
           <td>04/03/26</td>
           <td><span class="countdown soon">In 2 days</span></td>
           <td><span class="wait-pill wait-critical">351d (8424h)</span></td>
-        </tr>
-        <tr>
-          <td>Sergio Bonadona</td>
-          <td><a href="https://go.servicetitan.com/#/Job/Index/478958137" target="_blank" class="job-link">#478958137</a></td>
-          <td><span class="badge badge-ordered">Ordered</span></td>
-          <td>Carrier enterprise</td>
-          <td>07/26/25</td>
-          <td>04/01/26</td>
-          <td><span class="countdown today">TODAY</span></td>
-          <td><span class="wait-pill wait-critical">249d (5976h)</span></td>
-        </tr>
-        <tr>
-          <td>Mildred Rousseau</td>
-          <td><a href="https://go.servicetitan.com/#/Job/Index/554749130" target="_blank" class="job-link">#554749130</a></td>
-          <td><span class="badge badge-ordered">Ordered</span></td>
-          <td>Carrier enterprise</td>
-          <td>12/08/25</td>
-          <td>03/31/26</td>
-          <td><span class="countdown overdue">1d OVERDUE</span></td>
-          <td><span class="wait-pill wait-critical">114d (2736h)</span></td>
         </tr>
         <tr>
           <td>Wanda Betancourt</td>
@@ -2807,16 +2489,6 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
           <td><span class="wait-pill wait-critical">6d (144h)</span></td>
         </tr>
         <tr>
-          <td>Edna Parkin</td>
-          <td><a href="https://go.servicetitan.com/#/Job/Index/587764352" target="_blank" class="job-link">#587764352</a></td>
-          <td><span class="badge badge-ordered">Ordered</span></td>
-          <td>Trane Supply</td>
-          <td>03/28/26</td>
-          <td>04/02/26</td>
-          <td><span class="countdown tomorrow">Tomorrow</span></td>
-          <td><span class="wait-pill wait-critical">4d (96h)</span></td>
-        </tr>
-        <tr>
           <td>Lera Chacon</td>
           <td><a href="https://go.servicetitan.com/#/Job/Index/587785435" target="_blank" class="job-link">#587785435</a></td>
           <td><span class="badge badge-ordered">Ordered</span></td>
@@ -2825,16 +2497,6 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
           <td>04/13/26</td>
           <td><span class="countdown future">In 12 days</span></td>
           <td><span class="wait-pill wait-critical">3d (72h)</span></td>
-        </tr>
-        <tr>
-          <td>Maria Hill</td>
-          <td><a href="https://go.servicetitan.com/#/Job/Index/587806192" target="_blank" class="job-link">#587806192</a></td>
-          <td><span class="badge badge-ordered">Ordered</span></td>
-          <td>Goodman distribution</td>
-          <td>03/30/26</td>
-          <td>04/01/26</td>
-          <td><span class="countdown today">TODAY</span></td>
-          <td><span class="wait-pill wait-critical">2d (48h)</span></td>
         </tr>
         <tr>
           <td>Joe Buck</td>
@@ -2864,26 +2526,6 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
           <td>03/30/26</td>
           <td>04/08/26</td>
           <td><span class="countdown future">In 7 days</span></td>
-          <td><span class="wait-pill wait-critical">2d (48h)</span></td>
-        </tr>
-        <tr>
-          <td>Richard Butcher</td>
-          <td><a href="https://go.servicetitan.com/#/Job/Index/587881253" target="_blank" class="job-link">#587881253</a></td>
-          <td><span class="badge badge-ordered">Ordered</span></td>
-          <td>Carrier enterprise</td>
-          <td>03/30/26</td>
-          <td>04/01/26</td>
-          <td><span class="countdown today">TODAY</span></td>
-          <td><span class="wait-pill wait-critical">2d (48h)</span></td>
-        </tr>
-        <tr>
-          <td>Serge Janov</td>
-          <td><a href="https://go.servicetitan.com/#/Job/Index/587888212" target="_blank" class="job-link">#587888212</a></td>
-          <td><span class="badge badge-ordered">Ordered</span></td>
-          <td>Lennox Supply</td>
-          <td>03/30/26</td>
-          <td>04/03/26</td>
-          <td><span class="countdown soon">In 2 days</span></td>
           <td><span class="wait-pill wait-critical">2d (48h)</span></td>
         </tr>
         <tr>
@@ -2985,6 +2627,36 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
           <td>04/02/26</td>
           <td><span class="countdown tomorrow">Tomorrow</span></td>
           <td><span class="wait-pill">Today</span></td>
+        </tr>
+        <tr>
+          <td>Susan Mann</td>
+          <td><a href="https://go.servicetitan.com/#/Job/Index/588123550" target="_blank" class="job-link">#588123550</a></td>
+          <td><span class="badge badge-ordered">Ordered</span></td>
+          <td>Gemaire</td>
+          <td>04/01/26</td>
+          <td>04/02/26</td>
+          <td><span class="countdown tomorrow">Tomorrow</span></td>
+          <td><span class="wait-pill">Today</span></td>
+        </tr>
+        <tr>
+          <td>Sergio Bonadona</td>
+          <td><a href="https://go.servicetitan.com/#/Job/Index/478958137" target="_blank" class="job-link">#478958137</a></td>
+          <td><span class="badge badge-received">Received</span></td>
+          <td>Carrier enterprise</td>
+          <td>07/26/25</td>
+          <td>04/01/26</td>
+          <td><span class="countdown received-tag">At Shop</span></td>
+          <td><span class="wait-pill wait-critical">249d (5976h)</span></td>
+        </tr>
+        <tr>
+          <td>Mildred Rousseau</td>
+          <td><a href="https://go.servicetitan.com/#/Job/Index/554749130" target="_blank" class="job-link">#554749130</a></td>
+          <td><span class="badge badge-received">Received</span></td>
+          <td>Carrier enterprise</td>
+          <td>12/08/25</td>
+          <td>03/31/26</td>
+          <td><span class="countdown received-tag">At Shop</span></td>
+          <td><span class="wait-pill wait-critical">114d (2736h)</span></td>
         </tr>
         <tr>
           <td>Caryn Gordon</td>
@@ -3107,12 +2779,22 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
           <td><span class="wait-pill wait-critical">4d (96h)</span></td>
         </tr>
         <tr>
-          <td>Brett Frankel</td>
-          <td><a href="https://go.servicetitan.com/#/Job/Index/587879230" target="_blank" class="job-link">#587879230</a></td>
+          <td>Maria Hill</td>
+          <td><a href="https://go.servicetitan.com/#/Job/Index/587806192" target="_blank" class="job-link">#587806192</a></td>
           <td><span class="badge badge-received">Received</span></td>
-          <td>—</td>
+          <td>Goodman distribution</td>
           <td>03/30/26</td>
+          <td>04/01/26</td>
+          <td><span class="countdown received-tag">At Shop</span></td>
+          <td><span class="wait-pill wait-critical">2d (48h)</span></td>
+        </tr>
+        <tr>
+          <td>Richard Butcher</td>
+          <td><a href="https://go.servicetitan.com/#/Job/Index/587881253" target="_blank" class="job-link">#587881253</a></td>
+          <td><span class="badge badge-received">Received</span></td>
+          <td>Carrier enterprise</td>
           <td>03/30/26</td>
+          <td>04/01/26</td>
           <td><span class="countdown received-tag">At Shop</span></td>
           <td><span class="wait-pill wait-critical">2d (48h)</span></td>
         </tr>
@@ -3127,32 +2809,12 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
           <td><span class="wait-pill wait-warn">1d (24h)</span></td>
         </tr>
         <tr>
-          <td>Rob LaFleur</td>
-          <td><a href="https://go.servicetitan.com/#/Job/Index/587960019" target="_blank" class="job-link">#587960019</a></td>
-          <td><span class="badge badge-received">Received</span></td>
-          <td>—</td>
-          <td>03/31/26</td>
-          <td>03/31/26</td>
-          <td><span class="countdown received-tag">At Shop</span></td>
-          <td><span class="wait-pill wait-warn">1d (24h)</span></td>
-        </tr>
-        <tr>
           <td>Nsanyaw Rawls</td>
           <td><a href="https://go.servicetitan.com/#/Job/Index/587960361" target="_blank" class="job-link">#587960361</a></td>
           <td><span class="badge badge-received">Received</span></td>
           <td>—</td>
           <td>03/31/26</td>
           <td>04/01/26</td>
-          <td><span class="countdown received-tag">At Shop</span></td>
-          <td><span class="wait-pill wait-warn">1d (24h)</span></td>
-        </tr>
-        <tr>
-          <td>Dave Prince</td>
-          <td><a href="https://go.servicetitan.com/#/Job/Index/588026565" target="_blank" class="job-link">#588026565</a></td>
-          <td><span class="badge badge-received">Received</span></td>
-          <td>—</td>
-          <td>03/31/26</td>
-          <td>03/31/26</td>
           <td><span class="countdown received-tag">At Shop</span></td>
           <td><span class="wait-pill wait-warn">1d (24h)</span></td>
         </tr>
@@ -3226,7 +2888,7 @@ tbody td { padding: 12px 16px; vertical-align: middle; }
 
 <script>
 /* ── JOB DATA ──────────────────────────────────── */
-const JOBS = [{"job_num": "459781920", "customer": "Gluck Carolyn", "status": "Ordered", "supplier": "Baker Supply", "extra_tags": ["PLM"], "sched_date": "2026-03-25", "created_date": "2025-03-10", "days_to_sched": -7, "days_since_ord": 387, "revenue": 722.79, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "463016698", "customer": "Evan Frangos", "status": "Ordered", "supplier": "Gemaire", "extra_tags": ["Club Member"], "sched_date": "2026-04-03", "created_date": "2025-04-15", "days_to_sched": 2, "days_since_ord": 351, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "463158467", "customer": "GRACEFFO, GENE", "status": "Unknown", "supplier": "Carrier enterprise", "extra_tags": ["PLM", "10-Year Labor", "Club Member"], "sched_date": "2025-06-09", "created_date": "2025-04-16", "days_to_sched": -296, "days_since_ord": 350, "revenue": 502.95, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "478958137", "customer": "Sergio Bonadona", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["Club Member"], "sched_date": "2026-04-01", "created_date": "2025-07-26", "days_to_sched": 0, "days_since_ord": 249, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "534127140", "customer": "Roberta Berger", "status": "Unknown", "supplier": "Carrier enterprise", "extra_tags": ["10-Year Labor", "Club Member"], "sched_date": "2026-02-20", "created_date": "2025-10-27", "days_to_sched": -40, "days_since_ord": 156, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "554749130", "customer": "Mildred Rousseau", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["Club Member", "10-10-10"], "sched_date": "2026-03-31", "created_date": "2025-12-08", "days_to_sched": -1, "days_since_ord": 114, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "555552166", "customer": "Wanda Betancourt", "status": "Ordered", "supplier": "Baker Supply", "extra_tags": ["Club Member", "PLM"], "sched_date": "2026-04-08", "created_date": "2025-12-16", "days_to_sched": 7, "days_since_ord": 106, "revenue": 462.83, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "581332764", "customer": "Chris Orsini", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": [], "sched_date": "2026-04-06", "created_date": "2026-02-05", "days_to_sched": 5, "days_since_ord": 55, "revenue": 303.45, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 2.0, "po_count": 1, "pos": [{"id": 581361649, "number": "581332764-001", "status": "Sent", "typeName": "Material", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-02-05", "receivedOn": "", "total": 2.0, "parts": [{"desc": "Material Item for PO", "qty": 2.0, "cost": 1.0}]}]}, {"job_num": "583259145", "customer": "John Moore", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["PLM"], "sched_date": "2026-04-08", "created_date": "2026-02-17", "days_to_sched": 7, "days_since_ord": 43, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "585211793", "customer": "Caryn Gordon", "status": "Received", "supplier": "Carrier enterprise", "extra_tags": ["Club Member"], "sched_date": "2026-03-10", "created_date": "2026-03-04", "days_to_sched": -22, "days_since_ord": 28, "revenue": 344.39, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 79.0, "po_count": 1, "pos": [{"id": 585208118, "number": "585211793-001", "status": "Received", "typeName": "Material", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-04", "receivedOn": "2026-03-05", "total": 79.0, "parts": [{"desc": "Sound Blanket", "qty": 1.0, "cost": 46.73}]}]}, {"job_num": "585388429", "customer": "Charles Funkey", "status": "Ordered", "supplier": "Goodman distribution", "extra_tags": ["Club Member", "10-Year Labor"], "sched_date": "2026-03-31", "created_date": "2026-03-05", "days_to_sched": -1, "days_since_ord": 27, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 11.51, "po_count": 1, "pos": [{"id": 587370390, "number": "585388429-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Goodman Distribution, Inc", "date": "2026-03-25", "receivedOn": "", "total": 11.51, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 11.51}]}]}, {"job_num": "586073723", "customer": "Catherin Miller ", "status": "Received", "supplier": "", "extra_tags": ["PLM", "Club Member"], "sched_date": "2026-03-12", "created_date": "2026-03-12", "days_to_sched": -20, "days_since_ord": 20, "revenue": 339.51, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "586083412", "customer": "Gregory  Tsesler", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["Club Member"], "sched_date": "2026-04-07", "created_date": "2026-03-12", "days_to_sched": 6, "days_since_ord": 20, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 2289.05, "po_count": 2, "pos": [{"id": 587948894, "number": "586083412-002", "status": "Sent", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-31", "receivedOn": "", "total": 0, "parts": [{"desc": "warranty harnes", "qty": 1.0, "cost": 0}]}, {"id": 586446729, "number": "586083412-001", "status": "Received", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-16", "receivedOn": "2026-03-25", "total": 2289.05, "parts": [{"desc": "warranty board", "qty": 1.0, "cost": 2039.2}, {"desc": "Wet Switch", "qty": 1.0, "cost": 73.0}]}]}, {"job_num": "586595677", "customer": "Bob Lauson", "status": "Ordered", "supplier": "Gemaire", "extra_tags": ["Club Member 3 sys", "5 YEAR WARRANTY"], "sched_date": "2026-04-03", "created_date": "2026-03-17", "days_to_sched": 2, "days_since_ord": 15, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 2.0, "po_count": 1, "pos": [{"id": 586832672, "number": "586595677-001", "status": "Sent", "typeName": "Material", "vendorName": "Gemaire Distributors", "date": "2026-03-19", "receivedOn": "", "total": 2.0, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 1.0}, {"desc": "Material Item for PO", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "586668443", "customer": "Harry Leiby", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["Club Member"], "sched_date": "2026-04-06", "created_date": "2026-03-18", "days_to_sched": 5, "days_since_ord": 14, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 1, "pos": [{"id": 586800743, "number": "586668443-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-19", "receivedOn": "", "total": 0, "parts": [{"desc": "warranty board", "qty": 1.0, "cost": 0}]}]}, {"job_num": "586702574", "customer": "PAT WHELAN", "status": "Unknown", "supplier": "Gemaire", "extra_tags": ["PSL Zone 4", "Club Member"], "sched_date": "2026-03-20", "created_date": "2026-03-18", "days_to_sched": -12, "days_since_ord": 14, "revenue": 292.95, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 131.59, "po_count": 1, "pos": [{"id": 586803340, "number": "586702574-001", "status": "Received", "typeName": "Material", "vendorName": "Gemaire Distributors", "date": "2026-03-19", "receivedOn": "2026-03-19", "total": 131.59, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 90.27}]}]}, {"job_num": "586815067", "customer": "Christine Semenza", "status": "Received", "supplier": "Goodman distribution", "extra_tags": ["Club Member", "5 YEAR WARRANTY"], "sched_date": "2026-03-23", "created_date": "2026-03-19", "days_to_sched": -9, "days_since_ord": 13, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 17.57, "po_count": 1, "pos": [{"id": 587248923, "number": "586815067-001", "status": "Received", "typeName": "Material", "vendorName": "Goodman Distribution, Inc", "date": "2026-03-24", "receivedOn": "2026-03-24", "total": 17.57, "parts": [{"desc": "Relay", "qty": 1.0, "cost": 16.42}]}]}, {"job_num": "587202433", "customer": "CHRISTOPHER KENNEDY", "status": "Received", "supplier": "", "extra_tags": ["PLM", "Club Member"], "sched_date": "2026-03-23", "created_date": "2026-03-23", "days_to_sched": -9, "days_since_ord": 9, "revenue": 1100.0, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "587208106", "customer": "Brett Frankel", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["Club Member 3 sys"], "sched_date": "2026-04-03", "created_date": "2026-03-23", "days_to_sched": 2, "days_since_ord": 9, "revenue": 1167.95, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 3116.0, "po_count": 1, "pos": [{"id": 587248337, "number": "587208106-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-24", "receivedOn": "", "total": 3116.0, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 3116.0}]}]}, {"job_num": "587248489", "customer": "Baldwin Burey", "status": "Received", "supplier": "", "extra_tags": ["Club Member"], "sched_date": "2026-03-24", "created_date": "2026-03-24", "days_to_sched": -8, "days_since_ord": 8, "revenue": 691.98, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "587253199", "customer": "Dane Lyons", "status": "Received", "supplier": "Gemaire", "extra_tags": ["2-YR Labor Warranty", "Club Member"], "sched_date": "2026-03-25", "created_date": "2026-03-24", "days_to_sched": -7, "days_since_ord": 8, "revenue": 689.97, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 76.21, "po_count": 1, "pos": [{"id": 587291556, "number": "587253199-001", "status": "Received", "typeName": "Material", "vendorName": "Gemaire Distributors", "date": "2026-03-24", "receivedOn": "2026-03-25", "total": 76.21, "parts": [{"desc": "RGF UV REPLACEMENT  BULB 9\" 24V", "qty": 1.0, "cost": 38.51}]}]}, {"job_num": "587301961", "customer": "Lera Chacon", "status": "Received", "supplier": "Baker Supply", "extra_tags": ["PLM", "Club Member"], "sched_date": "2026-03-27", "created_date": "2026-03-24", "days_to_sched": -5, "days_since_ord": 8, "revenue": 292.95, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 30.0, "po_count": 1, "pos": [{"id": 587283537, "number": "587301961-001", "status": "Sent", "typeName": "Material", "vendorName": "Baker Distribution", "date": "2026-03-24", "receivedOn": "", "total": 30.0, "parts": [{"desc": "RGF UV REPLACEMENT  BULB 9\" 24V", "qty": 1.0, "cost": 30.0}]}]}, {"job_num": "587314216", "customer": "FRIEDMAN, SAMANTHA", "status": "Received", "supplier": "Gemaire", "extra_tags": ["Club Member", "PLM", "10-Year Labor"], "sched_date": "2026-03-26", "created_date": "2026-03-24", "days_to_sched": -6, "days_since_ord": 8, "revenue": 3247.45, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 567.54, "po_count": 1, "pos": [{"id": 587303875, "number": "587314216-001", "status": "Received", "typeName": "Material", "vendorName": "Gemaire Distributors", "date": "2026-03-24", "receivedOn": "2026-03-25", "total": 567.54, "parts": [{"desc": "Triatomic TUV-APCO-ER2 - Two Year Lamp (18-32 VAC series) AP", "qty": 1.0, "cost": 497.7}]}]}, {"job_num": "587489793", "customer": "PASAMI, LLC", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["PLM"], "sched_date": "2026-04-01", "created_date": "2026-03-26", "days_to_sched": 0, "days_since_ord": 6, "revenue": 1536.7, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 1396.18, "po_count": 1, "pos": [{"id": 587502905, "number": "587489793-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-26", "receivedOn": "", "total": 1396.18, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 1396.18}]}]}, {"job_num": "587515482", "customer": "Aruna Chadha", "status": "Unknown", "supplier": "", "extra_tags": ["Club Member", "10-10-10"], "sched_date": "2026-04-01", "created_date": "2026-03-26", "days_to_sched": 0, "days_since_ord": 6, "revenue": 1981.35, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "587676974", "customer": "Teresa & Joe Perez", "status": "Received", "supplier": "Trane Supply", "extra_tags": ["Club Member", "10-10-10"], "sched_date": "2026-04-01", "created_date": "2026-03-27", "days_to_sched": 0, "days_since_ord": 5, "revenue": 708.54, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 11.51, "po_count": 1, "pos": [{"id": 587879204, "number": "587676974-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Trane Parts", "date": "2026-03-30", "receivedOn": "", "total": 11.51, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 11.51}]}]}, {"job_num": "587732375", "customer": "Mandelbaum, Shelly 0201146", "status": "Received", "supplier": "Gemaire", "extra_tags": ["Club Member 3 sys"], "sched_date": "2026-03-31", "created_date": "2026-03-28", "days_to_sched": -1, "days_since_ord": 4, "revenue": 2295.35, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 220.2, "po_count": 1, "pos": [{"id": 587867411, "number": "587732375-001", "status": "Received", "typeName": "Material", "vendorName": "Gemaire Distributors", "date": "2026-03-30", "receivedOn": "2026-03-31", "total": 220.2, "parts": [{"desc": "RGF HALO REPLACEMENT BULB", "qty": 1.0, "cost": 173.08}]}]}, {"job_num": "587732523", "customer": "Chris Madzi", "status": "Received", "supplier": "", "extra_tags": ["10-Year Labor"], "sched_date": "2026-03-28", "created_date": "2026-03-28", "days_to_sched": -4, "days_since_ord": 4, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "587751042", "customer": "Andy Ong", "status": "Received", "supplier": "Trane Supply", "extra_tags": [], "sched_date": "2026-04-01", "created_date": "2026-03-28", "days_to_sched": 0, "days_since_ord": 4, "revenue": 2022.0, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 1, "pos": [{"id": 587824396, "number": "587751042-001", "status": "Received", "typeName": "Warranty", "vendorName": "Trane Parts", "date": "2026-03-30", "receivedOn": "2026-03-31", "total": 0, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 0}]}]}, {"job_num": "587764352", "customer": "Edna Parkin", "status": "Ordered", "supplier": "Trane Supply", "extra_tags": ["Club Member"], "sched_date": "2026-04-02", "created_date": "2026-03-28", "days_to_sched": 1, "days_since_ord": 4, "revenue": 579.81, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 623.56, "po_count": 1, "pos": [{"id": 587826000, "number": "587764352-001", "status": "Pending", "typeName": "Warranty", "vendorName": "Trane Parts", "date": "2026-03-30", "receivedOn": "", "total": 623.56, "parts": [{"desc": "Warranty Motor", "qty": 1.0, "cost": 623.56}, {"desc": "warranty harnes", "qty": 1.0, "cost": 0}]}]}, {"job_num": "587785435", "customer": "Lera Chacon", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["PLM", "Club Member"], "sched_date": "2026-04-13", "created_date": "2026-03-29", "days_to_sched": 12, "days_since_ord": 3, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 11.51, "po_count": 1, "pos": [{"id": 587807142, "number": "587785435-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-30", "receivedOn": "", "total": 11.51, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 11.51}]}]}, {"job_num": "587806192", "customer": "Maria Hill", "status": "Ordered", "supplier": "Goodman distribution", "extra_tags": ["5-YR Labor Warranty"], "sched_date": "2026-04-01", "created_date": "2026-03-30", "days_to_sched": 0, "days_since_ord": 2, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 1, "pos": [{"id": 587816473, "number": "587806192-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Goodman Distribution, Inc", "date": "2026-03-30", "receivedOn": "", "total": 0, "parts": [{"desc": "warranty valve", "qty": 1.0, "cost": 0}]}]}, {"job_num": "587820789", "customer": "Joe Buck", "status": "Ordered", "supplier": "Goodman distribution", "extra_tags": [], "sched_date": "2026-04-01", "created_date": "2026-03-30", "days_to_sched": 0, "days_since_ord": 2, "revenue": 828.5, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 15.27, "po_count": 1, "pos": [{"id": 587838603, "number": "587820789-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Goodman Distribution, Inc", "date": "2026-03-30", "receivedOn": "", "total": 15.27, "parts": [{"desc": "Warrant Compressor", "qty": 1.0, "cost": 15.27}]}]}, {"job_num": "587871803", "customer": "FRANCES, ARNOLD", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["PLM", "Club Member 3 sys", "10-10-10"], "sched_date": "2026-04-02", "created_date": "2026-03-30", "days_to_sched": 1, "days_since_ord": 2, "revenue": 1612.7, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 1495.08, "po_count": 1, "pos": [{"id": 587864012, "number": "587871803-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-30", "receivedOn": "", "total": 1495.08, "parts": [{"desc": "Warrant Compressor", "qty": 1.0, "cost": 1495.08}]}]}, {"job_num": "587874409", "customer": "Phillip Padgett", "status": "Ordered", "supplier": "Gemaire", "extra_tags": ["Club Member", "PLM", "10-Year Labor"], "sched_date": "2026-04-08", "created_date": "2026-03-30", "days_to_sched": 7, "days_since_ord": 2, "revenue": 289.85, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 587941535, "number": "587874409-001", "status": "Sent", "typeName": "Material", "vendorName": "Gemaire Distributors", "date": "2026-03-31", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Remote Controller", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "587879230", "customer": "Brett Frankel", "status": "Received", "supplier": "", "extra_tags": ["Club Member 3 sys"], "sched_date": "2026-03-30", "created_date": "2026-03-30", "days_to_sched": -2, "days_since_ord": 2, "revenue": 1811.8, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "587881253", "customer": "Richard Butcher", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["Club Member", "10-Year Labor"], "sched_date": "2026-04-01", "created_date": "2026-03-30", "days_to_sched": 0, "days_since_ord": 2, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 1, "pos": [{"id": 587961548, "number": "587881253-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-31", "receivedOn": "", "total": 0, "parts": [{"desc": "warranty harnes", "qty": 1.0, "cost": 0}]}]}, {"job_num": "587888212", "customer": "Serge Janov", "status": "Ordered", "supplier": "Lennox Supply", "extra_tags": [], "sched_date": "2026-04-03", "created_date": "2026-03-30", "days_to_sched": 2, "days_since_ord": 2, "revenue": 1784.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 15.27, "po_count": 1, "pos": [{"id": 587940996, "number": "587888212-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Lennox Parts Plus", "date": "2026-03-31", "receivedOn": "", "total": 15.27, "parts": [{"desc": "Warrant Compressor", "qty": 1.0, "cost": 15.27}]}]}, {"job_num": "587893406", "customer": "Rebecca Temple", "status": "Ordered", "supplier": "Gemaire", "extra_tags": ["Club Member", "PLM", "5 YEAR WARRANTY"], "sched_date": "2026-04-01", "created_date": "2026-03-30", "days_to_sched": 0, "days_since_ord": 2, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 587948702, "number": "587893406-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Gemaire Warranty ", "date": "2026-03-31", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "587902732", "customer": "GORIN, MURRAY", "status": "Ordered", "supplier": "Gemaire", "extra_tags": ["Club Member", "PLM", "5-YR Labor Warranty"], "sched_date": "2026-04-01", "created_date": "2026-03-30", "days_to_sched": 0, "days_since_ord": 2, "revenue": 766.31, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 163.0, "po_count": 1, "pos": [{"id": 587940123, "number": "587902732-001", "status": "Sent", "typeName": "Material", "vendorName": "Gemaire Distributors", "date": "2026-03-31", "receivedOn": "", "total": 163.0, "parts": [{"desc": "RGF HALO REPLACEMENT BULB", "qty": 1.0, "cost": 163.0}]}]}, {"job_num": "587921559", "customer": "Odete Sung", "status": "Ordered", "supplier": "Baker Supply", "extra_tags": [], "sched_date": "2026-04-06", "created_date": "2026-03-31", "days_to_sched": 5, "days_since_ord": 1, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 587940524, "number": "587921559-001", "status": "Sent", "typeName": "Material", "vendorName": "Baker - HVAC", "date": "2026-03-31", "receivedOn": "", "total": 1.0, "parts": [{"desc": "22 X 38 Filter back", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "587931022", "customer": "Kate Moubarak", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["Club Member", "5-YR Labor Warranty"], "sched_date": "2026-04-02", "created_date": "2026-03-31", "days_to_sched": 1, "days_since_ord": 1, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 587944983, "number": "587931022-001", "status": "Sent", "typeName": "Material", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-31", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "587956840", "customer": "Craig Nomberg ", "status": "Received", "supplier": "", "extra_tags": ["Club Member"], "sched_date": "2026-03-31", "created_date": "2026-03-31", "days_to_sched": -1, "days_since_ord": 1, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "587960019", "customer": "Rob LaFleur", "status": "Received", "supplier": "", "extra_tags": [], "sched_date": "2026-03-31", "created_date": "2026-03-31", "days_to_sched": -1, "days_since_ord": 1, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "587960093", "customer": "Arlan Eisler", "status": "Ordered", "supplier": "", "extra_tags": ["Club Member", "10-Year Labor"], "sched_date": "2026-04-01", "created_date": "2026-03-31", "days_to_sched": 0, "days_since_ord": 1, "revenue": 579.81, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 10.91, "po_count": 1, "pos": [{"id": 587945045, "number": "587960093-001", "status": "Sent", "typeName": "Warranty", "vendorName": "York / source1 Parts", "date": "2026-03-31", "receivedOn": "", "total": 10.91, "parts": [{"desc": "Warranty Motor", "qty": 1.0, "cost": 10.91}]}]}, {"job_num": "587960361", "customer": "Nsanyaw Rawls", "status": "Received", "supplier": "", "extra_tags": ["10-10-10"], "sched_date": "2026-04-01", "created_date": "2026-03-31", "days_to_sched": 0, "days_since_ord": 1, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 10.91, "po_count": 1, "pos": [{"id": 587956464, "number": "587960361-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Trane Parts", "date": "2026-03-31", "receivedOn": "", "total": 10.91, "parts": [{"desc": "Warranty Motor", "qty": 1.0, "cost": 10.91}]}]}, {"job_num": "587965598", "customer": "Sonia Botero", "status": "Ordered", "supplier": "", "extra_tags": [], "sched_date": "2026-04-01", "created_date": "2026-03-31", "days_to_sched": 0, "days_since_ord": 1, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 587956406, "number": "587965598-001", "status": "Pending", "typeName": "Warranty", "vendorName": "Trane Parts", "date": "2026-03-31", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "588021775", "customer": "DANY & FARAH KHOSROVANI", "status": "Ordered", "supplier": "Trane Supply", "extra_tags": ["Club Member", "10-10-10"], "sched_date": "2026-04-01", "created_date": "2026-03-31", "days_to_sched": 0, "days_since_ord": 1, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 588021991, "number": "588021775-001", "status": "Sent", "typeName": "Material", "vendorName": "Trane Parts", "date": "2026-03-31", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "588026565", "customer": "Dave Prince", "status": "Received", "supplier": "", "extra_tags": [], "sched_date": "2026-03-31", "created_date": "2026-03-31", "days_to_sched": -1, "days_since_ord": 1, "revenue": 1442.54, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "588026616", "customer": "Christine Tate", "status": "Ordered", "supplier": "Trane Supply", "extra_tags": ["Club Member"], "sched_date": "2026-04-02", "created_date": "2026-03-31", "days_to_sched": 1, "days_since_ord": 1, "revenue": 1516.4, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 11.51, "po_count": 1, "pos": [{"id": 588097663, "number": "588026616-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Trane Parts", "date": "2026-04-01", "receivedOn": "", "total": 11.51, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 11.51}]}]}, {"job_num": "588042652", "customer": "Rob LaFleur", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": [], "sched_date": "2026-04-01", "created_date": "2026-03-31", "days_to_sched": 0, "days_since_ord": 1, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 588027418, "number": "588042652-001", "status": "Sent", "typeName": "Material", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-31", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Filter", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "588099543", "customer": "Kari Harmeling", "status": "Received", "supplier": "", "extra_tags": [], "sched_date": "2026-04-01", "created_date": "2026-04-01", "days_to_sched": 0, "days_since_ord": 0, "revenue": 1784.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "588099912", "customer": "Jeff Mountz", "status": "Received", "supplier": "", "extra_tags": ["Club Member"], "sched_date": "2026-04-01", "created_date": "2026-04-01", "days_to_sched": 0, "days_since_ord": 0, "revenue": 708.54, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "588101366", "customer": "Barbara Collins", "status": "Ordered", "supplier": "Gemaire", "extra_tags": ["Club Member", "10-10-10"], "sched_date": "2026-04-02", "created_date": "2026-04-01", "days_to_sched": 1, "days_since_ord": 0, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 1, "pos": [{"id": 588106323, "number": "588101366-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Gemaire Warranty ", "date": "2026-04-01", "receivedOn": "", "total": 0, "parts": [{"desc": "warranty valve", "qty": 1.0, "cost": 0}]}]}, {"job_num": "588123550", "customer": "Susan Mann", "status": "NTO", "supplier": "", "extra_tags": ["Club Member", "10-10-10"], "sched_date": "2026-04-01", "created_date": "2026-04-01", "days_to_sched": 0, "days_since_ord": 0, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}];
+const JOBS = [{"job_num": "459781920", "customer": "Gluck Carolyn", "status": "Ordered", "supplier": "Baker Supply", "extra_tags": ["PLM"], "sched_date": "2026-03-25", "created_date": "2025-03-10", "days_to_sched": -7, "days_since_ord": 387, "revenue": 722.79, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "463016698", "customer": "Evan Frangos", "status": "Ordered", "supplier": "Gemaire", "extra_tags": ["Club Member"], "sched_date": "2026-04-03", "created_date": "2025-04-15", "days_to_sched": 2, "days_since_ord": 351, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "463158467", "customer": "GRACEFFO, GENE", "status": "Unknown", "supplier": "Carrier enterprise", "extra_tags": ["PLM", "10-Year Labor", "Club Member"], "sched_date": "2025-06-09", "created_date": "2025-04-16", "days_to_sched": -296, "days_since_ord": 350, "revenue": 502.95, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "478958137", "customer": "Sergio Bonadona", "status": "Received", "supplier": "Carrier enterprise", "extra_tags": ["Club Member"], "sched_date": "2026-04-01", "created_date": "2025-07-26", "days_to_sched": 0, "days_since_ord": 249, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "534127140", "customer": "Roberta Berger", "status": "Unknown", "supplier": "Carrier enterprise", "extra_tags": ["10-Year Labor", "Club Member"], "sched_date": "2026-02-20", "created_date": "2025-10-27", "days_to_sched": -40, "days_since_ord": 156, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "554749130", "customer": "Mildred Rousseau", "status": "Received", "supplier": "Carrier enterprise", "extra_tags": ["Club Member", "10-10-10"], "sched_date": "2026-03-31", "created_date": "2025-12-08", "days_to_sched": -1, "days_since_ord": 114, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "555552166", "customer": "Wanda Betancourt", "status": "Ordered", "supplier": "Baker Supply", "extra_tags": ["Club Member", "PLM"], "sched_date": "2026-04-08", "created_date": "2025-12-16", "days_to_sched": 7, "days_since_ord": 106, "revenue": 462.83, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "581332764", "customer": "Chris Orsini", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": [], "sched_date": "2026-04-06", "created_date": "2026-02-05", "days_to_sched": 5, "days_since_ord": 55, "revenue": 303.45, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 2.0, "po_count": 1, "pos": [{"id": 581361649, "number": "581332764-001", "status": "Sent", "typeName": "Material", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-02-05", "receivedOn": "", "total": 2.0, "parts": [{"desc": "Material Item for PO", "qty": 2.0, "cost": 1.0}]}]}, {"job_num": "583259145", "customer": "John Moore", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["PLM"], "sched_date": "2026-04-08", "created_date": "2026-02-17", "days_to_sched": 7, "days_since_ord": 43, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "585211793", "customer": "Caryn Gordon", "status": "Received", "supplier": "Carrier enterprise", "extra_tags": ["Club Member"], "sched_date": "2026-03-10", "created_date": "2026-03-04", "days_to_sched": -22, "days_since_ord": 28, "revenue": 344.39, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 79.0, "po_count": 1, "pos": [{"id": 585208118, "number": "585211793-001", "status": "Received", "typeName": "Material", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-04", "receivedOn": "2026-03-05", "total": 79.0, "parts": [{"desc": "Sound Blanket", "qty": 1.0, "cost": 46.73}]}]}, {"job_num": "585388429", "customer": "Charles Funkey", "status": "Ordered", "supplier": "Goodman distribution", "extra_tags": ["Club Member", "10-Year Labor"], "sched_date": "2026-03-31", "created_date": "2026-03-05", "days_to_sched": -1, "days_since_ord": 27, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 11.51, "po_count": 1, "pos": [{"id": 587370390, "number": "585388429-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Goodman Distribution, Inc", "date": "2026-03-25", "receivedOn": "", "total": 11.51, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 11.51}]}]}, {"job_num": "586073723", "customer": "Catherin Miller ", "status": "Received", "supplier": "", "extra_tags": ["PLM", "Club Member"], "sched_date": "2026-03-12", "created_date": "2026-03-12", "days_to_sched": -20, "days_since_ord": 20, "revenue": 339.51, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "586083412", "customer": "Gregory  Tsesler", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["Club Member"], "sched_date": "2026-04-07", "created_date": "2026-03-12", "days_to_sched": 6, "days_since_ord": 20, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 2289.05, "po_count": 2, "pos": [{"id": 587948894, "number": "586083412-002", "status": "Sent", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-31", "receivedOn": "", "total": 0, "parts": [{"desc": "warranty harnes", "qty": 1.0, "cost": 0}]}, {"id": 586446729, "number": "586083412-001", "status": "Received", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-16", "receivedOn": "2026-03-25", "total": 2289.05, "parts": [{"desc": "warranty board", "qty": 1.0, "cost": 2039.2}, {"desc": "Wet Switch", "qty": 1.0, "cost": 73.0}]}]}, {"job_num": "586595677", "customer": "Bob Lauson", "status": "Ordered", "supplier": "Gemaire", "extra_tags": ["Club Member 3 sys", "5 YEAR WARRANTY"], "sched_date": "2026-04-03", "created_date": "2026-03-17", "days_to_sched": 2, "days_since_ord": 15, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 2.0, "po_count": 1, "pos": [{"id": 586832672, "number": "586595677-001", "status": "Sent", "typeName": "Material", "vendorName": "Gemaire Distributors", "date": "2026-03-19", "receivedOn": "", "total": 2.0, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 1.0}, {"desc": "Material Item for PO", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "586668443", "customer": "Harry Leiby", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["Club Member"], "sched_date": "2026-04-06", "created_date": "2026-03-18", "days_to_sched": 5, "days_since_ord": 14, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 1, "pos": [{"id": 586800743, "number": "586668443-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-19", "receivedOn": "", "total": 0, "parts": [{"desc": "warranty board", "qty": 1.0, "cost": 0}]}]}, {"job_num": "586702574", "customer": "PAT WHELAN", "status": "Unknown", "supplier": "Gemaire", "extra_tags": ["PSL Zone 4", "Club Member"], "sched_date": "2026-03-20", "created_date": "2026-03-18", "days_to_sched": -12, "days_since_ord": 14, "revenue": 292.95, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 131.59, "po_count": 1, "pos": [{"id": 586803340, "number": "586702574-001", "status": "Received", "typeName": "Material", "vendorName": "Gemaire Distributors", "date": "2026-03-19", "receivedOn": "2026-03-19", "total": 131.59, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 90.27}]}]}, {"job_num": "586815067", "customer": "Christine Semenza", "status": "Received", "supplier": "Goodman distribution", "extra_tags": ["Club Member", "5 YEAR WARRANTY"], "sched_date": "2026-03-23", "created_date": "2026-03-19", "days_to_sched": -9, "days_since_ord": 13, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 17.57, "po_count": 1, "pos": [{"id": 587248923, "number": "586815067-001", "status": "Received", "typeName": "Material", "vendorName": "Goodman Distribution, Inc", "date": "2026-03-24", "receivedOn": "2026-03-24", "total": 17.57, "parts": [{"desc": "Relay", "qty": 1.0, "cost": 16.42}]}]}, {"job_num": "587202433", "customer": "CHRISTOPHER KENNEDY", "status": "Received", "supplier": "", "extra_tags": ["PLM", "Club Member"], "sched_date": "2026-03-23", "created_date": "2026-03-23", "days_to_sched": -9, "days_since_ord": 9, "revenue": 1100.0, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "587208106", "customer": "Brett Frankel", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["Club Member 3 sys"], "sched_date": "2026-04-03", "created_date": "2026-03-23", "days_to_sched": 2, "days_since_ord": 9, "revenue": 1167.95, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 3116.0, "po_count": 1, "pos": [{"id": 587248337, "number": "587208106-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-24", "receivedOn": "", "total": 3116.0, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 3116.0}]}]}, {"job_num": "587248489", "customer": "Baldwin Burey", "status": "Received", "supplier": "", "extra_tags": ["Club Member"], "sched_date": "2026-03-24", "created_date": "2026-03-24", "days_to_sched": -8, "days_since_ord": 8, "revenue": 691.98, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "587253199", "customer": "Dane Lyons", "status": "Received", "supplier": "Gemaire", "extra_tags": ["2-YR Labor Warranty", "Club Member"], "sched_date": "2026-03-25", "created_date": "2026-03-24", "days_to_sched": -7, "days_since_ord": 8, "revenue": 689.97, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 76.21, "po_count": 1, "pos": [{"id": 587291556, "number": "587253199-001", "status": "Received", "typeName": "Material", "vendorName": "Gemaire Distributors", "date": "2026-03-24", "receivedOn": "2026-03-25", "total": 76.21, "parts": [{"desc": "RGF UV REPLACEMENT  BULB 9\" 24V", "qty": 1.0, "cost": 38.51}]}]}, {"job_num": "587301961", "customer": "Lera Chacon", "status": "Received", "supplier": "Baker Supply", "extra_tags": ["PLM", "Club Member"], "sched_date": "2026-03-27", "created_date": "2026-03-24", "days_to_sched": -5, "days_since_ord": 8, "revenue": 292.95, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 30.0, "po_count": 1, "pos": [{"id": 587283537, "number": "587301961-001", "status": "Sent", "typeName": "Material", "vendorName": "Baker Distribution", "date": "2026-03-24", "receivedOn": "", "total": 30.0, "parts": [{"desc": "RGF UV REPLACEMENT  BULB 9\" 24V", "qty": 1.0, "cost": 30.0}]}]}, {"job_num": "587314216", "customer": "FRIEDMAN, SAMANTHA", "status": "Received", "supplier": "Gemaire", "extra_tags": ["Club Member", "PLM", "10-Year Labor"], "sched_date": "2026-03-26", "created_date": "2026-03-24", "days_to_sched": -6, "days_since_ord": 8, "revenue": 3247.45, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 567.54, "po_count": 1, "pos": [{"id": 587303875, "number": "587314216-001", "status": "Received", "typeName": "Material", "vendorName": "Gemaire Distributors", "date": "2026-03-24", "receivedOn": "2026-03-25", "total": 567.54, "parts": [{"desc": "Triatomic TUV-APCO-ER2 - Two Year Lamp (18-32 VAC series) AP", "qty": 1.0, "cost": 497.7}]}]}, {"job_num": "587489793", "customer": "PASAMI, LLC", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["PLM"], "sched_date": "2026-04-01", "created_date": "2026-03-26", "days_to_sched": 0, "days_since_ord": 6, "revenue": 1536.7, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 1396.18, "po_count": 1, "pos": [{"id": 587502905, "number": "587489793-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-26", "receivedOn": "", "total": 1396.18, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 1396.18}]}]}, {"job_num": "587515482", "customer": "Aruna Chadha", "status": "Unknown", "supplier": "", "extra_tags": ["Club Member", "10-10-10"], "sched_date": "2026-04-01", "created_date": "2026-03-26", "days_to_sched": 0, "days_since_ord": 6, "revenue": 1981.35, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "587676974", "customer": "Teresa & Joe Perez", "status": "Received", "supplier": "Trane Supply", "extra_tags": ["Club Member", "10-10-10"], "sched_date": "2026-04-01", "created_date": "2026-03-27", "days_to_sched": 0, "days_since_ord": 5, "revenue": 708.54, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 11.51, "po_count": 1, "pos": [{"id": 587879204, "number": "587676974-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Trane Parts", "date": "2026-03-30", "receivedOn": "", "total": 11.51, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 11.51}]}]}, {"job_num": "587732375", "customer": "Mandelbaum, Shelly 0201146", "status": "Received", "supplier": "Gemaire", "extra_tags": ["Club Member 3 sys"], "sched_date": "2026-03-31", "created_date": "2026-03-28", "days_to_sched": -1, "days_since_ord": 4, "revenue": 2295.35, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 220.2, "po_count": 1, "pos": [{"id": 587867411, "number": "587732375-001", "status": "Received", "typeName": "Material", "vendorName": "Gemaire Distributors", "date": "2026-03-30", "receivedOn": "2026-03-31", "total": 220.2, "parts": [{"desc": "RGF HALO REPLACEMENT BULB", "qty": 1.0, "cost": 173.08}]}]}, {"job_num": "587732523", "customer": "Chris Madzi", "status": "Received", "supplier": "", "extra_tags": ["10-Year Labor"], "sched_date": "2026-03-28", "created_date": "2026-03-28", "days_to_sched": -4, "days_since_ord": 4, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "587751042", "customer": "Andy Ong", "status": "Received", "supplier": "Trane Supply", "extra_tags": [], "sched_date": "2026-04-01", "created_date": "2026-03-28", "days_to_sched": 0, "days_since_ord": 4, "revenue": 2022.0, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 1, "pos": [{"id": 587824396, "number": "587751042-001", "status": "Received", "typeName": "Warranty", "vendorName": "Trane Parts", "date": "2026-03-30", "receivedOn": "2026-03-31", "total": 0, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 0}]}]}, {"job_num": "587785435", "customer": "Lera Chacon", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["PLM", "Club Member"], "sched_date": "2026-04-13", "created_date": "2026-03-29", "days_to_sched": 12, "days_since_ord": 3, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 11.51, "po_count": 1, "pos": [{"id": 587807142, "number": "587785435-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-30", "receivedOn": "", "total": 11.51, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 11.51}]}]}, {"job_num": "587806192", "customer": "Maria Hill", "status": "Received", "supplier": "Goodman distribution", "extra_tags": ["5-YR Labor Warranty"], "sched_date": "2026-04-01", "created_date": "2026-03-30", "days_to_sched": 0, "days_since_ord": 2, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 109.6, "po_count": 1, "pos": [{"id": 587816473, "number": "587806192-001", "status": "Received", "typeName": "Warranty", "vendorName": "Goodman Distribution, Inc", "date": "2026-03-30", "receivedOn": "2026-04-01", "total": 109.6, "parts": [{"desc": "warranty valve", "qty": 1.0, "cost": 102.43}]}]}, {"job_num": "587820789", "customer": "Joe Buck", "status": "Ordered", "supplier": "Goodman distribution", "extra_tags": [], "sched_date": "2026-04-01", "created_date": "2026-03-30", "days_to_sched": 0, "days_since_ord": 2, "revenue": 828.5, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 1045.52, "po_count": 1, "pos": [{"id": 587838603, "number": "587820789-001", "status": "Received", "typeName": "Warranty", "vendorName": "Goodman Distribution, Inc", "date": "2026-03-30", "receivedOn": "2026-04-01", "total": 1045.52, "parts": [{"desc": "Warrant Compressor", "qty": 1.0, "cost": 977.12}]}]}, {"job_num": "587871803", "customer": "FRANCES, ARNOLD", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["PLM", "Club Member 3 sys", "10-10-10"], "sched_date": "2026-04-02", "created_date": "2026-03-30", "days_to_sched": 1, "days_since_ord": 2, "revenue": 1612.7, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 1495.08, "po_count": 1, "pos": [{"id": 587864012, "number": "587871803-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-30", "receivedOn": "", "total": 1495.08, "parts": [{"desc": "Warrant Compressor", "qty": 1.0, "cost": 1495.08}]}]}, {"job_num": "587874409", "customer": "Phillip Padgett", "status": "Ordered", "supplier": "Gemaire", "extra_tags": ["Club Member", "PLM", "10-Year Labor"], "sched_date": "2026-04-08", "created_date": "2026-03-30", "days_to_sched": 7, "days_since_ord": 2, "revenue": 289.85, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 587941535, "number": "587874409-001", "status": "Sent", "typeName": "Material", "vendorName": "Gemaire Distributors", "date": "2026-03-31", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Remote Controller", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "587881253", "customer": "Richard Butcher", "status": "Received", "supplier": "Carrier enterprise", "extra_tags": ["Club Member", "10-Year Labor"], "sched_date": "2026-04-01", "created_date": "2026-03-30", "days_to_sched": 0, "days_since_ord": 2, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 157.3, "po_count": 1, "pos": [{"id": 587961548, "number": "587881253-001", "status": "Received", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-31", "receivedOn": "2026-04-01", "total": 157.3, "parts": [{"desc": "warranty harnes", "qty": 1.0, "cost": 147.01}]}]}, {"job_num": "587893406", "customer": "Rebecca Temple", "status": "Ordered", "supplier": "Gemaire", "extra_tags": ["Club Member", "PLM", "5 YEAR WARRANTY"], "sched_date": "2026-04-01", "created_date": "2026-03-30", "days_to_sched": 0, "days_since_ord": 2, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 587948702, "number": "587893406-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Gemaire Warranty ", "date": "2026-03-31", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "587902732", "customer": "GORIN, MURRAY", "status": "Ordered", "supplier": "Gemaire", "extra_tags": ["Club Member", "PLM", "5-YR Labor Warranty"], "sched_date": "2026-04-01", "created_date": "2026-03-30", "days_to_sched": 0, "days_since_ord": 2, "revenue": 766.31, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 163.0, "po_count": 1, "pos": [{"id": 587940123, "number": "587902732-001", "status": "Sent", "typeName": "Material", "vendorName": "Gemaire Distributors", "date": "2026-03-31", "receivedOn": "", "total": 163.0, "parts": [{"desc": "RGF HALO REPLACEMENT BULB", "qty": 1.0, "cost": 163.0}]}]}, {"job_num": "587921559", "customer": "Odete Sung", "status": "Ordered", "supplier": "Baker Supply", "extra_tags": [], "sched_date": "2026-04-06", "created_date": "2026-03-31", "days_to_sched": 5, "days_since_ord": 1, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 587940524, "number": "587921559-001", "status": "Sent", "typeName": "Material", "vendorName": "Baker - HVAC", "date": "2026-03-31", "receivedOn": "", "total": 1.0, "parts": [{"desc": "22 X 38 Filter back", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "587931022", "customer": "Kate Moubarak", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["Club Member", "5-YR Labor Warranty"], "sched_date": "2026-04-02", "created_date": "2026-03-31", "days_to_sched": 1, "days_since_ord": 1, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 587944983, "number": "587931022-001", "status": "Sent", "typeName": "Material", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-31", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "587956840", "customer": "Craig Nomberg ", "status": "Received", "supplier": "", "extra_tags": ["Club Member"], "sched_date": "2026-03-31", "created_date": "2026-03-31", "days_to_sched": -1, "days_since_ord": 1, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "587960093", "customer": "Arlan Eisler", "status": "Ordered", "supplier": "", "extra_tags": ["Club Member", "10-Year Labor"], "sched_date": "2026-04-01", "created_date": "2026-03-31", "days_to_sched": 0, "days_since_ord": 1, "revenue": 579.81, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 10.91, "po_count": 1, "pos": [{"id": 587945045, "number": "587960093-001", "status": "Sent", "typeName": "Warranty", "vendorName": "York / source1 Parts", "date": "2026-03-31", "receivedOn": "", "total": 10.91, "parts": [{"desc": "Warranty Motor", "qty": 1.0, "cost": 10.91}]}]}, {"job_num": "587960361", "customer": "Nsanyaw Rawls", "status": "Received", "supplier": "", "extra_tags": ["10-10-10"], "sched_date": "2026-04-01", "created_date": "2026-03-31", "days_to_sched": 0, "days_since_ord": 1, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 10.91, "po_count": 1, "pos": [{"id": 587956464, "number": "587960361-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Trane Parts", "date": "2026-03-31", "receivedOn": "", "total": 10.91, "parts": [{"desc": "Warranty Motor", "qty": 1.0, "cost": 10.91}]}]}, {"job_num": "587965598", "customer": "Sonia Botero", "status": "Ordered", "supplier": "", "extra_tags": [], "sched_date": "2026-04-01", "created_date": "2026-03-31", "days_to_sched": 0, "days_since_ord": 1, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 587956406, "number": "587965598-001", "status": "Pending", "typeName": "Warranty", "vendorName": "Trane Parts", "date": "2026-03-31", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "588021775", "customer": "DANY & FARAH KHOSROVANI", "status": "Ordered", "supplier": "Trane Supply", "extra_tags": ["Club Member", "10-10-10"], "sched_date": "2026-04-01", "created_date": "2026-03-31", "days_to_sched": 0, "days_since_ord": 1, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "sold_by": "", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 588021991, "number": "588021775-001", "status": "Sent", "typeName": "Material", "vendorName": "Trane Parts", "date": "2026-03-31", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "588026616", "customer": "Christine Tate", "status": "Ordered", "supplier": "Trane Supply", "extra_tags": ["Club Member"], "sched_date": "2026-04-02", "created_date": "2026-03-31", "days_to_sched": 1, "days_since_ord": 1, "revenue": 1516.4, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 11.51, "po_count": 1, "pos": [{"id": 588097663, "number": "588026616-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Trane Parts", "date": "2026-04-01", "receivedOn": "", "total": 11.51, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 11.51}]}]}, {"job_num": "588042652", "customer": "Rob LaFleur", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": [], "sched_date": "2026-04-01", "created_date": "2026-03-31", "days_to_sched": 0, "days_since_ord": 1, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 588027418, "number": "588042652-001", "status": "Sent", "typeName": "Material", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-03-31", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Filter", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "588099543", "customer": "Kari Harmeling", "status": "Received", "supplier": "", "extra_tags": [], "sched_date": "2026-04-01", "created_date": "2026-04-01", "days_to_sched": 0, "days_since_ord": 0, "revenue": 1784.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "588099912", "customer": "Jeff Mountz", "status": "Received", "supplier": "", "extra_tags": ["Club Member"], "sched_date": "2026-04-01", "created_date": "2026-04-01", "days_to_sched": 0, "days_since_ord": 0, "revenue": 708.54, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "588101366", "customer": "Barbara Collins", "status": "Ordered", "supplier": "Gemaire", "extra_tags": ["Club Member", "10-10-10"], "sched_date": "2026-04-02", "created_date": "2026-04-01", "days_to_sched": 1, "days_since_ord": 0, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 0, "po_count": 1, "pos": [{"id": 588106323, "number": "588101366-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Gemaire Warranty ", "date": "2026-04-01", "receivedOn": "", "total": 0, "parts": [{"desc": "warranty valve", "qty": 1.0, "cost": 0}]}]}, {"job_num": "588123550", "customer": "Susan Mann", "status": "Ordered", "supplier": "Gemaire", "extra_tags": ["Club Member", "10-10-10"], "sched_date": "2026-04-02", "created_date": "2026-04-01", "days_to_sched": 1, "days_since_ord": 0, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "sold_by": "", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 588129094, "number": "588123550-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Gemaire Distributors", "date": "2026-04-01", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Fan Blade", "qty": 1.0, "cost": 1.0}]}]}];
 const TODAY = '2026-04-01';
 
 /* ── TILE FILTER ───────────────────────────────── */
@@ -3429,7 +3091,7 @@ const todayStr = '2026-04-01';
 
 /* ── BAR CHART ─────────────────────────────────── */
 const barLabels = ['2025-06-09', '2026-02-20', '2026-03-20', '2026-03-25', '2026-03-31', '2026-04-01', '2026-04-02', '2026-04-03', '2026-04-06', '2026-04-07', '2026-04-08', '2026-04-13'];
-const barData   = [1, 1, 1, 1, 2, 13, 5, 4, 3, 1, 3, 1];
+const barData   = [1, 1, 1, 1, 1, 9, 5, 3, 3, 1, 3, 1];
 
 const barColors = barLabels.map(l => {
   if (l < todayStr) return 'rgba(239,68,68,0.75)';
@@ -3476,7 +3138,7 @@ new Chart(document.getElementById('dateChart').getContext('2d'), {
 });
 
 /* ── DONUT CHART ───────────────────────────────── */
-const nto = 1, ordered = 31, received = 19;
+const nto = 0, ordered = 26, received = 20;
 new Chart(document.getElementById('donutChart').getContext('2d'), {
   type: 'doughnut',
   data: {
@@ -3515,7 +3177,7 @@ new Chart(document.getElementById('vendorChart').getContext('2d'), {
     labels: ["Carrier Sales And Distrubution, LLC", "Ferguson", "Goodman Distribution, Inc", "Gemaire Distributors", "Gemaire Warranty ", "Trane Parts", "Lennox", "A & A Supply Inc", "TRANE EQUIPMENT", "City Electric Supply Co."],
     datasets: [{
       label: 'Spend ($)',
-      data: [485526.13, 326057.54, 236842.3, 55666.67, 37843.26, 31191.19, 22059.03, 19480.42, 16470.61, 16024.77],
+      data: [486809.0, 326057.54, 237982.15, 55667.67, 37843.26, 31380.36, 22059.03, 19480.42, 16470.61, 16024.77],
       backgroundColor: 'rgba(59,130,246,.7)',
       borderColor: '#3b82f6',
       borderWidth: 1,

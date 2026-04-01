@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-01T14:57:03.661818+00:00",
+  "fetchedAt": "2026-04-01T17:40:26.577725+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -83,7 +83,7 @@
       "tagNames": [
         "Carrier enterprise",
         "Club Member",
-        "Parts Ordered"
+        "Parts Received"
       ],
       "customer": "Sergio Bonadona",
       "businessUnit": "CS - HVAC - Service - 12",
@@ -133,7 +133,7 @@
       "tagNames": [
         "Carrier enterprise",
         "Club Member",
-        "Parts Ordered",
+        "Parts Received",
         "10-10-10"
       ],
       "customer": "Mildred Rousseau",
@@ -645,24 +645,6 @@
       "invoiceId": 587757962
     },
     {
-      "id": 587764352,
-      "jobNumber": "587764352",
-      "jobStatus": "Hold",
-      "total": 579.81,
-      "createdOn": "2026-03-28",
-      "scheduledDate": "2026-04-02",
-      "tagNames": [
-        "Club Member",
-        "Parts Ordered",
-        "Trane Supply"
-      ],
-      "customer": "Edna Parkin",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 581113783,
-      "invoiceId": 587764360
-    },
-    {
       "id": 587785435,
       "jobNumber": "587785435",
       "jobStatus": "Hold",
@@ -691,7 +673,7 @@
       "tagNames": [
         "5-YR Labor Warranty",
         "Goodman distribution",
-        "Parts Ordered"
+        "Parts Received"
       ],
       "customer": "Maria Hill",
       "businessUnit": "CS - HVAC - Service - 12",
@@ -757,23 +739,6 @@
       "invoiceId": 587874416
     },
     {
-      "id": 587879230,
-      "jobNumber": "587879230",
-      "jobStatus": "Hold",
-      "total": 1811.8,
-      "createdOn": "2026-03-30",
-      "scheduledDate": "2026-03-30",
-      "tagNames": [
-        "Club Member 3 sys",
-        "Parts Received"
-      ],
-      "customer": "Brett Frankel",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 586452067,
-      "invoiceId": 587879237
-    },
-    {
       "id": 587881253,
       "jobNumber": "587881253",
       "jobStatus": "Hold",
@@ -782,8 +747,8 @@
       "scheduledDate": "2026-04-01",
       "tagNames": [
         "Club Member",
+        "Parts Received",
         "10-Year Labor",
-        "Parts Ordered",
         "Carrier enterprise"
       ],
       "customer": "Richard Butcher",
@@ -791,23 +756,6 @@
       "businessUnitId": 2415186,
       "soldById": 469171232,
       "invoiceId": 587881260
-    },
-    {
-      "id": 587888212,
-      "jobNumber": "587888212",
-      "jobStatus": "Hold",
-      "total": 1784.0,
-      "createdOn": "2026-03-30",
-      "scheduledDate": "2026-04-03",
-      "tagNames": [
-        "Lennox Supply",
-        "Parts Ordered"
-      ],
-      "customer": "Serge Janov",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 135434429,
-      "invoiceId": 587888220
     },
     {
       "id": 587893406,
@@ -903,22 +851,6 @@
       "invoiceId": 587956847
     },
     {
-      "id": 587960019,
-      "jobNumber": "587960019",
-      "jobStatus": "Hold",
-      "total": 0.0,
-      "createdOn": "2026-03-31",
-      "scheduledDate": "2026-03-31",
-      "tagNames": [
-        "Parts Received"
-      ],
-      "customer": "Rob LaFleur",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 580648483,
-      "invoiceId": 587960026
-    },
-    {
       "id": 587960093,
       "jobNumber": "587960093",
       "jobStatus": "Hold",
@@ -987,22 +919,6 @@
       "businessUnitId": 182981957,
       "soldById": null,
       "invoiceId": 588021783
-    },
-    {
-      "id": 588026565,
-      "jobNumber": "588026565",
-      "jobStatus": "Hold",
-      "total": 1442.54,
-      "createdOn": "2026-03-31",
-      "scheduledDate": "2026-03-31",
-      "tagNames": [
-        "Parts Received"
-      ],
-      "customer": "Dave Prince",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 135434429,
-      "invoiceId": 588026572
     },
     {
       "id": 588026616,
@@ -1097,10 +1013,11 @@
       "jobStatus": "Hold",
       "total": 0.0,
       "createdOn": "2026-04-01",
-      "scheduledDate": "2026-04-01",
+      "scheduledDate": "2026-04-02",
       "tagNames": [
-        "Need to order part (NTO)",
+        "Gemaire",
         "Club Member",
+        "Parts Ordered",
         "10-10-10"
       ],
       "customer": "Susan Mann",
