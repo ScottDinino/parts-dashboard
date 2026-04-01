@@ -13,6 +13,9 @@ JOBS_DATA_FILE = "data/jobs.json"
 PO_DATA_FILE   = "data/po_data.json"
 OUTPUT_FILE    = "index.html"
 
+# Only show jobs from these business unit prefixes (change as needed)
+ACTIVE_BU_PREFIXES = ("CS", "PLM")
+
 SUPPLIERS = [
     "Baker Supply", "Carrier enterprise", "Gemaire", "Trane Supply",
     "Goodman distribution", "Lennox Supply",
@@ -88,6 +91,10 @@ def load_data():
         if not job_num or len(job_num) < 7:
             continue
 
+        bunit = j.get("businessUnit", "")
+        if not bunit.upper().startswith(ACTIVE_BU_PREFIXES):
+            continue
+
         tag_names = j.get("tagNames", [])
         status    = get_status(tag_names)
         supplier  = get_supplier(tag_names)
@@ -114,7 +121,7 @@ def load_data():
             "days_since_ord": days_since_ord,
             "revenue":        float(j.get("total", 0) or 0),
             "tech":           "",  # not available via current API credentials
-            "bunit":          j.get("businessUnit", ""),
+            "bunit":          bunit,
         })
 
     print(f"  {len(rows)} valid jobs loaded.")
