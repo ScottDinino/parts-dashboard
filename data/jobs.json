@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-02T09:40:41.116687+00:00",
+  "fetchedAt": "2026-04-02T12:05:43.363339+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -246,25 +246,6 @@
       "businessUnitId": 2415186,
       "soldById": null,
       "invoiceId": 585211800
-    },
-    {
-      "id": 585388429,
-      "jobNumber": "585388429",
-      "jobStatus": "Hold",
-      "total": 0.0,
-      "createdOn": "2026-03-05",
-      "scheduledDate": "2026-03-31",
-      "tagNames": [
-        "Club Member",
-        "10-Year Labor",
-        "Goodman distribution",
-        "Parts Received"
-      ],
-      "customer": "Charles Funkey",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 103309147,
-      "invoiceId": 585388436
     },
     {
       "id": 586073723,
@@ -640,8 +621,8 @@
         "Gemaire",
         "Club Member",
         "PLM",
-        "5 YEAR WARRANTY",
-        "Parts Ordered"
+        "Parts Received",
+        "5 YEAR WARRANTY"
       ],
       "customer": "Rebecca Temple",
       "businessUnit": "PLM - HVAC - Service - 12",
@@ -660,8 +641,8 @@
         "Gemaire",
         "Club Member",
         "PLM",
-        "5-YR Labor Warranty",
-        "Parts Ordered"
+        "Parts Received",
+        "5-YR Labor Warranty"
       ],
       "customer": "GORIN, MURRAY",
       "businessUnit": "CS - HVAC - Service - 12",
