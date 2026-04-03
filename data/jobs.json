@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-03T11:26:29.009769+00:00",
+  "fetchedAt": "2026-04-03T14:29:00.003423+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -7,7 +7,7 @@
       "jobStatus": "Hold",
       "total": 722.79,
       "createdOn": "2025-03-10",
-      "scheduledDate": "2026-03-25",
+      "scheduledDate": "2026-04-07",
       "tagNames": [
         "PLM",
         "Baker Supply",
@@ -25,7 +25,7 @@
       "jobStatus": "Hold",
       "total": 0.0,
       "createdOn": "2025-04-15",
-      "scheduledDate": "2026-04-03",
+      "scheduledDate": "2026-04-07",
       "tagNames": [
         "Gemaire",
         "Club Member",
@@ -130,7 +130,7 @@
       "jobStatus": "Hold",
       "total": 462.83,
       "createdOn": "2025-12-16",
-      "scheduledDate": "2026-04-08",
+      "scheduledDate": "2026-04-25",
       "tagNames": [
         "Baker Supply",
         "Club Member",
@@ -183,7 +183,7 @@
       "jobStatus": "Hold",
       "total": 303.45,
       "createdOn": "2026-02-05",
-      "scheduledDate": "2026-04-06",
+      "scheduledDate": "2026-04-08",
       "tagNames": [
         "Carrier enterprise",
         "Parts Ordered"
@@ -380,7 +380,7 @@
       "jobStatus": "Hold",
       "total": 1167.95,
       "createdOn": "2026-03-23",
-      "scheduledDate": "2026-04-03",
+      "scheduledDate": "2026-04-16",
       "tagNames": [
         "Carrier enterprise",
         "Club Member 3 sys",
@@ -469,7 +469,7 @@
       "jobStatus": "Hold",
       "total": 1536.7,
       "createdOn": "2026-03-26",
-      "scheduledDate": "2026-04-02",
+      "scheduledDate": "2026-04-06",
       "tagNames": [
         "PLM",
         "Carrier enterprise",
@@ -730,24 +730,6 @@
       "invoiceId": 588101373
     },
     {
-      "id": 588144612,
-      "jobNumber": "588144612",
-      "jobStatus": "Hold",
-      "total": 14165.0,
-      "createdOn": "2026-04-01",
-      "scheduledDate": "2026-04-01",
-      "tagNames": [
-        "PLM",
-        "Club Member",
-        "Parts Received"
-      ],
-      "customer": "DONOGHUE, MIKE",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 515080737,
-      "invoiceId": 588144619
-    },
-    {
       "id": 588174913,
       "jobNumber": "588174913",
       "jobStatus": "Hold",
@@ -897,8 +879,8 @@
       "createdOn": "2026-04-03",
       "scheduledDate": "2026-04-02",
       "tagNames": [
-        "Need to order part (NTO)",
         "Club Member",
+        "Parts Received",
         "10-10-10"
       ],
       "customer": "Wesley Cook",
