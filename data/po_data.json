@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-04T21:03:01.252676+00:00",
+  "fetchedAt": "2026-04-04T23:03:06.520238+00:00",
   "vendorMap": {
     "202401690": " Americast Precast Generator Pads DGE",
     "202401691": " City Electric Supply DGE",
@@ -681,6 +681,38 @@
     "174": "Equipment"
   },
   "purchaseOrders": [
+    {
+      "id": 588767430,
+      "number": "588752706-101",
+      "status": "Pending",
+      "typeId": 173,
+      "typeName": "Supply House Run",
+      "vendorId": 102,
+      "vendorName": "Home Depot",
+      "jobId": 588752706,
+      "date": "2026-04-04T00:00:00Z",
+      "requiredOn": "2026-04-04T04:00:00Z",
+      "sentOn": null,
+      "receivedOn": null,
+      "total": 0.0,
+      "tax": 0.0,
+      "shipping": 0.0,
+      "summary": "Parts for job",
+      "businessUnitId": 337544613,
+      "items": [
+        {
+          "id": 588767435,
+          "skuName": "MISC PART",
+          "skuCode": "MISC PART",
+          "description": "MISC PART",
+          "quantity": 1.0,
+          "quantityReceived": 0.0,
+          "cost": 0.0,
+          "total": 0.0,
+          "status": "Pending"
+        }
+      ]
+    },
     {
       "id": 588687547,
       "number": "588683852-001",

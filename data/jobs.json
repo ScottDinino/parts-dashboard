@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-04T21:02:53.963797+00:00",
+  "fetchedAt": "2026-04-04T23:02:56.774343+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -955,6 +955,23 @@
       "businessUnitId": 2415186,
       "soldById": 515478274,
       "invoiceId": 588762280
+    },
+    {
+      "id": 588762611,
+      "jobNumber": "588762611",
+      "jobStatus": "Hold",
+      "total": 811.73,
+      "createdOn": "2026-04-04",
+      "scheduledDate": "2026-04-04",
+      "tagNames": [
+        "Need to order part (NTO)",
+        "Club Member"
+      ],
+      "customer": "IDANIA ROJAS",
+      "businessUnit": "12 - DAC HVAC Service - Residential",
+      "businessUnitId": 481747519,
+      "soldById": 481801151,
+      "invoiceId": 588762618
     }
   ]
 }
