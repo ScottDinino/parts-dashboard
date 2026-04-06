@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-06T10:41:26.285626+00:00",
+  "fetchedAt": "2026-04-06T14:17:54.455651+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -288,7 +288,7 @@
       "jobStatus": "Hold",
       "total": 0.0,
       "createdOn": "2026-03-17",
-      "scheduledDate": "2026-04-03",
+      "scheduledDate": "2026-04-10",
       "tagNames": [
         "Gemaire",
         "Club Member 3 sys",
@@ -462,6 +462,22 @@
       "businessUnitId": 174723250,
       "soldById": 50714847,
       "invoiceId": 587347090
+    },
+    {
+      "id": 587432655,
+      "jobNumber": "587432655",
+      "jobStatus": "Hold",
+      "total": 803.91,
+      "createdOn": "2026-03-25",
+      "scheduledDate": "2026-04-13",
+      "tagNames": [
+        "Need to order part (NTO)"
+      ],
+      "customer": "Oswaldo Santos",
+      "businessUnit": "PSL - HVAC - Service - 12",
+      "businessUnitId": 174723250,
+      "soldById": 182986882,
+      "invoiceId": 587432662
     },
     {
       "id": 587489793,
@@ -736,7 +752,7 @@
       "jobStatus": "Hold",
       "total": 1248.8,
       "createdOn": "2026-04-02",
-      "scheduledDate": "2026-04-03",
+      "scheduledDate": "2026-04-06",
       "tagNames": [
         "Lennox Supply",
         "Club Member",
@@ -858,10 +874,11 @@
       "jobStatus": "Hold",
       "total": 0.0,
       "createdOn": "2026-04-03",
-      "scheduledDate": "2026-04-03",
+      "scheduledDate": "2026-04-09",
       "tagNames": [
-        "Need to order part (NTO)",
+        "Gemaire",
         "Club Member",
+        "Parts Ordered",
         "10-10-10"
       ],
       "customer": "Seth Rosenthal",
@@ -896,9 +913,9 @@
       "createdOn": "2026-04-04",
       "scheduledDate": "2026-04-03",
       "tagNames": [
-        "Need to order part (NTO)",
+        "Club Member",
         "10-Year Labor",
-        "Club Member"
+        "Parts Received"
       ],
       "customer": "Patricia Goldwire",
       "businessUnit": "PLM - HVAC - Service - 12",
@@ -914,7 +931,7 @@
       "createdOn": "2026-04-04",
       "scheduledDate": "2026-04-04",
       "tagNames": [
-        "Need to order part (NTO)"
+        "Parts Received"
       ],
       "customer": "Brittney Reid",
       "businessUnit": "PLM - HVAC - Service - 12",
@@ -945,10 +962,11 @@
       "jobStatus": "Hold",
       "total": 0.0,
       "createdOn": "2026-04-04",
-      "scheduledDate": "2026-04-04",
+      "scheduledDate": "2026-04-07",
       "tagNames": [
-        "Need to order part (NTO)",
-        "Club Member"
+        "Gemaire",
+        "Club Member",
+        "Parts Ordered"
       ],
       "customer": "Deborah Angelucci",
       "businessUnit": "CS - HVAC - Service - 12",
@@ -957,32 +975,16 @@
       "invoiceId": 588762280
     },
     {
-      "id": 588762611,
-      "jobNumber": "588762611",
-      "jobStatus": "Hold",
-      "total": 811.73,
-      "createdOn": "2026-04-04",
-      "scheduledDate": "2026-04-04",
-      "tagNames": [
-        "Need to order part (NTO)",
-        "Club Member"
-      ],
-      "customer": "IDANIA ROJAS",
-      "businessUnit": "12 - DAC HVAC Service - Residential",
-      "businessUnitId": 481747519,
-      "soldById": 481801151,
-      "invoiceId": 588762618
-    },
-    {
       "id": 588774012,
       "jobNumber": "588774012",
       "jobStatus": "Hold",
       "total": 1784.0,
       "createdOn": "2026-04-05",
-      "scheduledDate": "2026-04-05",
+      "scheduledDate": "2026-04-07",
       "tagNames": [
         "PLM",
-        "Need to order part (NTO)"
+        "Gemaire",
+        "Parts Ordered"
       ],
       "customer": "BRINGLEY, TOM",
       "businessUnit": "PLM - HVAC - Service - 12",
@@ -1006,6 +1008,89 @@
       "businessUnitId": 2415186,
       "soldById": 505091406,
       "invoiceId": 588784687
+    },
+    {
+      "id": 588788332,
+      "jobNumber": "588788332",
+      "jobStatus": "Hold",
+      "total": 5292.0,
+      "createdOn": "2026-04-06",
+      "scheduledDate": "2026-04-10",
+      "tagNames": [
+        "Parts Ordered"
+      ],
+      "customer": "Lenny Simon",
+      "businessUnit": "12 - DAC HVAC Service - Residential",
+      "businessUnitId": 481747519,
+      "soldById": 481801151,
+      "invoiceId": 588788339
+    },
+    {
+      "id": 588791308,
+      "jobNumber": "588791308",
+      "jobStatus": "Hold",
+      "total": 2999.0,
+      "createdOn": "2026-04-06",
+      "scheduledDate": "2026-04-10",
+      "tagNames": [
+        "Club Member",
+        "Parts Ordered"
+      ],
+      "customer": "WILLIAM MANN",
+      "businessUnit": "12 - DAC HVAC Service - Residential",
+      "businessUnitId": 481747519,
+      "soldById": 481801151,
+      "invoiceId": 588791315
+    },
+    {
+      "id": 588792458,
+      "jobNumber": "588792458",
+      "jobStatus": "Hold",
+      "total": 0.0,
+      "createdOn": "2026-04-06",
+      "scheduledDate": "2026-04-07",
+      "tagNames": [
+        "Club Member"
+      ],
+      "customer": "Leda Saylor",
+      "businessUnit": "12 - DAC HVAC Service - Residential",
+      "businessUnitId": 481747519,
+      "soldById": null,
+      "invoiceId": 588792465
+    },
+    {
+      "id": 588794076,
+      "jobNumber": "588794076",
+      "jobStatus": "Hold",
+      "total": 0.0,
+      "createdOn": "2026-04-06",
+      "scheduledDate": "2026-04-06",
+      "tagNames": [
+        "Need to order part (NTO)",
+        "Club Member",
+        "10-10-10"
+      ],
+      "customer": "Adele D'Azzo",
+      "businessUnit": "CS - HVAC - Service - 12",
+      "businessUnitId": 2415186,
+      "soldById": 552615701,
+      "invoiceId": 588794083
+    },
+    {
+      "id": 588815416,
+      "jobNumber": "588815416",
+      "jobStatus": "Hold",
+      "total": 511.35,
+      "createdOn": "2026-04-06",
+      "scheduledDate": "2026-04-06",
+      "tagNames": [
+        "Need to order part (NTO)"
+      ],
+      "customer": "Marlene Abramowitz",
+      "businessUnit": "PLM - HVAC - Service - 12",
+      "businessUnitId": 182981957,
+      "soldById": null,
+      "invoiceId": 588815423
     }
   ]
 }
