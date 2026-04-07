@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-07T14:59:04.327706+00:00",
+  "fetchedAt": "2026-04-07T18:12:01.959735+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -354,24 +354,6 @@
       "invoiceId": 587432662
     },
     {
-      "id": 587489793,
-      "jobNumber": "587489793",
-      "jobStatus": "Hold",
-      "total": 1536.7,
-      "createdOn": "2026-03-26",
-      "scheduledDate": "2026-04-07",
-      "tagNames": [
-        "PLM",
-        "Carrier enterprise",
-        "Parts Received"
-      ],
-      "customer": "PASAMI, LLC",
-      "businessUnit": "PLM - HVAC - Service - 12",
-      "businessUnitId": 182981957,
-      "soldById": 162589891,
-      "invoiceId": 587489800
-    },
-    {
       "id": 587515482,
       "jobNumber": "587515482",
       "jobStatus": "Hold",
@@ -615,25 +597,6 @@
       "invoiceId": 588792465
     },
     {
-      "id": 588836316,
-      "jobNumber": "588836316",
-      "jobStatus": "Hold",
-      "total": 0.0,
-      "createdOn": "2026-04-06",
-      "scheduledDate": "2026-04-13",
-      "tagNames": [
-        "Club Member",
-        "5 YEAR WARRANTY",
-        "Goodman distribution",
-        "Parts Ordered"
-      ],
-      "customer": "Stacey Savidge",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 479567906,
-      "invoiceId": 588836324
-    },
-    {
       "id": 588849132,
       "jobNumber": "588849132",
       "jobStatus": "Hold",
@@ -642,7 +605,7 @@
       "scheduledDate": "2026-04-07",
       "tagNames": [
         "Club Member",
-        "Parts Ordered",
+        "Parts Received",
         "10-10-10"
       ],
       "customer": "Ricardo Carrington",
@@ -650,24 +613,6 @@
       "businessUnitId": 2415186,
       "soldById": 586501946,
       "invoiceId": 588849139
-    },
-    {
-      "id": 588864865,
-      "jobNumber": "588864865",
-      "jobStatus": "Hold",
-      "total": 931.18,
-      "createdOn": "2026-04-06",
-      "scheduledDate": "2026-04-06",
-      "tagNames": [
-        "PLM",
-        "Club Member",
-        "Parts Received"
-      ],
-      "customer": "Mario Diotto",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 554348043,
-      "invoiceId": 588864872
     },
     {
       "id": 588883892,
@@ -756,6 +701,25 @@
       "businessUnitId": 182981957,
       "soldById": 53297920,
       "invoiceId": 588936925
+    },
+    {
+      "id": 588973999,
+      "jobNumber": "588973999",
+      "jobStatus": "Hold",
+      "total": 466.01,
+      "createdOn": "2026-04-07",
+      "scheduledDate": "2026-04-08",
+      "tagNames": [
+        "Gemaire",
+        "Club Member",
+        "5 YEAR WARRANTY",
+        "Parts Ordered"
+      ],
+      "customer": "Thomas Finkle",
+      "businessUnit": "CS - HVAC - Service - 12",
+      "businessUnitId": 2415186,
+      "soldById": 53297920,
+      "invoiceId": 588974006
     }
   ]
 }
