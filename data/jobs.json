@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-07T18:12:01.959735+00:00",
+  "fetchedAt": "2026-04-07T21:31:24.232437+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -25,7 +25,7 @@
       "jobStatus": "Hold",
       "total": 0.0,
       "createdOn": "2025-04-15",
-      "scheduledDate": "2026-04-07",
+      "scheduledDate": "2026-04-08",
       "tagNames": [
         "Gemaire",
         "Club Member",
@@ -362,6 +362,7 @@
       "scheduledDate": "2026-04-01",
       "tagNames": [
         "Club Member",
+        "Parts Received",
         "10-10-10"
       ],
       "customer": "Aruna Chadha",
@@ -388,20 +389,6 @@
       "businessUnitId": 182981957,
       "soldById": 469171232,
       "invoiceId": 587785443
-    },
-    {
-      "id": 587808281,
-      "jobNumber": "587808281",
-      "jobStatus": "Hold",
-      "total": 492.47,
-      "createdOn": "2026-03-30",
-      "scheduledDate": "2026-04-02",
-      "tagNames": [],
-      "customer": "Keith Griffin",
-      "businessUnit": "12 - DAC HVAC Service - Residential",
-      "businessUnitId": 481747519,
-      "soldById": 481801059,
-      "invoiceId": 587808288
     },
     {
       "id": 587874409,
@@ -597,40 +584,6 @@
       "invoiceId": 588792465
     },
     {
-      "id": 588849132,
-      "jobNumber": "588849132",
-      "jobStatus": "Hold",
-      "total": 650.21,
-      "createdOn": "2026-04-06",
-      "scheduledDate": "2026-04-07",
-      "tagNames": [
-        "Club Member",
-        "Parts Received",
-        "10-10-10"
-      ],
-      "customer": "Ricardo Carrington",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 586501946,
-      "invoiceId": 588849139
-    },
-    {
-      "id": 588883892,
-      "jobNumber": "588883892",
-      "jobStatus": "Hold",
-      "total": 0.0,
-      "createdOn": "2026-04-06",
-      "scheduledDate": "2026-04-07",
-      "tagNames": [
-        "Club Member 3 sys"
-      ],
-      "customer": "Mandelbaum, Shelly 0201146",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 162589891,
-      "invoiceId": 588883900
-    },
-    {
       "id": 588888877,
       "jobNumber": "588888877",
       "jobStatus": "Hold",
@@ -639,7 +592,7 @@
       "scheduledDate": "2026-04-07",
       "tagNames": [
         "Gemaire",
-        "Parts Ordered",
+        "Parts Received",
         "10-10-10"
       ],
       "customer": "Alvaro Pereira",
@@ -675,7 +628,7 @@
       "tagNames": [
         "Gemaire",
         "Club Member",
-        "Parts Ordered"
+        "Parts Received"
       ],
       "customer": "Eytan Hartung",
       "businessUnit": "CS - HVAC - Service - 12",
@@ -706,20 +659,72 @@
       "id": 588973999,
       "jobNumber": "588973999",
       "jobStatus": "Hold",
-      "total": 466.01,
+      "total": 874.51,
       "createdOn": "2026-04-07",
       "scheduledDate": "2026-04-08",
       "tagNames": [
         "Gemaire",
         "Club Member",
         "5 YEAR WARRANTY",
-        "Parts Ordered"
+        "Parts Received"
       ],
       "customer": "Thomas Finkle",
       "businessUnit": "CS - HVAC - Service - 12",
       "businessUnitId": 2415186,
       "soldById": 53297920,
       "invoiceId": 588974006
+    },
+    {
+      "id": 589045414,
+      "jobNumber": "589045414",
+      "jobStatus": "Hold",
+      "total": 486.28,
+      "createdOn": "2026-04-07",
+      "scheduledDate": "2026-04-07",
+      "tagNames": [
+        "Need to order part (NTO)",
+        "Club Member"
+      ],
+      "customer": "Marvin Anklow",
+      "businessUnit": "CS - HVAC - Service - 12",
+      "businessUnitId": 2415186,
+      "soldById": 472056376,
+      "invoiceId": 589045421
+    },
+    {
+      "id": 589049402,
+      "jobNumber": "589049402",
+      "jobStatus": "Hold",
+      "total": 689.95,
+      "createdOn": "2026-04-07",
+      "scheduledDate": "2026-04-07",
+      "tagNames": [
+        "Need to order part (NTO)",
+        "Club Member"
+      ],
+      "customer": "Gilbert Hatfield",
+      "businessUnit": "CS - HVAC - Service - 12",
+      "businessUnitId": 2415186,
+      "soldById": 581113783,
+      "invoiceId": 589049409
+    },
+    {
+      "id": 589053865,
+      "jobNumber": "589053865",
+      "jobStatus": "Hold",
+      "total": 0.0,
+      "createdOn": "2026-04-07",
+      "scheduledDate": "2026-04-07",
+      "tagNames": [
+        "Need to order part (NTO)",
+        "Club Member",
+        "10-10-10"
+      ],
+      "customer": "GEORGE SHEEHAN",
+      "businessUnit": "CS - HVAC - Service - 12",
+      "businessUnitId": 2415186,
+      "soldById": 187778225,
+      "invoiceId": 589053872
     }
   ]
 }
