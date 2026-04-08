@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-08T18:59:59.322457+00:00",
+  "fetchedAt": "2026-04-08T21:32:19.600280+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -29,7 +29,7 @@
       "tagNames": [
         "Gemaire",
         "Club Member",
-        "Parts Ordered"
+        "Parts Received"
       ],
       "customer": "Evan Frangos",
       "businessUnit": "CS - HVAC - Service - 12",
@@ -164,7 +164,7 @@
       "jobStatus": "Hold",
       "total": 303.45,
       "createdOn": "2026-02-05",
-      "scheduledDate": "2026-04-08",
+      "scheduledDate": "2026-04-09",
       "tagNames": [
         "Carrier enterprise",
         "Parts Ordered"
@@ -181,7 +181,7 @@
       "jobStatus": "Hold",
       "total": 0.0,
       "createdOn": "2026-02-17",
-      "scheduledDate": "2026-04-08",
+      "scheduledDate": "2026-04-09",
       "tagNames": [
         "PLM",
         "Carrier enterprise",
@@ -610,7 +610,7 @@
       "scheduledDate": "2026-04-09",
       "tagNames": [
         "Club Member",
-        "Parts Ordered",
+        "Parts Received",
         "Trane Supply"
       ],
       "customer": "Marvin Anklow",
@@ -805,11 +805,12 @@
       "jobStatus": "Hold",
       "total": 292.95,
       "createdOn": "2026-04-08",
-      "scheduledDate": "2026-04-08",
+      "scheduledDate": "2026-04-09",
       "tagNames": [
+        "Gemaire",
         "Club Member",
-        "Need to order part (NTO)",
-        "5 YEAR WARRANTY"
+        "5 YEAR WARRANTY",
+        "Parts Ordered"
       ],
       "customer": "Sue Jacobson",
       "businessUnit": "PLM - HVAC - Service - 12",
@@ -851,6 +852,23 @@
       "businessUnitId": 2415186,
       "soldById": 515080737,
       "invoiceId": 589173013
+    },
+    {
+      "id": 589173543,
+      "jobNumber": "589173543",
+      "jobStatus": "Hold",
+      "total": 3816.88,
+      "createdOn": "2026-04-08",
+      "scheduledDate": "2026-04-10",
+      "tagNames": [
+        "Club Member",
+        "Need to order part (NTO)"
+      ],
+      "customer": "AVELLO, DARIO 0015313",
+      "businessUnit": "12 - DAC HVAC Service - Residential",
+      "businessUnitId": 481747519,
+      "soldById": 481801164,
+      "invoiceId": 589173550
     }
   ]
 }
