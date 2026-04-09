@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-09T20:12:37.226188+00:00",
+  "fetchedAt": "2026-04-09T23:13:27.955592+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -590,42 +590,6 @@
       "invoiceId": 589157007
     },
     {
-      "id": 589121457,
-      "jobNumber": "589121457",
-      "jobStatus": "Hold",
-      "total": 1605.6,
-      "createdOn": "2026-04-08",
-      "scheduledDate": "2026-04-10",
-      "tagNames": [
-        "Carrier enterprise",
-        "Club Member",
-        "Parts Received"
-      ],
-      "customer": "Trent Bunton ",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 103309147,
-      "invoiceId": 589121464
-    },
-    {
-      "id": 589127270,
-      "jobNumber": "589127270",
-      "jobStatus": "Hold",
-      "total": 292.95,
-      "createdOn": "2026-04-08",
-      "scheduledDate": "2026-04-08",
-      "tagNames": [
-        "PLM",
-        "10-Year Labor",
-        "Parts Received"
-      ],
-      "customer": "GANSLAW, STUART",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 187778225,
-      "invoiceId": 589127277
-    },
-    {
       "id": 589140945,
       "jobNumber": "589140945",
       "jobStatus": "Hold",
@@ -735,8 +699,9 @@
       "createdOn": "2026-04-09",
       "scheduledDate": "2026-04-13",
       "tagNames": [
-        "Need to order part (NTO)",
-        "Club Member"
+        "Carrier enterprise",
+        "Club Member",
+        "Parts Ordered"
       ],
       "customer": "Niti Chadha",
       "businessUnit": "CS - HVAC - Service - 12",
@@ -777,24 +742,6 @@
       "businessUnitId": 182981957,
       "soldById": 552615701,
       "invoiceId": 589297901
-    },
-    {
-      "id": 589301144,
-      "jobNumber": "589301144",
-      "jobStatus": "Hold",
-      "total": 579.81,
-      "createdOn": "2026-04-09",
-      "scheduledDate": "2026-04-09",
-      "tagNames": [
-        "2-YR Labor Warranty",
-        "Club Member",
-        "Parts Received"
-      ],
-      "customer": "Luke Cohen",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 53297920,
-      "invoiceId": 589301151
     }
   ]
 }
