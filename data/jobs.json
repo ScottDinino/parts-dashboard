@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-10T17:38:03.760934+00:00",
+  "fetchedAt": "2026-04-10T19:58:53.136003+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -7,7 +7,7 @@
       "jobStatus": "Hold",
       "total": 722.79,
       "createdOn": "2025-03-10",
-      "scheduledDate": "2026-04-10",
+      "scheduledDate": "2026-04-16",
       "tagNames": [
         "PLM",
         "Baker Supply",
@@ -201,7 +201,7 @@
       "jobStatus": "Hold",
       "total": 0.0,
       "createdOn": "2026-03-18",
-      "scheduledDate": "2026-04-10",
+      "scheduledDate": "2026-04-14",
       "tagNames": [
         "Carrier enterprise",
         "Club Member",
@@ -428,23 +428,6 @@
       "invoiceId": 588936925
     },
     {
-      "id": 589046325,
-      "jobNumber": "589046325",
-      "jobStatus": "Hold",
-      "total": 292.95,
-      "createdOn": "2026-04-07",
-      "scheduledDate": "2026-04-07",
-      "tagNames": [
-        "Club Member",
-        "Parts Received"
-      ],
-      "customer": "Trent Bunton ",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 586452067,
-      "invoiceId": 589046332
-    },
-    {
       "id": 589049402,
       "jobNumber": "589049402",
       "jobStatus": "Hold",
@@ -533,25 +516,6 @@
       "invoiceId": 589087943
     },
     {
-      "id": 589095394,
-      "jobNumber": "589095394",
-      "jobStatus": "Hold",
-      "total": 0.0,
-      "createdOn": "2026-04-08",
-      "scheduledDate": "2026-04-13",
-      "tagNames": [
-        "Club Member",
-        "10-10-10",
-        "Parts Received",
-        "Trane Supply"
-      ],
-      "customer": "Diane Carlson",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 53297920,
-      "invoiceId": 589095401
-    },
-    {
       "id": 589113992,
       "jobNumber": "589113992",
       "jobStatus": "Hold",
@@ -607,23 +571,6 @@
       "businessUnitId": 2415186,
       "soldById": 182986969,
       "invoiceId": 589147377
-    },
-    {
-      "id": 589173543,
-      "jobNumber": "589173543",
-      "jobStatus": "Hold",
-      "total": 3816.88,
-      "createdOn": "2026-04-08",
-      "scheduledDate": "2026-04-10",
-      "tagNames": [
-        "Club Member",
-        "Need to order part (NTO)"
-      ],
-      "customer": "AVELLO, DARIO 0015313",
-      "businessUnit": "12 - DAC HVAC Service - Residential",
-      "businessUnitId": 481747519,
-      "soldById": 481801164,
-      "invoiceId": 589173550
     },
     {
       "id": 589198379,
@@ -725,24 +672,6 @@
       "businessUnitId": 2415186,
       "soldById": 580648483,
       "invoiceId": 589329549
-    },
-    {
-      "id": 589297894,
-      "jobNumber": "589297894",
-      "jobStatus": "Hold",
-      "total": 0.0,
-      "createdOn": "2026-04-09",
-      "scheduledDate": "2026-04-13",
-      "tagNames": [
-        "Club Member",
-        "10-10-10",
-        "Parts Ordered"
-      ],
-      "customer": "Diane Carlson",
-      "businessUnit": "PLM - HVAC - Service - 12",
-      "businessUnitId": 182981957,
-      "soldById": 552615701,
-      "invoiceId": 589297901
     },
     {
       "id": 589367027,
@@ -851,6 +780,23 @@
       "businessUnitId": 2415186,
       "soldById": 469171232,
       "invoiceId": 589409573
+    },
+    {
+      "id": 589440402,
+      "jobNumber": "589440402",
+      "jobStatus": "Hold",
+      "total": 2218.58,
+      "createdOn": "2026-04-10",
+      "scheduledDate": "2026-04-17",
+      "tagNames": [
+        "Need to order part (NTO)",
+        "Club Member"
+      ],
+      "customer": "Jillian Mcgirr",
+      "businessUnit": "CS - HVAC - Service - 12",
+      "businessUnitId": 2415186,
+      "soldById": 470591194,
+      "invoiceId": 589440409
     }
   ]
 }
