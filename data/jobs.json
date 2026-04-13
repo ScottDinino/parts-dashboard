@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-13T20:14:38.787437+00:00",
+  "fetchedAt": "2026-04-13T23:33:49.522238+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -531,24 +531,6 @@
       "businessUnitId": 481747519,
       "soldById": null,
       "invoiceId": 589229460
-    },
-    {
-      "id": 589281244,
-      "jobNumber": "589281244",
-      "jobStatus": "Hold",
-      "total": 579.81,
-      "createdOn": "2026-04-09",
-      "scheduledDate": "2026-04-13",
-      "tagNames": [
-        "Club Member",
-        "Parts Received",
-        "Trane Supply"
-      ],
-      "customer": "Marvin Anklow",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 505091406,
-      "invoiceId": 589281251
     },
     {
       "id": 589295858,
