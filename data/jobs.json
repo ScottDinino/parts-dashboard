@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-12T23:54:01.226682+00:00",
+  "fetchedAt": "2026-04-13T07:27:13.921600+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -750,10 +750,11 @@
       "jobStatus": "Hold",
       "total": 2765.9,
       "createdOn": "2026-04-11",
-      "scheduledDate": "2026-04-10",
+      "scheduledDate": "2026-04-14",
       "tagNames": [
         "PLM",
-        "Need to order part (NTO)"
+        "Carrier enterprise",
+        "Parts Ordered"
       ],
       "customer": "WEXLER, PAUL",
       "businessUnit": "PLM - HVAC - Service - 12",
@@ -822,8 +823,8 @@
       "scheduledDate": "2026-04-11",
       "tagNames": [
         "PLM",
-        "Need to order part (NTO)",
-        "Club Member"
+        "Club Member",
+        "Parts Received"
       ],
       "customer": "CURTIS, BRYAN",
       "businessUnit": "PLM - HVAC - Service - 12",
@@ -839,9 +840,9 @@
       "createdOn": "2026-04-12",
       "scheduledDate": "2026-04-11",
       "tagNames": [
-        "Need to order part (NTO)",
         "2-YR Labor Warranty",
-        "Club Member"
+        "Club Member",
+        "Parts Received"
       ],
       "customer": "Gladis Diaz",
       "businessUnit": "CS - HVAC - Service - 12",
