@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-14T15:52:35.056166+00:00",
+  "fetchedAt": "2026-04-14T19:56:14.295719+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -149,7 +149,7 @@
       "jobStatus": "Hold",
       "total": 303.45,
       "createdOn": "2026-02-05",
-      "scheduledDate": "2026-04-14",
+      "scheduledDate": "2026-04-16",
       "tagNames": [
         "Carrier enterprise",
         "Parts Ordered"
@@ -238,7 +238,7 @@
       "jobStatus": "Hold",
       "total": 0.0,
       "createdOn": "2026-03-18",
-      "scheduledDate": "2026-04-14",
+      "scheduledDate": "2026-04-16",
       "tagNames": [
         "Carrier enterprise",
         "Club Member",
@@ -287,25 +287,6 @@
       "invoiceId": 587208113
     },
     {
-      "id": 587301961,
-      "jobNumber": "587301961",
-      "jobStatus": "Hold",
-      "total": 292.95,
-      "createdOn": "2026-03-24",
-      "scheduledDate": "2026-03-27",
-      "tagNames": [
-        "PLM",
-        "Baker Supply",
-        "Club Member",
-        "Parts Received"
-      ],
-      "customer": "Lera Chacon",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 515478274,
-      "invoiceId": 587301968
-    },
-    {
       "id": 587347083,
       "jobNumber": "587347083",
       "jobStatus": "Hold",
@@ -320,25 +301,6 @@
       "businessUnitId": 174723250,
       "soldById": 50714847,
       "invoiceId": 587347090
-    },
-    {
-      "id": 587785435,
-      "jobNumber": "587785435",
-      "jobStatus": "Hold",
-      "total": 0.0,
-      "createdOn": "2026-03-29",
-      "scheduledDate": "2026-04-14",
-      "tagNames": [
-        "Club Member",
-        "PLM",
-        "Parts Ordered",
-        "Carrier enterprise"
-      ],
-      "customer": "Lera Chacon",
-      "businessUnit": "PLM - HVAC - Service - 12",
-      "businessUnitId": 182981957,
-      "soldById": 469171232,
-      "invoiceId": 587785443
     },
     {
       "id": 587921559,
@@ -391,44 +353,6 @@
       "businessUnitId": 2415186,
       "soldById": 554348043,
       "invoiceId": 588660417
-    },
-    {
-      "id": 588936917,
-      "jobNumber": "588936917",
-      "jobStatus": "Hold",
-      "total": 1784.0,
-      "createdOn": "2026-04-07",
-      "scheduledDate": "2026-04-13",
-      "tagNames": [
-        "PLM",
-        "Carrier enterprise",
-        "Club Member",
-        "Parts Received"
-      ],
-      "customer": "Michael Gilbert ",
-      "businessUnit": "PLM - HVAC - Service - 12",
-      "businessUnitId": 182981957,
-      "soldById": 53297920,
-      "invoiceId": 588936925
-    },
-    {
-      "id": 589053865,
-      "jobNumber": "589053865",
-      "jobStatus": "Hold",
-      "total": 0.0,
-      "createdOn": "2026-04-07",
-      "scheduledDate": "2026-04-13",
-      "tagNames": [
-        "Club Member",
-        "10-10-10",
-        "Parts Received",
-        "Trane Supply"
-      ],
-      "customer": "GEORGE SHEEHAN",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 187778225,
-      "invoiceId": 589053872
     },
     {
       "id": 589087884,
@@ -603,24 +527,6 @@
       "invoiceId": 589440409
     },
     {
-      "id": 589508887,
-      "jobNumber": "589508887",
-      "jobStatus": "Hold",
-      "total": 2765.9,
-      "createdOn": "2026-04-11",
-      "scheduledDate": "2026-04-14",
-      "tagNames": [
-        "PLM",
-        "Carrier enterprise",
-        "Parts Received"
-      ],
-      "customer": "WEXLER, PAUL",
-      "businessUnit": "PLM - HVAC - Service - 12",
-      "businessUnitId": 182981957,
-      "soldById": 515080737,
-      "invoiceId": 589508894
-    },
-    {
       "id": 589512745,
       "jobNumber": "589512745",
       "jobStatus": "Hold",
@@ -630,49 +536,13 @@
       "tagNames": [
         "Gemaire",
         "Club Member",
-        "Parts Ordered"
+        "Parts Received"
       ],
       "customer": "Deborah Angelucci",
       "businessUnit": "CS - HVAC - Service - 12",
       "businessUnitId": 2415186,
       "soldById": 581113783,
       "invoiceId": 589512753
-    },
-    {
-      "id": 589524535,
-      "jobNumber": "589524535",
-      "jobStatus": "Hold",
-      "total": 1784.0,
-      "createdOn": "2026-04-11",
-      "scheduledDate": "2026-04-14",
-      "tagNames": [
-        "Club Member",
-        "PLM",
-        "Parts Received",
-        "Carrier enterprise"
-      ],
-      "customer": "ROSENBLATT, MARCEA",
-      "businessUnit": "PLM - HVAC - Service - 12",
-      "businessUnitId": 182981957,
-      "soldById": 552615701,
-      "invoiceId": 589524543
-    },
-    {
-      "id": 589559106,
-      "jobNumber": "589559106",
-      "jobStatus": "Hold",
-      "total": 1516.4,
-      "createdOn": "2026-04-12",
-      "scheduledDate": "2026-04-13",
-      "tagNames": [
-        "Trane Supply",
-        "Parts Received"
-      ],
-      "customer": "Leah Cretcau",
-      "businessUnit": "PLM - HVAC - Service - 12",
-      "businessUnitId": 182981957,
-      "soldById": 162589891,
-      "invoiceId": 589559114
     },
     {
       "id": 589617250,
@@ -683,7 +553,7 @@
       "scheduledDate": "2026-04-14",
       "tagNames": [
         "Gemaire",
-        "Parts Ordered"
+        "Parts Received"
       ],
       "customer": "Charles Fortilus",
       "businessUnit": "CS - HVAC - Service - 12",
@@ -701,7 +571,7 @@
       "tagNames": [
         "Gemaire",
         "Club Member",
-        "Parts Ordered",
+        "Parts Received",
         "10-10-10"
       ],
       "customer": "Jeff Schilit",
@@ -747,24 +617,6 @@
       "invoiceId": 589686001
     },
     {
-      "id": 589730940,
-      "jobNumber": "589730940",
-      "jobStatus": "Hold",
-      "total": 344.21,
-      "createdOn": "2026-04-14",
-      "scheduledDate": "2026-04-14",
-      "tagNames": [
-        "PLM",
-        "Club Member",
-        "Parts Received"
-      ],
-      "customer": "Alexis White",
-      "businessUnit": "PLM - HVAC - Service - 12",
-      "businessUnitId": 182981957,
-      "soldById": 586452067,
-      "invoiceId": 589730947
-    },
-    {
       "id": 589744944,
       "jobNumber": "589744944",
       "jobStatus": "Hold",
@@ -773,7 +625,7 @@
       "scheduledDate": "2026-04-15",
       "tagNames": [
         "Gemaire",
-        "Parts Ordered",
+        "Parts Received",
         "10-10-10"
       ],
       "customer": "Alex Brown",
@@ -788,10 +640,11 @@
       "jobStatus": "Hold",
       "total": 0.0,
       "createdOn": "2026-04-14",
-      "scheduledDate": "2026-04-14",
+      "scheduledDate": "2026-04-15",
       "tagNames": [
-        "Need to order part (NTO)",
+        "Gemaire",
         "Club Member",
+        "Parts Ordered",
         "10-10-10"
       ],
       "customer": "Rose Marie Manigat",
@@ -799,6 +652,23 @@
       "businessUnitId": 2415186,
       "soldById": 53297920,
       "invoiceId": 589772989
+    },
+    {
+      "id": 589825964,
+      "jobNumber": "589825964",
+      "jobStatus": "Hold",
+      "total": 867.98,
+      "createdOn": "2026-04-14",
+      "scheduledDate": "2026-04-14",
+      "tagNames": [
+        "Need to order part (NTO)",
+        "Club Member"
+      ],
+      "customer": "Jeff Ringer",
+      "businessUnit": "CS - HVAC - Service - 12",
+      "businessUnitId": 2415186,
+      "soldById": 182986969,
+      "invoiceId": 589825971
     }
   ]
 }
