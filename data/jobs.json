@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-16T07:10:37.791503+00:00",
+  "fetchedAt": "2026-04-16T11:41:03.754550+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -444,23 +444,6 @@
       "businessUnitId": 2415186,
       "soldById": 581113783,
       "invoiceId": 589512753
-    },
-    {
-      "id": 589598557,
-      "jobNumber": "589598557",
-      "jobStatus": "Hold",
-      "total": 0.0,
-      "createdOn": "2026-04-13",
-      "scheduledDate": "2026-04-16",
-      "tagNames": [
-        "Club Member",
-        "Need to order part (NTO)"
-      ],
-      "customer": "David Balcher",
-      "businessUnit": "12 - DAC HVAC Service - Residential",
-      "businessUnitId": 481747519,
-      "soldById": 481801164,
-      "invoiceId": 589598564
     },
     {
       "id": 589685422,
