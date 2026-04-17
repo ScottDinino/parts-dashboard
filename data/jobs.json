@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-17T16:29:53.184147+00:00",
+  "fetchedAt": "2026-04-17T17:37:32.358080+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -534,26 +534,6 @@
       "invoiceId": 589989036
     },
     {
-      "id": 590048985,
-      "jobNumber": "590048985",
-      "jobStatus": "Hold",
-      "total": 579.81,
-      "createdOn": "2026-04-16",
-      "scheduledDate": "2026-04-20",
-      "tagNames": [
-        "Club Member",
-        "PLM",
-        "Parts Received",
-        "5 YEAR WARRANTY",
-        "Carrier enterprise"
-      ],
-      "customer": "Herman Graff",
-      "businessUnit": "PLM - HVAC - Service - 12",
-      "businessUnitId": 182981957,
-      "soldById": 53297920,
-      "invoiceId": 590048992
-    },
-    {
       "id": 590049438,
       "jobNumber": "590049438",
       "jobStatus": "Hold",
@@ -568,26 +548,6 @@
       "businessUnitId": 481747519,
       "soldById": 481801059,
       "invoiceId": 590049445
-    },
-    {
-      "id": 590051554,
-      "jobNumber": "590051554",
-      "jobStatus": "Hold",
-      "total": 0.0,
-      "createdOn": "2026-04-16",
-      "scheduledDate": "2026-04-20",
-      "tagNames": [
-        "PLM",
-        "Club Member 3 sys",
-        "Parts Received",
-        "10-Year Labor",
-        "Carrier enterprise"
-      ],
-      "customer": "Ashley & Andrew McMillin",
-      "businessUnit": "PLM - HVAC - Service - 12",
-      "businessUnitId": 182981957,
-      "soldById": 53297920,
-      "invoiceId": 590051561
     },
     {
       "id": 590055144,
@@ -697,6 +657,22 @@
       "businessUnitId": 182981957,
       "soldById": 348777176,
       "invoiceId": 590159369
+    },
+    {
+      "id": 590237382,
+      "jobNumber": "590237382",
+      "jobStatus": "Hold",
+      "total": 3131.18,
+      "createdOn": "2026-04-17",
+      "scheduledDate": "2026-04-17",
+      "tagNames": [
+        "Need to order part (NTO)"
+      ],
+      "customer": "Mark Sullivan ",
+      "businessUnit": "PLM - HVAC - Service - 12",
+      "businessUnitId": 182981957,
+      "soldById": 463150599,
+      "invoiceId": 590237389
     }
   ]
 }
