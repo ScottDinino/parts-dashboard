@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-17T17:37:32.358080+00:00",
+  "fetchedAt": "2026-04-17T20:13:20.663284+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -250,6 +250,25 @@
       "invoiceId": 587208113
     },
     {
+      "id": 587253199,
+      "jobNumber": "587253199",
+      "jobStatus": "Hold",
+      "total": 689.97,
+      "createdOn": "2026-03-24",
+      "scheduledDate": "2026-04-17",
+      "tagNames": [
+        "Gemaire",
+        "2-YR Labor Warranty",
+        "Club Member",
+        "Parts Received"
+      ],
+      "customer": "Dane Lyons",
+      "businessUnit": "CS - HVAC - Service - 12",
+      "businessUnitId": 2415186,
+      "soldById": 581113783,
+      "invoiceId": 587253206
+    },
+    {
       "id": 587921559,
       "jobNumber": "587921559",
       "jobStatus": "Hold",
@@ -472,7 +491,7 @@
         "PLM",
         "Carrier enterprise",
         "Club Member",
-        "Parts Ordered"
+        "Parts Received"
       ],
       "customer": "Robert Ellis",
       "businessUnit": "PLM - HVAC - Service - 12",
@@ -503,12 +522,13 @@
       "jobStatus": "Hold",
       "total": 1505.6,
       "createdOn": "2026-04-15",
-      "scheduledDate": "2026-04-15",
+      "scheduledDate": "2026-04-20",
       "tagNames": [
+        "Gemaire",
         "Club Member",
         "Club Member 3 sys",
-        "Need to order part (NTO)",
-        "5 YEAR WARRANTY"
+        "5 YEAR WARRANTY",
+        "Parts Ordered"
       ],
       "customer": "Hayong Burke",
       "businessUnit": "CS - HVAC - Service - 12",
@@ -559,30 +579,13 @@
       "tagNames": [
         "Gemaire",
         "Club Member",
-        "Parts Ordered"
+        "Parts Received"
       ],
       "customer": "Dave Sowers",
       "businessUnit": "CS - HVAC - Service - 12",
       "businessUnitId": 2415186,
       "soldById": 580648483,
       "invoiceId": 590055151
-    },
-    {
-      "id": 590074178,
-      "jobNumber": "590074178",
-      "jobStatus": "Hold",
-      "total": 800.0,
-      "createdOn": "2026-04-16",
-      "scheduledDate": "2026-04-20",
-      "tagNames": [
-        "Carrier enterprise",
-        "Parts Received"
-      ],
-      "customer": "BENDIEN, ALEX",
-      "businessUnit": "PLM - HVAC - Service - 12",
-      "businessUnitId": 182981957,
-      "soldById": null,
-      "invoiceId": 590074185
     },
     {
       "id": 590090322,
@@ -666,7 +669,7 @@
       "createdOn": "2026-04-17",
       "scheduledDate": "2026-04-17",
       "tagNames": [
-        "Need to order part (NTO)"
+        "Parts Received"
       ],
       "customer": "Mark Sullivan ",
       "businessUnit": "PLM - HVAC - Service - 12",
