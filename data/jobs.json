@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-17T14:45:57.698676+00:00",
+  "fetchedAt": "2026-04-17T16:29:53.184147+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -159,24 +159,6 @@
       "businessUnitId": 2415186,
       "soldById": 515080737,
       "invoiceId": 581332771
-    },
-    {
-      "id": 582686716,
-      "jobNumber": "582686716",
-      "jobStatus": "Hold",
-      "total": 0.0,
-      "createdOn": "2026-02-13",
-      "scheduledDate": "2026-02-17",
-      "tagNames": [
-        "Carrier enterprise",
-        "Club Member",
-        "Parts Received"
-      ],
-      "customer": "Kim Waller",
-      "businessUnit": "PLM - HVAC - Service - 12",
-      "businessUnitId": 182981957,
-      "soldById": 515080737,
-      "invoiceId": 582686723
     },
     {
       "id": 583259145,
@@ -365,7 +347,7 @@
       "tagNames": [
         "Carrier enterprise",
         "Club Member",
-        "Parts Received",
+        "Parts Ordered",
         "10-10-10"
       ],
       "customer": "Michelle Cook",
@@ -710,7 +692,7 @@
         "Parts Ordered",
         "Carrier enterprise"
       ],
-      "customer": "ROSENBLATT, MARCEA",
+      "customer": "Marcea Rosenblatt",
       "businessUnit": "PLM - HVAC - Service - 12",
       "businessUnitId": 182981957,
       "soldById": 348777176,
