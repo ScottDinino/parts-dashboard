@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-17T20:13:20.663284+00:00",
+  "fetchedAt": "2026-04-17T23:12:06.622647+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -348,7 +348,7 @@
       "tagNames": [
         "Gemaire",
         "Club Member",
-        "Parts Ordered"
+        "Parts Received"
       ],
       "customer": "Oscar Rodriguez",
       "businessUnit": "CS - HVAC - Service - 12",
@@ -362,7 +362,7 @@
       "jobStatus": "Hold",
       "total": 0.0,
       "createdOn": "2026-04-10",
-      "scheduledDate": "2026-04-17",
+      "scheduledDate": "2026-04-21",
       "tagNames": [
         "Carrier enterprise",
         "Club Member",
@@ -402,7 +402,7 @@
       "scheduledDate": "2026-04-17",
       "tagNames": [
         "Goodman distribution",
-        "Parts Ordered"
+        "Parts Received"
       ],
       "customer": "Judy Rubin",
       "businessUnit": "CS - HVAC - Service - 12",
@@ -451,11 +451,11 @@
       "jobStatus": "Hold",
       "total": 1482.01,
       "createdOn": "2026-04-15",
-      "scheduledDate": "2026-04-17",
+      "scheduledDate": "2026-04-20",
       "tagNames": [
         "PLM",
         "Carrier enterprise",
-        "Parts Ordered"
+        "Parts Received"
       ],
       "customer": "Randazzo School",
       "businessUnit": "CS - HVAC - Service - 12",
@@ -597,7 +597,7 @@
       "tagNames": [
         "Carrier enterprise",
         "Club Member",
-        "Parts Ordered",
+        "Parts Received",
         "10-10-10"
       ],
       "customer": "Angeles Ritter",
@@ -614,7 +614,7 @@
       "createdOn": "2026-04-16",
       "scheduledDate": "2026-04-17",
       "tagNames": [
-        "Parts Ordered",
+        "Parts Received",
         "Trane Supply"
       ],
       "customer": "Eloy Leal",
@@ -676,6 +676,39 @@
       "businessUnitId": 182981957,
       "soldById": 463150599,
       "invoiceId": 590237389
+    },
+    {
+      "id": 590295847,
+      "jobNumber": "590295847",
+      "jobStatus": "Hold",
+      "total": 486.28,
+      "createdOn": "2026-04-17",
+      "scheduledDate": "2026-04-17",
+      "tagNames": [
+        "Need to order part (NTO)",
+        "Club Member"
+      ],
+      "customer": "Biswanath Samal",
+      "businessUnit": "CS - HVAC - Service - 12",
+      "businessUnitId": 2415186,
+      "soldById": 580648483,
+      "invoiceId": 590295854
+    },
+    {
+      "id": 590303146,
+      "jobNumber": "590303146",
+      "jobStatus": "Hold",
+      "total": 297.62,
+      "createdOn": "2026-04-17",
+      "scheduledDate": "2026-04-17",
+      "tagNames": [
+        "Need to order part (NTO)"
+      ],
+      "customer": "Erinn Heatherman",
+      "businessUnit": "CS - HVAC - Service - 12",
+      "businessUnitId": 2415186,
+      "soldById": 515080737,
+      "invoiceId": 590303153
     }
   ]
 }
