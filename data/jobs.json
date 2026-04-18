@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-04-17T23:12:06.622647+00:00",
+  "fetchedAt": "2026-04-18T05:52:48.639216+00:00",
   "jobs": [
     {
       "id": 459781920,
@@ -304,24 +304,6 @@
       "invoiceId": 588469169
     },
     {
-      "id": 589295858,
-      "jobNumber": "589295858",
-      "jobStatus": "Hold",
-      "total": 0.0,
-      "createdOn": "2026-04-09",
-      "scheduledDate": "2026-04-14",
-      "tagNames": [
-        "Carrier enterprise",
-        "Club Member",
-        "Parts Received"
-      ],
-      "customer": "Niti Chadha",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": null,
-      "invoiceId": 589295865
-    },
-    {
       "id": 589296262,
       "jobNumber": "589296262",
       "jobStatus": "Hold",
@@ -337,24 +319,6 @@
       "businessUnitId": 2415186,
       "soldById": 580648483,
       "invoiceId": 589329549
-    },
-    {
-      "id": 589367027,
-      "jobNumber": "589367027",
-      "jobStatus": "Hold",
-      "total": 0.0,
-      "createdOn": "2026-04-10",
-      "scheduledDate": "2026-04-17",
-      "tagNames": [
-        "Gemaire",
-        "Club Member",
-        "Parts Received"
-      ],
-      "customer": "Oscar Rodriguez",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 581113783,
-      "invoiceId": 589367034
     },
     {
       "id": 589376742,
@@ -537,23 +501,6 @@
       "invoiceId": 589986843
     },
     {
-      "id": 589989029,
-      "jobNumber": "589989029",
-      "jobStatus": "Hold",
-      "total": 0.0,
-      "createdOn": "2026-04-15",
-      "scheduledDate": "2026-04-15",
-      "tagNames": [
-        "Parts Received",
-        "10-10-10"
-      ],
-      "customer": "Susan Wu",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 156920109,
-      "invoiceId": 589989036
-    },
-    {
       "id": 590049438,
       "jobNumber": "590049438",
       "jobStatus": "Hold",
@@ -568,24 +515,6 @@
       "businessUnitId": 481747519,
       "soldById": 481801059,
       "invoiceId": 590049445
-    },
-    {
-      "id": 590055144,
-      "jobNumber": "590055144",
-      "jobStatus": "Hold",
-      "total": 1784.0,
-      "createdOn": "2026-04-16",
-      "scheduledDate": "2026-04-17",
-      "tagNames": [
-        "Gemaire",
-        "Club Member",
-        "Parts Received"
-      ],
-      "customer": "Dave Sowers",
-      "businessUnit": "CS - HVAC - Service - 12",
-      "businessUnitId": 2415186,
-      "soldById": 580648483,
-      "invoiceId": 590055151
     },
     {
       "id": 590090322,
