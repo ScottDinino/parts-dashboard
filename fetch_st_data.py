@@ -12,10 +12,22 @@ import os
 import time
 from datetime import datetime, timezone
 
-TENANT_ID     = (os.environ.get("ST_TENANT_ID")     or "973792675").strip()
-CLIENT_ID     = (os.environ.get("ST_CLIENT_ID")     or "cid.iuqpyeu1p6hablalzrq6jjzf1").strip()
-CLIENT_SECRET = (os.environ.get("ST_CLIENT_SECRET") or "cs1.i6kdgrqq4dgx7nmf8lv791mwp3udwd37qu6rfbm6v3sphkmf0b").strip()
-APP_KEY       = (os.environ.get("ST_APP_KEY")       or "ak1.mm0wsdj7a3lvfu46i30r7qpbe").strip()
+def _require_env(name):
+    """Read a required credential from the environment."""
+    val = (os.environ.get(name) or "").strip()
+    if not val:
+        raise SystemExit(
+            f"Missing required environment variable {name}. "
+            "Credentials come from GitHub Secrets (or your local shell) — "
+            "they are deliberately not stored in this file."
+        )
+    return val
+
+
+TENANT_ID     = _require_env("ST_TENANT_ID")
+CLIENT_ID     = _require_env("ST_CLIENT_ID")
+CLIENT_SECRET = _require_env("ST_CLIENT_SECRET")
+APP_KEY       = _require_env("ST_APP_KEY")
 
 INVENTORY_URL = f"https://api.servicetitan.io/inventory/v2/tenant/{TENANT_ID}"
 JPM_URL       = f"https://api.servicetitan.io/jpm/v2/tenant/{TENANT_ID}"
@@ -135,11 +147,6 @@ def enrich_job(job, headers):
     bunit    = ""
     inv_id = job.get("invoiceId")
     if inv_id:
-        inv_data = fetch_one(
-            f"{ACCOUNTING_URL}/invoices",
-            headers,
-        )
-        # Use targeted single-id fetch via list endpoint
         resp = requests.get(
             f"{ACCOUNTING_URL}/invoices",
             headers=headers,
