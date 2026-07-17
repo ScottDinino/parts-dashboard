@@ -1,16 +1,22 @@
 name: Deploy Dashboard
 "on":
   workflow_dispatch:
+  # GitHub's scheduler is best-effort and drops most runs: at "0 * * * *" this
+  # actually fired every 1.5-3h, not hourly. Asking every 6 min means even a
+  # heavily-dropped schedule lands often. 6 (not 5) keeps us at 10 builds/hour,
+  # the soft limit for branch-based Pages deploys.
   schedule:
-    - cron: "0 * * * *"   # runs every hour
+    - cron: "*/6 * * * *"
   push:
     paths:
-      - data/parts_report_past.xlsx
-      - data/parts_report_future.xlsx
       - fetch_st_data.py
       - parts_dashboard.py
 permissions:
   contents: write
+# One deploy at a time — overlapping runs would race on the gh-pages force-push.
+concurrency:
+  group: deploy-dashboard
+  cancel-in-progress: false
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -33,3 +39,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
           publish_branch: gh-pages
+          # Publish a single orphan commit instead of appending history —
+          # at ~240 deploys/day the branch would otherwise grow without bound.
+          force_orphan: true
