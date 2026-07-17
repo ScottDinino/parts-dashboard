@@ -199,76 +199,9 @@ def build_po_summary(pos):
 
 
 def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
-    # ── PO summary ────────────────────────────────────────────────────
+    """Render the dashboard: summary tiles on top, one sortable table below."""
     pos = pos or []
     job_po_map = job_po_map or {}
-    po_summary = build_po_summary(pos)
-
-    # Build PO table rows (active first, then received, skip canceled)
-    active_statuses   = {"Pending", "Sent", "PartiallyReceived"}
-    received_statuses = {"Received", "Exported"}
-
-    def po_status_badge(status):
-        cls = {
-            "Pending":           "badge-nto",
-            "Sent":              "badge-ordered",
-            "PartiallyReceived": "badge-ordered",
-            "Received":          "badge-received",
-            "Exported":          "badge-received",
-            "Canceled":          "badge-unknown",
-        }.get(status, "badge-unknown")
-        return f'<span class="badge {cls}">{status}</span>'
-
-    sorted_pos = sorted(pos, key=lambda p: (
-        0 if p["status"] in active_statuses else 1,
-        -(p["total"] or 0)
-    ))
-    po_table_rows = ""
-    for po in sorted_pos[:200]:  # cap at 200 for page size
-        if po["status"] == "Canceled":
-            continue
-        date_str = po["date"][:10] if po["date"] else "—"
-        recv_str = po["receivedOn"][:10] if po.get("receivedOn") else "—"
-        item_count = len(po.get("items", []))
-        item_names = ", ".join(
-            (i.get("description") or i.get("skuName") or "")[:40]
-            for i in po.get("items", [])[:3]
-        )
-        if len(po.get("items", [])) > 3:
-            item_names += f" +{len(po['items'])-3} more"
-        job_link = ""
-        if po.get("jobId"):
-            job_link = f'<a href="https://go.servicetitan.com/#/Job/Index/{po["jobId"]}" target="_blank" class="job-link">#{po["jobId"]}</a>'
-        po_table_rows += f"""
-        <tr>
-          <td><a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/{po['id']}" target="_blank" class="job-link">#{po['number']}</a></td>
-          <td class="td-customer">{po['vendorName']}</td>
-          <td>{po_status_badge(po['status'])}</td>
-          <td>{date_str}</td>
-          <td>{recv_str}</td>
-          <td>{item_count} item{'s' if item_count != 1 else ''}<br><small class="muted">{item_names}</small></td>
-          <td>{job_link or '—'}</td>
-          <td style="text-align:right;font-weight:600;color:var(--accent-green)">${po['total']:,.2f}</td>
-        </tr>"""
-
-    # Top vendor chart data
-    tv_labels = json.dumps([v[0] for v in po_summary["top_vendors"]])
-    tv_data   = json.dumps([round(v[1], 2) for v in po_summary["top_vendors"]])
-
-    # Vendor breakdown table
-    vendor_table_rows = ""
-    for vendor, spend in po_summary["top_vendors"]:
-        cnt = po_summary["vendor_count"].get(vendor, 0)
-        pct = (spend / po_summary["total_spend"] * 100) if po_summary["total_spend"] else 0
-        vendor_table_rows += f"""
-        <tr>
-          <td>{vendor}</td>
-          <td style="text-align:center">{cnt}</td>
-          <td style="text-align:right;font-weight:600;color:var(--accent-green)">${spend:,.2f}</td>
-          <td style="text-align:right;color:var(--text-3)">{pct:.1f}%</td>
-        </tr>"""
-
-    po_fetched_label = po_fetched_at[:10] if po_fetched_at else "N/A"
 
     def get_job_pos(job_num):
         """Return list of POs linked to this job."""
@@ -278,85 +211,7 @@ def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
         """Total part cost across all POs for this job."""
         return sum(po["total"] or 0 for po in get_job_pos(job_num))
 
-    def fmt_date_short(d):
-        if not d:
-            return "—"
-        return d[:10]
-
-    def po_card_block(job_num):
-        """Rich PO block for job cards — only shown on hold jobs."""
-        pos_for_job = get_job_pos(job_num)
-        if not pos_for_job:
-            return ""
-        blocks = []
-        for po in pos_for_job:
-            po_status  = po.get("status", "")
-            po_type    = po.get("typeName", "").strip()
-            status_cls = {
-                "Pending":           "badge-nto",
-                "Sent":              "badge-ordered",
-                "PartiallyReceived": "badge-ordered",
-                "Received":          "badge-received",
-                "Exported":          "badge-received",
-            }.get(po_status, "badge-unknown")
-            date_str = fmt_date_short(po.get("date"))
-            recv_str = fmt_date_short(po.get("receivedOn"))
-            cost_str = f"${po['total']:,.2f}" if po.get("total") else "—"
-            items = po.get("items", [])
-            part_lines = []
-            for item in items[:3]:
-                desc = (item.get("description") or item.get("skuName") or "").strip()
-                qty  = item.get("quantity", 1)
-                cost = item.get("cost", 0)
-                if desc:
-                    line = f"{desc[:50]}"
-                    if qty and qty != 1:
-                        line += f" ×{int(qty)}"
-                    if cost:
-                        line += f' <span style="color:var(--accent-green)">${cost:,.2f}/ea</span>'
-                    part_lines.append(line)
-            if len(items) > 3:
-                part_lines.append(f'<span style="color:var(--text-3)">+{len(items)-3} more items</span>')
-            parts_html = "".join(f'<div class="po-part-line">{p}</div>' for p in part_lines)
-            type_html  = f'<span class="po-type-badge">{po_type}</span>' if po_type else ""
-            blocks.append(f"""<div class="po-card-block">
-  <div class="po-card-header">
-    {type_html}
-    <a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/{po['id']}" target="_blank" class="po-num">PO#{po['number']}</a>
-    <span class="badge {status_cls}" style="font-size:9px;padding:2px 6px">{po_status}</span>
-  </div>
-  <div class="po-vendor-cost-row">
-    <span class="po-vendor-line">{po['vendorName']}</span>
-    <span class="po-cost">{cost_str}</span>
-  </div>
-  {parts_html}
-  <div class="po-dates">Ordered: {date_str}{' · Received: ' + recv_str if recv_str != '—' else ' · Not yet received'}</div>
-</div>""")
-        return "".join(blocks)
-
-    def po_html_for_job(job_num):
-        """Compact PO info for the detail table."""
-        pos_for_job = get_job_pos(job_num)
-        if not pos_for_job:
-            return ""
-        parts = []
-        for po in pos_for_job:
-            date_str = fmt_date_short(po.get("date"))
-            recv_str = fmt_date_short(po.get("receivedOn"))
-            cost_str = f"${po['total']:,.2f}" if po.get("total") else "—"
-            items = po.get("items", [])
-            desc = (items[0].get("description") or items[0].get("skuName") or "") if items else ""
-            parts.append(
-                f'<div class="po-inline">'
-                f'<a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/{po["id"]}" target="_blank" class="po-num">PO#{po["number"]}</a> '
-                f'<span class="po-vendor">{po["vendorName"]}</span> '
-                f'<span class="po-cost">{cost_str}</span><br>'
-                f'<span class="muted">{desc[:50] + ("…" if len(desc)>50 else "") if desc else ""} · Ord: {date_str}{" · Rcv: "+recv_str if recv_str != "—" else ""}</span>'
-                f'</div>'
-            )
-        return "".join(parts)
-
-    # ── JSON payload for JS filtering ─────────────────────────────────
+    # ── JSON payload — the table is rendered client-side from this ─────
     jobs_json = json.dumps([{
         "job_num":        r["job_num"],
         "customer":       r["customer"],
@@ -369,7 +224,6 @@ def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
         "days_since_ord": r["days_since_ord"],
         "revenue":        r["revenue"],
         "bunit":          r["bunit"],
-        "sold_by":        r["tech"],
         "po_cost":        po_cost_for_job(r["job_num"]),
         "po_count":       len(get_job_pos(r["job_num"])),
         "pos": [{
@@ -383,252 +237,27 @@ def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
             "total":      po.get("total") or 0,
             "parts": [
                 {
-                    "desc": (item.get("description") or item.get("skuName") or "").strip()[:60],
+                    "desc": (item.get("description") or item.get("skuName") or "").strip()[:70],
                     "qty":  item.get("quantity", 1),
                     "cost": item.get("cost") or 0,
                 }
-                for item in po.get("items", [])[:4]
+                for item in po.get("items", [])[:6]
             ],
         } for po in get_job_pos(r["job_num"])],
     } for r in rows])
 
-    # ── Summary counts ────────────────────────────────────────────────
+    # ── Summary counts (tiles double as filters) ──────────────────────
     nto_count      = sum(1 for r in rows if r["status"] == "NTO")
     ordered_count  = sum(1 for r in rows if r["status"] == "Ordered")
     received_count = sum(1 for r in rows if r["status"] == "Received")
-    overdue_count  = sum(1 for r in rows if r["days_to_sched"] is not None and r["days_to_sched"] < 0 and r["status"] != "Received")
+    overdue_count  = sum(1 for r in rows if r["days_to_sched"] is not None
+                         and r["days_to_sched"] < 0 and r["status"] != "Received")
     today_count    = sum(1 for r in rows if r["days_to_sched"] == 0 and r["status"] != "Received")
-    tomorrow_count = sum(1 for r in rows if r["days_to_sched"] == 1 and r["status"] != "Received")
     rev_pending    = sum(r["revenue"] for r in rows if r["status"] in ("NTO", "Ordered"))
-    rev_total      = sum(r["revenue"] for r in rows)
 
-    # ── Timeline buckets ───────────────────────────────────────────────
-    buckets = {}
-    for r in rows:
-        if r["status"] == "Received":
-            continue
-        d = r["sched_date"]
-        if d not in buckets:
-            buckets[d] = []
-        buckets[d].append(r)
-    sorted_dates = sorted(d for d in buckets if d is not None)
+    stamp = po_fetched_at[:16].replace("T", " ") if po_fetched_at else today.isoformat()
 
-    # ── Chart data ─────────────────────────────────────────────────────
-    chart_labels = [str(d) for d in sorted_dates]
-    chart_data   = [len(buckets[d]) for d in sorted_dates]
-
-    # ── Row HTML helpers ───────────────────────────────────────────────
-    def status_badge(status):
-        cls = {"NTO": "badge-nto", "Ordered": "badge-ordered", "Received": "badge-received"}.get(status, "badge-unknown")
-        return f'<span class="badge {cls}">{status}</span>'
-
-    def countdown_badge(days, status):
-        if status == "Received":
-            return '<span class="countdown received-tag">At Shop</span>'
-        if days is None:
-            return '<span class="countdown unknown">No Date</span>'
-        if days < 0:
-            return f'<span class="countdown overdue">{abs(days)}d OVERDUE</span>'
-        if days == 0:
-            return '<span class="countdown today">TODAY</span>'
-        if days == 1:
-            return '<span class="countdown tomorrow">Tomorrow</span>'
-        if days <= 3:
-            return f'<span class="countdown soon">In {days} days</span>'
-        return f'<span class="countdown future">In {days} days</span>'
-
-    def row_class(r):
-        if r["status"] == "Received": return "row-received"
-        d = r["days_to_sched"]
-        if d is None: return ""
-        if d < 0:  return "row-overdue"
-        if d == 0: return "row-today"
-        if d == 1: return "row-tomorrow"
-        if d <= 3: return "row-soon"
-        return ""
-
-    # Build main table rows
-    table_rows = ""
-    sorted_rows = sorted(rows, key=lambda r: (
-        r["sched_date"] if r["sched_date"] else date(9999,1,1),
-        r["status"]
-    ))
-    for r in sorted_rows:
-        tags_html = " ".join(f'<span class="tag">{t}</span>' for t in r["extra_tags"])
-        created_str = r["created_date"].strftime("%m/%d/%y") if r["created_date"] else "—"
-        sched_str   = r["sched_date"].strftime("%m/%d/%y")   if r["sched_date"]   else "—"
-        age = f'{r["days_since_ord"]}d ago' if r["days_since_ord"] is not None else "—"
-        po_html = po_html_for_job(r["job_num"])
-        po_cost = po_cost_for_job(r["job_num"])
-        po_cost_str = f'<span style="color:var(--accent-green);font-weight:600">${po_cost:,.2f}</span>' if po_cost else '—'
-        table_rows += f"""
-        <tr class="{row_class(r)}">
-          <td><a href="https://go.servicetitan.com/#/Job/Index/{r['job_num']}" target="_blank" class="job-link">#{r['job_num']}</a></td>
-          <td class="td-customer">{r['customer']}</td>
-          <td>{status_badge(r['status'])}</td>
-          <td class="td-supplier">{r['supplier'] or '—'}</td>
-          <td>{created_str}<br><small class="muted">{age}</small></td>
-          <td>{sched_str}</td>
-          <td>{countdown_badge(r['days_to_sched'], r['status'])}</td>
-          <td>{po_cost_str}{po_html}</td>
-          <td class="tags-cell">{tags_html}</td>
-        </tr>"""
-
-    # ── Customer Status Board ──────────────────────────────────────────
-    def status_sort_key(r):
-        order = {"NTO": 0, "Ordered": 1, "Received": 2, "Unknown": 3}
-        return (order.get(r["status"], 3), -(r["days_since_ord"] or 0))
-
-    status_rows = ""
-    for r in sorted(rows, key=status_sort_key):
-        created_str = r["created_date"].strftime("%m/%d/%y") if r["created_date"] else "—"
-        sched_str   = r["sched_date"].strftime("%m/%d/%y")   if r["sched_date"]   else "—"
-        wait_days   = r["days_since_ord"] or 0
-        wait_hrs    = wait_days * 24
-        wait_str    = f"{wait_days}d ({wait_hrs}h)" if wait_days > 0 else "Today"
-        late_cls    = " wait-critical" if wait_days >= 2 else (" wait-warn" if wait_days == 1 else "")
-        status_rows += f"""
-        <tr>
-          <td>{r['customer']}</td>
-          <td><a href="https://go.servicetitan.com/#/Job/Index/{r['job_num']}" target="_blank" class="job-link">#{r['job_num']}</a></td>
-          <td>{status_badge(r['status'])}</td>
-          <td>{r['supplier'] or '—'}</td>
-          <td>{created_str}</td>
-          <td>{sched_str}</td>
-          <td>{countdown_badge(r['days_to_sched'], r['status'])}</td>
-          <td><span class="wait-pill{late_cls}">{wait_str}</span></td>
-        </tr>"""
-
-    # ── No Air Section ─────────────────────────────────────────────────
-    no_air_rows = [r for r in rows if r["status"] != "Received" and (r["days_since_ord"] or 0) >= 2]
-    no_air_rows.sort(key=lambda r: -(r["days_since_ord"] or 0))
-    no_air_count = len(no_air_rows)
-
-    no_air_cards = ""
-    for r in no_air_rows:
-        wait_days = r["days_since_ord"] or 0
-        wait_hrs  = wait_days * 24
-        created_str = r["created_date"].strftime("%m/%d/%y") if r["created_date"] else "—"
-        sched_str   = r["sched_date"].strftime("%m/%d/%y")   if r["sched_date"]   else "No Date"
-        urgency_cls = "noair-critical" if wait_days >= 5 else ("noair-urgent" if wait_days >= 3 else "noair-warn")
-        no_air_cards += f"""
-        <div class="noair-card {urgency_cls}">
-          <div class="noair-wait-row">
-            <div class="noair-wait">{wait_days}</div>
-            <div class="noair-wait-unit">days</div>
-          </div>
-          <div class="noair-hrs">{wait_hrs} hours without A/C</div>
-          <div class="noair-divider"></div>
-          <div class="noair-customer">{r['customer']}</div>
-          <div class="noair-job">
-            <a href="https://go.servicetitan.com/#/Job/Index/{r['job_num']}" target="_blank" class="job-link">#{r['job_num']}</a>
-            {status_badge(r['status'])}
-          </div>
-          <div class="noair-detail"><span>Ordered {created_str}</span><span>·</span>{countdown_badge(r['days_to_sched'], r['status'])}</div>
-          {'<div class="noair-supplier">📦 ' + r['supplier'] + '</div>' if r['supplier'] else ''}
-        </div>"""
-
-    if not no_air_cards:
-        no_air_cards = '<div style="color:#64748b; font-size:14px; padding:16px 0;">No customers have been waiting longer than 48 hours.</div>'
-
-    # ── Timeline: original row view ────────────────────────────────────
-    timeline_html = ""
-    for d in sorted_dates:
-        day_rows = buckets[d]
-        delta = (d - today).days
-        if delta < 0:
-            label = f'<span class="tl-label overdue">{d.strftime("%a %b %d")} — {abs(delta)}d OVERDUE</span>'
-            tl_cls = "tl-overdue"
-        elif delta == 0:
-            label = f'<span class="tl-label today">TODAY — {d.strftime("%a %b %d")}</span>'
-            tl_cls = "tl-today"
-        elif delta == 1:
-            label = f'<span class="tl-label tomorrow">TOMORROW — {d.strftime("%a %b %d")}</span>'
-            tl_cls = "tl-tomorrow"
-        else:
-            label = f'<span class="tl-label future">{d.strftime("%A, %b %d")}</span>'
-            tl_cls = "tl-future"
-
-        cards = ""
-        for r in sorted(day_rows, key=lambda x: x["status"]):
-            sup_html  = f'<div class="card-supplier">{r["supplier"]}</div>' if r["supplier"] else ""
-            meta_html = f'<div class="card-meta">{r["bunit"]} · {r["tech"]}</div>' if r["bunit"] or r["tech"] else ""
-            po_block  = po_card_block(r["job_num"])
-            cards += f"""
-            <div class="tl-card {tl_cls}">
-              <div class="card-top">
-                <a href="https://go.servicetitan.com/#/Job/Index/{r['job_num']}" target="_blank" class="job-link">#{r['job_num']}</a>
-                {status_badge(r['status'])}
-              </div>
-              <div class="card-customer">{r['customer']}</div>
-              {meta_html}
-              {sup_html}
-              {countdown_badge(r['days_to_sched'], r['status'])}
-              {po_block}
-            </div>"""
-
-        timeline_html += f"""
-        <div class="tl-group">
-          <div class="tl-header">{label} <span class="tl-divider"></span><span class="tl-count">{len(day_rows)} job{'s' if len(day_rows)!=1 else ''}</span></div>
-          <div class="tl-cards">{cards}</div>
-        </div>"""
-
-    # ── Timeline: swimlane / kanban view ───────────────────────────────
-    swimlane_cols = ""
-    for d in sorted_dates:
-        day_rows = buckets[d]
-        delta = (d - today).days
-
-        if delta < 0:
-            col_cls   = "sl-col-overdue"
-            day_label = f'<span class="sl-day-badge sl-badge-overdue">{abs(delta)}d OVERDUE</span>'
-        elif delta == 0:
-            col_cls   = "sl-col-today"
-            day_label = '<span class="sl-day-badge sl-badge-today">TODAY</span>'
-        elif delta == 1:
-            col_cls   = "sl-col-tomorrow"
-            day_label = '<span class="sl-day-badge sl-badge-tomorrow">TOMORROW</span>'
-        elif delta <= 4:
-            col_cls   = "sl-col-soon"
-            day_label = f'<span class="sl-day-badge sl-badge-soon">In {delta}d</span>'
-        else:
-            col_cls   = "sl-col-future"
-            day_label = f'<span class="sl-day-badge sl-badge-future">In {delta}d</span>'
-
-        col_cards = ""
-        for r in sorted(day_rows, key=lambda x: ({"NTO":0,"Ordered":1,"Received":2}.get(x["status"],3))):
-            wait = r["days_since_ord"] or 0
-            wait_html = ""
-            if wait >= 2:
-                w_cls = "sl-card-wait-crit" if wait >= 5 else ("sl-card-wait-urgent" if wait >= 3 else "sl-card-wait-warn")
-                wait_html = f'<div class="sl-card-wait {w_cls}">{wait}d waiting</div>'
-            sup = f'<div class="sl-card-sup">📦 {r["supplier"]}</div>' if r["supplier"] else ""
-            po_block = po_card_block(r["job_num"])
-            col_cards += f"""
-            <div class="sl-card">
-              <div class="sl-card-top">
-                {status_badge(r['status'])}
-                <a href="https://go.servicetitan.com/#/Job/Index/{r['job_num']}" target="_blank" class="job-link">#{r['job_num']}</a>
-              </div>
-              <div class="sl-card-customer">{r['customer']}</div>
-              {sup}
-              {po_block}
-              {wait_html}
-            </div>"""
-
-        swimlane_cols += f"""
-        <div class="sl-col {col_cls}">
-          <div class="sl-col-header">
-            <div class="sl-col-dayname">{d.strftime("%a")}</div>
-            <div class="sl-col-date">{d.strftime("%b %d")}</div>
-            <div class="sl-col-meta">{day_label} <span class="sl-col-count">{len(day_rows)}</span></div>
-          </div>
-          <div class="sl-col-body">{col_cards}</div>
-        </div>"""
-
-    generated = datetime.now().strftime("%m/%d/%Y %I:%M %p")
-
-    html = f"""<!DOCTYPE html>
+    return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -636,1044 +265,345 @@ def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
 <title>Parts Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {{
-  --bg:          #080b12;
-  --surface:     #0e1420;
-  --surface2:    #131b2a;
-  --border:      #1c2840;
-  --border2:     #243050;
-  --text:        #e8edf5;
-  --text-2:      #8899b4;
-  --text-3:      #4a5878;
-  --red:         #ef4444;
-  --red-dim:     #7f1d1d;
-  --orange:      #f97316;
-  --orange-dim:  #7c2d12;
-  --yellow:      #f59e0b;
-  --yellow-dim:  #78350f;
-  --green:       #22c55e;
-  --green-dim:   #14532d;
-  --blue:        #3b82f6;
-  --blue-dim:    #1e3a5f;
-  --purple:      #a78bfa;
-  --purple-dim:  #312e81;
-  --cyan:        #22d3ee;
+  --bg:      #080b12;  --surface:  #0e1420;  --surface2: #131b2a;
+  --border:  #1c2840;  --border2:  #243050;
+  --text:    #e8edf5;  --text-2:   #8899b4;  --text-3:   #4a5878;
+  --red:     #ef4444;  --orange:   #f97316;  --yellow:   #f59e0b;
+  --green:   #22c55e;  --blue:     #3b82f6;
 }}
-
-* {{ box-sizing: border-box; margin: 0; padding: 0; }}
-body {{ font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }}
-
-/* ── SCROLLBAR ───────────────────────────────────── */
-::-webkit-scrollbar {{ width: 6px; height: 6px; }}
-::-webkit-scrollbar-track {{ background: var(--bg); }}
-::-webkit-scrollbar-thumb {{ background: var(--border2); border-radius: 3px; }}
-
-/* ── HEADER ──────────────────────────────────────── */
-.header {{
-  position: relative; overflow: hidden;
-  background: linear-gradient(135deg, #0d1526 0%, #111e35 50%, #0d1526 100%);
-  border-bottom: 1px solid var(--border);
-  padding: 28px 40px;
+* {{ margin:0; padding:0; box-sizing:border-box; }}
+body {{
+  font-family:'Inter',-apple-system,sans-serif; background:var(--bg);
+  color:var(--text); min-height:100vh; padding:24px; font-size:14px;
 }}
-.header::before {{
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(59,130,246,.08) 0%, transparent 70%);
-  pointer-events: none;
+.wrap {{ max-width:1500px; margin:0 auto; }}
+
+/* ── Header ── */
+header {{ margin-bottom:20px; }}
+h1 {{
+  font-size:24px; font-weight:800; letter-spacing:-.4px;
+  background:linear-gradient(90deg,#e8edf5 0%,#93c5fd 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text; display:inline-block;
 }}
-.header-inner {{ position: relative; max-width: 1440px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }}
-.header-left h1 {{
-  font-size: 22px; font-weight: 800; letter-spacing: -.3px;
-  background: linear-gradient(90deg, #e8edf5 0%, #93c5fd 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+.sub {{ color:var(--text-3); font-size:12px; margin-top:4px; }}
+
+/* ── Tiles ── */
+.tiles {{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:10px; margin-bottom:18px;
 }}
-.header-left .sub {{ color: var(--text-3); font-size: 12px; margin-top: 5px; font-weight: 500; }}
-.header-right {{ display: flex; align-items: center; gap: 10px; }}
-.header-pill {{
-  background: var(--surface2); border: 1px solid var(--border2);
-  border-radius: 99px; padding: 6px 14px;
-  font-size: 12px; font-weight: 600; color: var(--text-2);
+.tile {{
+  background:var(--surface); border:1px solid var(--border);
+  border-top:2px solid var(--c,var(--border2)); border-radius:12px;
+  padding:14px 16px; cursor:pointer; transition:.15s;
 }}
+.tile:hover {{ background:var(--surface2); border-color:var(--border2); transform:translateY(-1px); }}
+.tile.on {{ background:var(--surface2); box-shadow:0 0 0 1px var(--c,var(--blue)) inset; }}
+.tile .v {{ font-size:26px; font-weight:800; color:var(--c,var(--text)); line-height:1.1; }}
+.tile .l {{ font-size:11px; color:var(--text-2); font-weight:600; margin-top:3px; letter-spacing:.2px; }}
 
-/* ── CONTAINER ───────────────────────────────────── */
-.container {{ max-width: 1440px; margin: 0 auto; padding: 32px 40px; }}
-
-/* ── STAT CARDS ──────────────────────────────────── */
-.stats-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 14px; margin-bottom: 36px; }}
-.stat-card {{
-  position: relative; overflow: hidden;
-  background: var(--surface); border-radius: 16px;
-  padding: 20px 22px; border: 1px solid var(--border);
-  transition: transform .2s, border-color .2s;
+/* ── Controls ── */
+.controls {{ display:flex; gap:10px; margin-bottom:12px; align-items:center; flex-wrap:wrap; }}
+#q {{
+  flex:1; min-width:220px; background:var(--surface); border:1px solid var(--border2);
+  border-radius:9px; padding:10px 14px; color:var(--text); font-size:13px;
+  font-family:inherit; outline:none;
 }}
-.stat-card:hover {{ transform: translateY(-2px); border-color: var(--border2); }}
-.stat-card::after {{
-  content: ''; position: absolute; bottom: -30px; right: -20px;
-  width: 90px; height: 90px; border-radius: 50%;
-  opacity: .07; pointer-events: none;
+#q:focus {{ border-color:var(--blue); }}
+#q::placeholder {{ color:var(--text-3); }}
+.count {{ color:var(--text-3); font-size:12px; white-space:nowrap; }}
+.clear {{
+  background:var(--surface2); border:1px solid var(--border2); color:var(--text-2);
+  border-radius:8px; padding:9px 14px; font-size:12px; cursor:pointer;
+  font-family:inherit; font-weight:600;
 }}
-.stat-card .s-icon {{ font-size: 20px; margin-bottom: 12px; display: block; }}
-.stat-card .label {{ font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--text-3); margin-bottom: 6px; }}
-.stat-card .value {{ font-size: 40px; font-weight: 900; line-height: 1; letter-spacing: -1px; }}
-.stat-card .delta {{ font-size: 11px; color: var(--text-3); margin-top: 6px; }}
+.clear:hover {{ color:var(--text); border-color:var(--blue); }}
 
-.stat-nto      {{ border-top: 2px solid var(--orange); }}
-.stat-nto      .value {{ color: var(--orange); }}
-.stat-nto::after {{ background: var(--orange); }}
-
-.stat-ordered  {{ border-top: 2px solid var(--blue); }}
-.stat-ordered  .value {{ color: var(--blue); }}
-.stat-ordered::after {{ background: var(--blue); }}
-
-.stat-received {{ border-top: 2px solid var(--green); }}
-.stat-received .value {{ color: var(--green); }}
-.stat-received::after {{ background: var(--green); }}
-
-.stat-overdue  {{ border-top: 2px solid var(--red); }}
-.stat-overdue  .value {{ color: var(--red); }}
-.stat-overdue::after {{ background: var(--red); }}
-
-.stat-today    {{ border-top: 2px solid var(--yellow); }}
-.stat-today    .value {{ color: var(--yellow); }}
-.stat-today::after {{ background: var(--yellow); }}
-
-.stat-tomorrow {{ border-top: 2px solid var(--purple); }}
-.stat-tomorrow .value {{ color: var(--purple); }}
-.stat-tomorrow::after {{ background: var(--purple); }}
-
-.stat-total    {{ border-top: 2px solid var(--cyan); }}
-.stat-total    .value {{ color: var(--cyan); }}
-.stat-total::after {{ background: var(--cyan); }}
-
-.stat-rev      {{ border-top: 2px solid #34d399; }}
-.stat-rev      .value {{ color: #34d399; font-size: 28px; letter-spacing: -1px; }}
-.stat-rev::after {{ background: #34d399; }}
-.stat-rev.tile-active {{ box-shadow: 0 0 0 2px #34d399; }}
-
-/* ── SECTION TITLE ───────────────────────────────── */
-.section-title {{
-  display: flex; align-items: center; gap: 10px;
-  font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
-  color: var(--text-2); margin-bottom: 18px; margin-top: 40px;
+/* ── Table ── */
+.tbl-wrap {{
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; overflow:hidden;
 }}
-.section-title::after {{
-  content: ''; flex: 1; height: 1px;
-  background: linear-gradient(90deg, var(--border2) 0%, transparent 100%);
+.scroll {{ overflow-x:auto; }}
+table {{ width:100%; border-collapse:collapse; min-width:1000px; }}
+th {{
+  text-align:left; font-size:11px; font-weight:700; color:var(--text-2);
+  text-transform:uppercase; letter-spacing:.5px; padding:12px 14px;
+  border-bottom:1px solid var(--border2); cursor:pointer;
+  user-select:none; white-space:nowrap; background:var(--surface2);
 }}
+th:hover {{ color:var(--text); }}
+th .arw {{ opacity:.35; margin-left:4px; font-size:9px; }}
+th.sorted {{ color:var(--blue); }}
+th.sorted .arw {{ opacity:1; }}
+td {{ padding:11px 14px; border-bottom:1px solid var(--border); vertical-align:middle; }}
+tr.job {{ cursor:pointer; transition:background .1s; }}
+tr.job:hover {{ background:var(--surface2); }}
+tr.job:last-child td {{ border-bottom:none; }}
+.cust {{ font-weight:600; }}
+.bu {{ color:var(--text-3); font-size:11px; }}
+.muted {{ color:var(--text-3); }}
+.jlink {{ color:var(--blue); text-decoration:none; font-weight:600; font-variant-numeric:tabular-nums; }}
+.jlink:hover {{ text-decoration:underline; }}
+.num {{ font-variant-numeric:tabular-nums; }}
 
-/* ── CHART ───────────────────────────────────────── */
-.chart-wrap {{
-  background: var(--surface); border-radius: 16px;
-  padding: 24px; border: 1px solid var(--border);
-  height: 240px; margin-bottom: 0;
-}}
-
-/* ── NTO ALERT ───────────────────────────────────── */
-.alert-box {{
-  background: linear-gradient(135deg, #2d1407 0%, #1f0d03 100%);
-  border: 1px solid #b45309;
-  border-radius: 14px; padding: 18px 22px; margin-bottom: 28px;
-  display: flex; align-items: center; gap: 16px;
-  box-shadow: 0 0 30px rgba(249,115,22,.08);
-}}
-.alert-box .alert-icon {{ font-size: 32px; flex-shrink: 0; }}
-.alert-box .alert-text h3 {{ color: #fdba74; font-size: 15px; font-weight: 800; }}
-.alert-box .alert-text p  {{ color: #92400e; font-size: 13px; margin-top: 4px; font-weight: 500; }}
-.alert-box.hidden {{ display: none; }}
-
-/* ── BADGES ──────────────────────────────────────── */
 .badge {{
-  display: inline-flex; align-items: center; gap: 4px;
-  font-size: 10px; font-weight: 700; padding: 3px 9px;
-  border-radius: 99px; text-transform: uppercase; letter-spacing: .06em;
-  border: 1px solid transparent;
+  display:inline-block; padding:3px 9px; border-radius:20px;
+  font-size:10px; font-weight:700; letter-spacing:.3px; white-space:nowrap;
 }}
-.badge-nto      {{ background: rgba(249,115,22,.15); color: #fb923c; border-color: rgba(249,115,22,.3); }}
-.badge-ordered  {{ background: rgba(59,130,246,.15);  color: #60a5fa; border-color: rgba(59,130,246,.3); }}
-.badge-received {{ background: rgba(34,197,94,.15);   color: #4ade80; border-color: rgba(34,197,94,.3); }}
-.badge-unknown  {{ background: rgba(100,116,139,.15); color: #94a3b8; border-color: rgba(100,116,139,.3); }}
+.b-nto      {{ background:rgba(249,115,22,.14); color:var(--orange); }}
+.b-ordered  {{ background:rgba(59,130,246,.14); color:var(--blue); }}
+.b-received {{ background:rgba(34,197,94,.14);  color:var(--green); }}
+.b-unknown  {{ background:rgba(136,153,180,.12); color:var(--text-2); }}
 
-/* ── COUNTDOWN PILL ──────────────────────────────── */
-.countdown {{
-  display: inline-flex; align-items: center;
-  font-size: 11px; font-weight: 700; padding: 4px 10px;
-  border-radius: 8px; white-space: nowrap; letter-spacing: .02em;
-}}
-.countdown.overdue      {{ background: rgba(239,68,68,.15);   color: #fca5a5; border: 1px solid rgba(239,68,68,.3); }}
-.countdown.today        {{ background: rgba(245,158,11,.15);  color: #fde68a; border: 1px solid rgba(245,158,11,.3); }}
-.countdown.tomorrow     {{ background: rgba(167,139,250,.15); color: #c4b5fd; border: 1px solid rgba(167,139,250,.3); }}
-.countdown.soon         {{ background: rgba(59,130,246,.15);  color: #93c5fd; border: 1px solid rgba(59,130,246,.3); }}
-.countdown.future       {{ background: var(--surface2); color: var(--text-3); border: 1px solid var(--border); }}
-.countdown.received-tag {{ background: rgba(34,197,94,.15);   color: #86efac; border: 1px solid rgba(34,197,94,.3); }}
-.countdown.unknown      {{ background: var(--surface2); color: var(--text-3); border: 1px solid var(--border); }}
+.wait {{ font-weight:700; font-variant-numeric:tabular-nums; }}
+.w-hot  {{ color:var(--red); }}
+.w-warm {{ color:var(--orange); }}
+.w-ok   {{ color:var(--text-2); }}
+.sched-late {{ color:var(--red); font-weight:600; }}
+.sched-now  {{ color:var(--yellow); font-weight:600; }}
 
-/* ── TIMELINE ────────────────────────────────────── */
-.tl-group {{ margin-bottom: 24px; }}
-.tl-header {{ display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }}
-.tl-label {{
-  font-size: 12px; font-weight: 800; padding: 5px 14px;
-  border-radius: 99px; letter-spacing: .05em; text-transform: uppercase; border: 1px solid transparent;
+/* ── Expanded PO detail ── */
+tr.det > td {{ padding:0; background:#0a0f1a; }}
+.det-in {{ padding:14px 18px; border-bottom:1px solid var(--border); }}
+.po {{
+  background:var(--surface); border:1px solid var(--border2); border-radius:10px;
+  padding:12px 14px; margin-bottom:8px;
 }}
-.tl-label.overdue  {{ background: rgba(239,68,68,.15); color: #fca5a5; border-color: rgba(239,68,68,.3); }}
-.tl-label.today    {{ background: rgba(245,158,11,.15); color: #fde68a; border-color: rgba(245,158,11,.3); }}
-.tl-label.tomorrow {{ background: rgba(167,139,250,.15); color: #c4b5fd; border-color: rgba(167,139,250,.3); }}
-.tl-label.future   {{ background: rgba(59,130,246,.1); color: #93c5fd; border-color: rgba(59,130,246,.2); }}
-.tl-divider {{ flex: 1; height: 1px; background: var(--border); }}
-.tl-count {{
-  font-size: 11px; font-weight: 600; color: var(--text-3);
-  background: var(--surface2); border: 1px solid var(--border); border-radius: 99px; padding: 2px 10px;
+.po:last-child {{ margin-bottom:0; }}
+.po-h {{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px; }}
+.po-n {{ color:var(--blue); text-decoration:none; font-weight:700; font-size:12px; }}
+.po-n:hover {{ text-decoration:underline; }}
+.po-v {{ color:var(--text-2); font-size:12px; }}
+.po-t {{ margin-left:auto; font-weight:700; font-variant-numeric:tabular-nums; }}
+.part {{
+  display:flex; gap:10px; font-size:12px; color:var(--text-2);
+  padding:4px 0; border-top:1px dashed var(--border);
 }}
-.tl-cards {{ display: flex; flex-wrap: wrap; gap: 10px; }}
-.tl-card {{
-  background: var(--surface); border-radius: 12px;
-  padding: 14px 16px; min-width: 190px; max-width: 240px;
-  border: 1px solid var(--border); position: relative; overflow: hidden;
-  transition: transform .15s, border-color .15s;
-}}
-.tl-card:hover {{ transform: translateY(-2px); border-color: var(--border2); }}
-.tl-card::before {{
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-}}
-.tl-card.tl-overdue::before  {{ background: var(--red); }}
-.tl-card.tl-today::before    {{ background: var(--yellow); }}
-.tl-card.tl-tomorrow::before {{ background: var(--purple); }}
-.tl-card.tl-future::before   {{ background: var(--blue); }}
-.card-top {{ display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }}
-.card-job {{ font-size: 11px; font-weight: 700; color: var(--text-3); font-family: 'SF Mono', 'Fira Code', monospace; }}
-.card-customer {{ font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; }}
-.card-supplier {{ font-size: 11px; color: var(--text-3); margin-top: 4px; font-weight: 500; }}
-.card-meta {{ font-size: 10px; color: var(--text-3); margin-top: 3px; }}
-
-/* ── NO AIR ──────────────────────────────────────── */
-.noair-banner {{
-  background: linear-gradient(135deg, #1f0505 0%, #120303 100%);
-  border: 1px solid rgba(239,68,68,.4);
-  border-radius: 14px; padding: 16px 22px; margin-bottom: 20px;
-  display: flex; align-items: center; gap: 14px;
-  box-shadow: 0 0 40px rgba(239,68,68,.08);
-}}
-.noair-banner .nb-icon {{ font-size: 28px; flex-shrink: 0; }}
-.noair-banner .nb-text h3 {{ color: #fca5a5; font-size: 15px; font-weight: 800; }}
-.noair-banner .nb-text p  {{ color: rgba(252,165,165,.5); font-size: 12px; margin-top: 3px; }}
-.noair-banner.hidden {{ display: none; }}
-
-.noair-grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-bottom: 0; }}
-
-.noair-card {{
-  border-radius: 16px; padding: 20px; position: relative; overflow: hidden;
-  border: 1px solid var(--border); transition: transform .2s;
-}}
-.noair-card:hover {{ transform: translateY(-3px); }}
-
-.noair-card.noair-warn {{
-  background: linear-gradient(145deg, #1a1400 0%, #0e1420 100%);
-  border-color: rgba(245,158,11,.3);
-  box-shadow: 0 0 20px rgba(245,158,11,.06);
-}}
-.noair-card.noair-urgent {{
-  background: linear-gradient(145deg, #1a0e00 0%, #0e1420 100%);
-  border-color: rgba(249,115,22,.4);
-  box-shadow: 0 0 24px rgba(249,115,22,.1);
-}}
-.noair-card.noair-critical {{
-  background: linear-gradient(145deg, #1a0000 0%, #0e1420 100%);
-  border-color: rgba(239,68,68,.5);
-  box-shadow: 0 0 30px rgba(239,68,68,.12);
-}}
-.noair-card.noair-critical .noair-wait {{ animation: pulse-red 2s ease-in-out infinite; }}
-
-@keyframes pulse-red {{
-  0%, 100% {{ opacity: 1; }}
-  50%       {{ opacity: .65; }}
-}}
-
-.noair-card::before {{
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 16px 16px 0 0;
-}}
-.noair-card.noair-warn::before     {{ background: linear-gradient(90deg, var(--yellow), transparent); }}
-.noair-card.noair-urgent::before   {{ background: linear-gradient(90deg, var(--orange), transparent); }}
-.noair-card.noair-critical::before {{ background: linear-gradient(90deg, var(--red), transparent); }}
-
-.noair-wait-row {{ display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; }}
-.noair-wait {{ font-size: 48px; font-weight: 900; line-height: 1; letter-spacing: -2px; }}
-.noair-card.noair-warn     .noair-wait {{ color: var(--yellow); }}
-.noair-card.noair-urgent   .noair-wait {{ color: var(--orange); }}
-.noair-card.noair-critical .noair-wait {{ color: var(--red); }}
-.noair-wait-unit {{ font-size: 16px; font-weight: 700; color: var(--text-3); padding-bottom: 4px; }}
-.noair-hrs {{ font-size: 12px; color: var(--text-3); font-weight: 500; margin-bottom: 10px; }}
-.noair-divider {{ height: 1px; background: var(--border); margin: 10px 0; }}
-.noair-customer {{ font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 5px; line-height: 1.3; }}
-.noair-job {{ display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }}
-.noair-detail {{ font-size: 11px; color: var(--text-3); margin-top: 4px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-weight: 500; }}
-.noair-supplier {{ font-size: 11px; color: var(--text-2); margin-top: 6px; font-weight: 600; }}
-
-/* ── TABLES ──────────────────────────────────────── */
-.table-wrap {{
-  background: var(--surface); border-radius: 16px;
-  border: 1px solid var(--border); overflow: auto; margin-bottom: 0;
-}}
-table {{ width: 100%; border-collapse: collapse; font-size: 13px; }}
-thead th {{
-  background: var(--surface2); padding: 13px 16px;
-  text-align: left; font-size: 10px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: .08em;
-  color: var(--text-3); border-bottom: 1px solid var(--border);
-  white-space: nowrap; position: sticky; top: 0; z-index: 1;
-}}
-tbody tr {{ border-bottom: 1px solid var(--border); transition: background .12s; }}
-tbody tr:last-child {{ border-bottom: none; }}
-tbody tr:hover {{ background: rgba(255,255,255,.03); }}
-tbody td {{ padding: 12px 16px; vertical-align: middle; }}
-
-.row-overdue  {{ background: rgba(239,68,68,.05); }}
-.row-today    {{ background: rgba(245,158,11,.05); }}
-.row-tomorrow {{ background: rgba(167,139,250,.05); }}
-.row-soon     {{ background: rgba(59,130,246,.03); }}
-.row-received {{ opacity: .5; }}
-
-.td-customer {{ font-weight: 600; color: var(--text); }}
-.td-supplier {{ font-weight: 600; color: var(--text-2); font-size: 12px; }}
-.job-link {{ color: var(--blue); text-decoration: none; font-family: 'SF Mono','Fira Code',monospace; font-size: 11px; font-weight: 700; }}
-.job-link:hover {{ color: #93c5fd; text-decoration: underline; }}
-.po-inline {{ font-size: 11px; margin-top: 4px; color: var(--text-2); }}
-.po-num {{ font-family: 'SF Mono','Fira Code',monospace; color: var(--blue); font-weight: 600; text-decoration:none; }}
-.po-num:hover {{ text-decoration: underline; }}
-.po-vendor {{ color: var(--text-2); }}
-.po-cost {{ color: var(--accent-green); font-weight: 700; margin: 0 4px; }}
-.po-card-block {{ background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; margin-top: 8px; font-size: 11px; }}
-.po-card-header {{ display:flex; align-items:center; gap:6px; margin-bottom:4px; flex-wrap:wrap; }}
-.po-vendor-cost-row {{ display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }}
-.po-vendor-line {{ color: var(--text-3); font-size: 11px; }}
-.po-part-line {{ color: var(--text-2); font-size: 11px; line-height:1.5; }}
-.po-dates {{ color: var(--text-3); font-size: 10px; margin-top: 5px; }}
-.po-type-badge {{ background: rgba(139,92,246,.15); color: #a78bfa; border: 1px solid rgba(139,92,246,.3); border-radius: 4px; font-size: 9px; font-weight: 700; padding: 2px 6px; text-transform: uppercase; letter-spacing: .06em; }}
-.muted {{ color: var(--text-3); font-size: 11px; font-weight: 500; }}
-.tags-cell {{ max-width: 260px; }}
-.tag {{
-  display: inline-block; background: var(--surface2);
-  color: var(--text-3); font-size: 10px; font-weight: 500;
-  padding: 2px 7px; border-radius: 5px; margin: 2px 2px 2px 0;
-  border: 1px solid var(--border);
-}}
-
-.wait-pill         {{ font-size: 12px; font-weight: 600; color: var(--text-3); }}
-.wait-pill.wait-warn     {{ color: var(--yellow); }}
-.wait-pill.wait-critical {{ color: var(--red); font-weight: 800; }}
-
-/* ── DONUT CLUSTER ───────────────────────────────── */
-.top-grid {{ display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; margin-bottom: 0; }}
-@media (max-width: 900px) {{ .top-grid {{ grid-template-columns: 1fr; }} }}
-.donut-wrap {{
-  background: var(--surface); border-radius: 16px;
-  padding: 24px; border: 1px solid var(--border);
-  height: 240px; display: flex; flex-direction: column;
-}}
-.donut-wrap canvas {{ flex: 1; }}
-.donut-legend {{ display: flex; flex-direction: column; gap: 10px; }}
-.dl-item {{ display: flex; align-items: center; gap: 10px; }}
-.dl-dot {{ width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }}
-.dl-label {{ font-size: 12px; font-weight: 600; color: var(--text-2); flex: 1; }}
-.dl-val {{ font-size: 14px; font-weight: 800; }}
-
-/* ── TILE INTERACTIVITY ──────────────────────────── */
-.stat-card {{ cursor: pointer; }}
-.stat-card .tile-hint {{
-  font-size: 10px; font-weight: 600; color: var(--text-3);
-  margin-top: 10px; opacity: 0; transition: opacity .2s;
-  text-transform: uppercase; letter-spacing: .06em;
-}}
-.stat-card:hover .tile-hint {{ opacity: 1; }}
-.stat-card:hover {{ transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,.3); }}
-.stat-card.tile-active {{
-  box-shadow: 0 0 0 2px currentColor;
-  transform: translateY(-3px);
-}}
-.stat-nto.tile-active      {{ box-shadow: 0 0 0 2px var(--orange); }}
-.stat-ordered.tile-active  {{ box-shadow: 0 0 0 2px var(--blue); }}
-.stat-received.tile-active {{ box-shadow: 0 0 0 2px var(--green); }}
-.stat-overdue.tile-active  {{ box-shadow: 0 0 0 2px var(--red); }}
-.stat-today.tile-active    {{ box-shadow: 0 0 0 2px var(--yellow); }}
-.stat-tomorrow.tile-active {{ box-shadow: 0 0 0 2px var(--purple); }}
-.stat-total.tile-active    {{ box-shadow: 0 0 0 2px var(--cyan); }}
-
-/* ── FILTER PANEL ────────────────────────────────── */
-.fp-header {{
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 16px;
-}}
-.fp-title {{
-  font-size: 15px; font-weight: 800; color: var(--text);
-  display: flex; align-items: center; gap: 10px;
-}}
-.fp-close {{
-  background: var(--surface2); border: 1px solid var(--border);
-  color: var(--text-3); border-radius: 8px; padding: 6px 14px;
-  font-size: 12px; font-weight: 700; cursor: pointer;
-  font-family: 'Inter', sans-serif; transition: all .15s;
-}}
-.fp-close:hover {{ border-color: var(--border2); color: var(--text); }}
-
-.fp-cards {{
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 14px;
-}}
-.fp-card {{
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 14px; padding: 18px 20px;
-  transition: transform .15s, border-color .15s;
-  position: relative; overflow: hidden;
-}}
-.fp-card:hover {{ transform: translateY(-2px); border-color: var(--border2); }}
-.fp-card::before {{
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-}}
-.fp-card.fc-nto::before      {{ background: var(--orange); }}
-.fp-card.fc-ordered::before  {{ background: var(--blue); }}
-.fp-card.fc-received::before {{ background: var(--green); }}
-.fp-card.fc-overdue::before  {{ background: var(--red); }}
-.fp-card.fc-today::before    {{ background: var(--yellow); }}
-.fp-card.fc-tomorrow::before {{ background: var(--purple); }}
-.fp-card.fc-rev::before      {{ background: #34d399; }}
-
-.fp-card-top {{ display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px; }}
-.fp-customer {{ font-size: 16px; font-weight: 800; color: var(--text); line-height: 1.2; }}
-.fp-job-link {{
-  color: var(--blue); text-decoration: none; font-family: 'SF Mono','Fira Code',monospace;
-  font-size: 11px; font-weight: 700; white-space: nowrap;
-  background: var(--surface2); border: 1px solid var(--border);
-  padding: 3px 8px; border-radius: 6px;
-}}
-.fp-job-link:hover {{ color: #93c5fd; border-color: var(--border2); }}
-
-.fp-badges {{ display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }}
-
-.fp-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }}
-.fp-field {{ background: var(--surface2); border-radius: 8px; padding: 8px 10px; border: 1px solid var(--border); }}
-.fp-field-label {{ font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-3); margin-bottom: 3px; }}
-.fp-field-value {{ font-size: 13px; font-weight: 700; color: var(--text); }}
-.fp-field-value.accent-orange {{ color: var(--orange); }}
-.fp-field-value.accent-red    {{ color: var(--red); }}
-.fp-field-value.accent-green  {{ color: var(--green); }}
-.fp-field-value.accent-yellow {{ color: var(--yellow); }}
-.fp-field-value.accent-purple {{ color: var(--purple); }}
-.fp-field-value.accent-blue   {{ color: var(--blue); }}
-
-.fp-tags {{ margin-top: 10px; display: flex; flex-wrap: wrap; gap: 4px; }}
-.fp-bunit {{ font-size: 11px; color: var(--text-3); font-weight: 500; margin-top: 10px; }}
-.fp-sold {{ font-size: 11px; color: var(--text-3); font-weight: 500; margin-top: 3px; }}
-
-.fp-empty {{
-  grid-column: 1/-1; text-align: center;
-  padding: 40px; color: var(--text-3); font-size: 14px; font-weight: 600;
-}}
-
-/* ── VIEW TOGGLE ─────────────────────────────────── */
-.view-toggle {{ display: flex; gap: 6px; margin-bottom: 18px; }}
-.vt-btn {{
-  display: flex; align-items: center; gap: 7px;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 8px 16px;
-  font-size: 12px; font-weight: 700; color: var(--text-3);
-  cursor: pointer; transition: all .18s; font-family: 'Inter', sans-serif;
-  letter-spacing: .02em;
-}}
-.vt-btn:hover {{ border-color: var(--border2); color: var(--text-2); }}
-.vt-btn.active {{
-  background: var(--blue-dim); border-color: rgba(59,130,246,.5);
-  color: #93c5fd;
-}}
-.vt-btn .vt-icon {{ font-size: 14px; }}
-
-/* ── SWIMLANE ────────────────────────────────────── */
-.swimlane-wrap {{
-  overflow-x: auto; overflow-y: visible;
-  padding-bottom: 12px;
-  /* custom scrollbar */
-  scrollbar-width: thin;
-  scrollbar-color: var(--border2) transparent;
-}}
-.swimlane-wrap::-webkit-scrollbar {{ height: 5px; }}
-.swimlane-wrap::-webkit-scrollbar-thumb {{ background: var(--border2); border-radius: 3px; }}
-
-.swimlane {{
-  display: flex; gap: 12px;
-  align-items: flex-start;
-  min-width: max-content;
-  padding: 2px 2px 4px;
-}}
-
-.sl-col {{
-  width: 210px; flex-shrink: 0;
-  border-radius: 14px; border: 1px solid var(--border);
-  background: var(--surface); overflow: hidden;
-  display: flex; flex-direction: column;
-}}
-
-.sl-col-overdue  {{ border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.04); }}
-.sl-col-today    {{ border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.04); }}
-.sl-col-tomorrow {{ border-color: rgba(167,139,250,.3); background: rgba(167,139,250,.03); }}
-.sl-col-soon     {{ border-color: rgba(59,130,246,.25); background: rgba(59,130,246,.03); }}
-.sl-col-future   {{ border-color: var(--border); }}
-
-.sl-col-header {{
-  padding: 14px 14px 12px;
-  border-bottom: 1px solid var(--border);
-  position: relative;
-}}
-.sl-col-overdue  .sl-col-header {{ border-bottom-color: rgba(239,68,68,.2); }}
-.sl-col-today    .sl-col-header {{ border-bottom-color: rgba(245,158,11,.2); }}
-.sl-col-tomorrow .sl-col-header {{ border-bottom-color: rgba(167,139,250,.2); }}
-.sl-col-soon     .sl-col-header {{ border-bottom-color: rgba(59,130,246,.2); }}
-
-.sl-col-dayname {{ font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text-3); margin-bottom: 2px; }}
-.sl-col-date    {{ font-size: 20px; font-weight: 900; letter-spacing: -.5px; color: var(--text); margin-bottom: 8px; }}
-.sl-col-overdue  .sl-col-date {{ color: var(--red); }}
-.sl-col-today    .sl-col-date {{ color: var(--yellow); }}
-.sl-col-tomorrow .sl-col-date {{ color: var(--purple); }}
-.sl-col-soon     .sl-col-date {{ color: var(--blue); }}
-
-.sl-col-meta {{ display: flex; align-items: center; justify-content: space-between; }}
-.sl-day-badge {{
-  font-size: 9px; font-weight: 800; padding: 3px 8px;
-  border-radius: 99px; text-transform: uppercase; letter-spacing: .07em;
-  border: 1px solid transparent;
-}}
-.sl-badge-overdue  {{ background: rgba(239,68,68,.15); color: #fca5a5; border-color: rgba(239,68,68,.3); }}
-.sl-badge-today    {{ background: rgba(245,158,11,.15); color: #fde68a; border-color: rgba(245,158,11,.3); }}
-.sl-badge-tomorrow {{ background: rgba(167,139,250,.15); color: #c4b5fd; border-color: rgba(167,139,250,.3); }}
-.sl-badge-soon     {{ background: rgba(59,130,246,.15); color: #93c5fd; border-color: rgba(59,130,246,.3); }}
-.sl-badge-future   {{ background: var(--surface2); color: var(--text-3); border-color: var(--border); }}
-
-.sl-col-count {{
-  font-size: 11px; font-weight: 800; color: var(--text-3);
-  background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 99px; width: 22px; height: 22px;
-  display: inline-flex; align-items: center; justify-content: center;
-}}
-
-.sl-col-body {{ padding: 10px; display: flex; flex-direction: column; gap: 8px; }}
-
-.sl-card {{
-  background: var(--surface2); border-radius: 10px;
-  padding: 11px 12px; border: 1px solid var(--border);
-  transition: transform .15s, border-color .15s;
-  cursor: default;
-}}
-.sl-card:hover {{ transform: translateY(-2px); border-color: var(--border2); }}
-.sl-card-top {{ display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }}
-.sl-card-customer {{ font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; margin-bottom: 4px; }}
-.sl-card-sup {{ font-size: 10px; color: var(--text-3); font-weight: 500; margin-top: 4px; }}
-.sl-card-wait {{
-  display: inline-block; margin-top: 7px;
-  font-size: 10px; font-weight: 800; padding: 2px 8px;
-  border-radius: 99px; letter-spacing: .04em;
-}}
-.sl-card-wait-warn   {{ background: rgba(245,158,11,.15); color: #fde68a; border: 1px solid rgba(245,158,11,.3); }}
-.sl-card-wait-urgent {{ background: rgba(249,115,22,.15); color: #fdba74; border: 1px solid rgba(249,115,22,.3); }}
-.sl-card-wait-crit   {{ background: rgba(239,68,68,.15);  color: #fca5a5; border: 1px solid rgba(239,68,68,.3); }}
+.part .d {{ flex:1; }}
+.part .q {{ color:var(--text-3); white-space:nowrap; }}
+.no-po {{ color:var(--text-3); font-size:12px; font-style:italic; }}
+.empty {{ padding:50px; text-align:center; color:var(--text-3); }}
+@media (max-width:700px) {{ body {{ padding:12px; }} .tile .v {{ font-size:22px; }} }}
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<!-- ── HEADER ────────────────────────────────────── -->
-<div class="header">
-  <div class="header-inner">
-    <div class="header-left">
-      <h1>Parts Dashboard</h1>
-      <div class="sub">{today.strftime("%A, %B %d, %Y")} &nbsp;·&nbsp; Generated {generated}</div>
-    </div>
-    <div class="header-right">
-      <span class="header-pill">{len(rows)} Total Jobs</span>
-      {'<span class="header-pill" style="color:#fb923c;border-color:rgba(249,115,22,.4)">⚠ ' + str(nto_count) + ' NTO</span>' if nto_count > 0 else ''}
-      {'<span class="header-pill" style="color:#fca5a5;border-color:rgba(239,68,68,.4)">🔥 ' + str(no_air_count) + ' No Air 48h+</span>' if no_air_count > 0 else ''}
-    </div>
+<header>
+  <h1>Parts Dashboard</h1>
+  <div class="sub">RTR jobs on hold &middot; Coral Springs + Plumbing &middot; updated {stamp}</div>
+</header>
+
+<div class="tiles">
+  <div class="tile" data-f="all"      style="--c:var(--text)"><div class="v">{len(rows)}</div><div class="l">All Jobs</div></div>
+  <div class="tile" data-f="nto"      style="--c:var(--orange)"><div class="v">{nto_count}</div><div class="l">Need To Order</div></div>
+  <div class="tile" data-f="ordered"  style="--c:var(--blue)"><div class="v">{ordered_count}</div><div class="l">Parts Ordered</div></div>
+  <div class="tile" data-f="received" style="--c:var(--green)"><div class="v">{received_count}</div><div class="l">Parts Received</div></div>
+  <div class="tile" data-f="overdue"  style="--c:var(--red)"><div class="v">{overdue_count}</div><div class="l">Overdue</div></div>
+  <div class="tile" data-f="today"    style="--c:var(--yellow)"><div class="v">{today_count}</div><div class="l">Scheduled Today</div></div>
+  <div class="tile" data-f="all"      style="--c:var(--text-2)"><div class="v">${rev_pending:,.0f}</div><div class="l">Revenue Pending</div></div>
+</div>
+
+<div class="controls">
+  <input id="q" type="text" placeholder="Search customer, job number, vendor, part&hellip;" autocomplete="off">
+  <button class="clear" onclick="resetAll()">Reset</button>
+  <span class="count" id="cnt"></span>
+</div>
+
+<div class="tbl-wrap">
+  <div class="scroll">
+    <table>
+      <thead><tr id="hdr"></tr></thead>
+      <tbody id="body"></tbody>
+    </table>
   </div>
 </div>
 
-<div class="container">
-
-<!-- ── NTO ALERT ─────────────────────────────────── -->
-<div class="alert-box{'  hidden' if nto_count == 0 else ''}">
-  <div class="alert-icon">⚠️</div>
-  <div class="alert-text">
-    <h3>{nto_count} Part{'s' if nto_count!=1 else ''} Need to Be Ordered Right Now</h3>
-    <p>Order today → arrives next day. Every hour counts for these customers.</p>
-  </div>
 </div>
-
-<!-- ── STAT CARDS ─────────────────────────────────── -->
-<div class="stats-grid">
-  <div class="stat-card stat-nto"      onclick="filterJobs('nto')"      title="Click to view NTO jobs">
-    <span class="s-icon">📦</span>
-    <div class="label">Need to Order</div>
-    <div class="value">{nto_count}</div>
-    <div class="delta">Unordered parts</div>
-    <div class="tile-hint">Click to view →</div>
-  </div>
-  <div class="stat-card stat-ordered"  onclick="filterJobs('ordered')"  title="Click to view ordered jobs">
-    <span class="s-icon">🚚</span>
-    <div class="label">Parts Ordered</div>
-    <div class="value">{ordered_count}</div>
-    <div class="delta">In transit</div>
-    <div class="tile-hint">Click to view →</div>
-  </div>
-  <div class="stat-card stat-received" onclick="filterJobs('received')" title="Click to view received jobs">
-    <span class="s-icon">✅</span>
-    <div class="label">At Shop</div>
-    <div class="value">{received_count}</div>
-    <div class="delta">Ready to install</div>
-    <div class="tile-hint">Click to view →</div>
-  </div>
-  <div class="stat-card stat-overdue"  onclick="filterJobs('overdue')"  title="Click to view overdue jobs">
-    <span class="s-icon">🚨</span>
-    <div class="label">Overdue</div>
-    <div class="value">{overdue_count}</div>
-    <div class="delta">Past scheduled date</div>
-    <div class="tile-hint">Click to view →</div>
-  </div>
-  <div class="stat-card stat-today"    onclick="filterJobs('today')"    title="Click to view today's arrivals">
-    <span class="s-icon">📬</span>
-    <div class="label">Arriving Today</div>
-    <div class="value">{today_count}</div>
-    <div class="delta">Expected delivery</div>
-    <div class="tile-hint">Click to view →</div>
-  </div>
-  <div class="stat-card stat-tomorrow" onclick="filterJobs('tomorrow')" title="Click to view tomorrow's arrivals">
-    <span class="s-icon">📅</span>
-    <div class="label">Tomorrow</div>
-    <div class="value">{tomorrow_count}</div>
-    <div class="delta">Next-day arrivals</div>
-    <div class="tile-hint">Click to view →</div>
-  </div>
-  <div class="stat-card stat-total"    onclick="filterJobs('all')"      title="Click to view all jobs">
-    <span class="s-icon">🗂</span>
-    <div class="label">Total Jobs</div>
-    <div class="value">{len(rows)}</div>
-    <div class="delta">On hold for parts</div>
-    <div class="tile-hint">Click to view →</div>
-  </div>
-  <div class="stat-card stat-rev"      onclick="filterJobs('pending_rev')" title="Click to view jobs with pending revenue">
-    <span class="s-icon">💰</span>
-    <div class="label">Rev Pending</div>
-    <div class="value rev-value">${rev_pending:,.0f}</div>
-    <div class="delta">NTO + Ordered jobs</div>
-    <div class="tile-hint">Click to view →</div>
-  </div>
-</div>
-
-<!-- ── FILTER PANEL ────────────────────────────────── -->
-<div id="filter-panel" style="display:none; margin-bottom:36px;">
-  <div class="fp-header">
-    <div class="fp-title" id="fp-title"></div>
-    <button class="fp-close" onclick="closeFilter()">✕ Close</button>
-  </div>
-  <div id="fp-cards" class="fp-cards"></div>
-</div>
-
-<!-- ── CHART + DONUT ──────────────────────────────── -->
-<div class="section-title">Delivery Schedule</div>
-<div class="top-grid">
-  <div class="chart-wrap">
-    <canvas id="dateChart"></canvas>
-  </div>
-  <div style="display:flex;flex-direction:column;gap:12px;">
-    <div style="background:var(--surface);border-radius:16px;padding:20px;border:1px solid var(--border);flex:1;">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:14px;">Parts Status Split</div>
-      <canvas id="donutChart" height="150"></canvas>
-    </div>
-  </div>
-</div>
-
-<!-- ── TIMELINE ───────────────────────────────────── -->
-<div class="section-title">Arrival Timeline</div>
-
-<div class="view-toggle">
-  <button class="vt-btn active" id="btn-rows" onclick="setView('rows')">
-    <span class="vt-icon">☰</span> Row View
-  </button>
-  <button class="vt-btn" id="btn-lanes" onclick="setView('lanes')">
-    <span class="vt-icon">⬛</span> Lane View
-  </button>
-</div>
-
-<div id="view-rows">
-  {timeline_html}
-</div>
-
-<div id="view-lanes" style="display:none;">
-  <div class="swimlane-wrap">
-    <div class="swimlane">
-      {swimlane_cols}
-    </div>
-  </div>
-</div>
-
-<!-- ── NO AIR ─────────────────────────────────────── -->
-<div class="section-title">No Air — Waiting 48+ Hours</div>
-<div class="noair-banner{'  hidden' if no_air_count == 0 else ''}">
-  <div class="nb-icon">🔥</div>
-  <div class="nb-text">
-    <h3>{no_air_count} customer{'s are' if no_air_count!=1 else ' is'} without A/C for 2+ days — needs immediate attention</h3>
-    <p>Sorted by longest wait. Critical (5d+) cards pulse red.</p>
-  </div>
-</div>
-<div class="noair-grid">
-  {no_air_cards}
-</div>
-
-<!-- ── CUSTOMER STATUS BOARD ──────────────────────── -->
-<div class="section-title">Customer Status Board</div>
-<div class="table-wrap">
-  <table>
-    <thead>
-      <tr>
-        <th>Customer</th>
-        <th>Job #</th>
-        <th>Status</th>
-        <th>Supplier</th>
-        <th>Ordered</th>
-        <th>Sched Date</th>
-        <th>Countdown</th>
-        <th>Waiting</th>
-      </tr>
-    </thead>
-    <tbody>
-      {status_rows}
-    </tbody>
-  </table>
-</div>
-
-
-<div style="height:48px;"></div>
-</div><!-- /container -->
-
 <script>
-/* ── JOB DATA ──────────────────────────────────── */
 const JOBS = {jobs_json};
-const TODAY = '{today.isoformat()}';
 
-/* ── TILE FILTER ───────────────────────────────── */
-let activeFilter = null;
+// Columns: key = field to sort on, num = numeric sort, nulls sort last.
+const COLS = [
+  {{ key:'status',         label:'Status'    }},
+  {{ key:'job_num',        label:'Job #'     }},
+  {{ key:'customer',       label:'Customer'  }},
+  {{ key:'days_since_ord', label:'Waiting',   num:true }},
+  {{ key:'sched_date',     label:'Scheduled' }},
+  {{ key:'supplier',       label:'Supplier'  }},
+  {{ key:'po_count',       label:'POs',       num:true }},
+  {{ key:'revenue',        label:'Revenue',   num:true }},
+];
 
-const FILTER_META = {{
-  nto:      {{ label: '📦 Need to Order',      cls: 'fc-nto',      color: '#f97316' }},
-  ordered:  {{ label: '🚚 Parts Ordered',       cls: 'fc-ordered',  color: '#3b82f6' }},
-  received: {{ label: '✅ Received — At Shop',  cls: 'fc-received', color: '#22c55e' }},
-  overdue:  {{ label: '🚨 Overdue',             cls: 'fc-overdue',  color: '#ef4444' }},
-  today:    {{ label: '📬 Arriving Today',      cls: 'fc-today',    color: '#f59e0b' }},
-  tomorrow: {{ label: '📅 Arriving Tomorrow',   cls: 'fc-tomorrow', color: '#a78bfa' }},
-  all:         {{ label: '🗂 All Jobs',              cls: '',              color: '#22d3ee' }},
-  pending_rev: {{ label: '💰 Revenue Pending',       cls: 'fc-rev',        color: '#34d399' }},
-}};
+// Default: longest-waiting first — the page opens as an action list.
+let sortKey = 'days_since_ord', sortDir = 'desc', filter = 'all', search = '', open_ = null;
 
-function applyFilter(key, job) {{
-  if (key === 'all')      return true;
-  if (key === 'nto')      return job.status === 'NTO';
-  if (key === 'ordered')  return job.status === 'Ordered';
-  if (key === 'received') return job.status === 'Received';
-  if (key === 'overdue')  return job.status !== 'Received' && job.days_to_sched !== null && job.days_to_sched < 0;
-  if (key === 'today')    return job.status !== 'Received' && job.days_to_sched === 0;
-  if (key === 'tomorrow')    return job.status !== 'Received' && job.days_to_sched === 1;
-  if (key === 'pending_rev') return (job.status === 'NTO' || job.status === 'Ordered') && job.revenue > 0;
-  return false;
+const STATUS_RANK = {{ NTO:0, Ordered:1, Received:2, Unknown:3 }};
+
+function money(n) {{ return '$' + (n || 0).toLocaleString('en-US', {{maximumFractionDigits:0}}); }}
+
+function matchesFilter(j) {{
+  if (filter === 'all')      return true;
+  if (filter === 'nto')      return j.status === 'NTO';
+  if (filter === 'ordered')  return j.status === 'Ordered';
+  if (filter === 'received') return j.status === 'Received';
+  if (filter === 'overdue')  return j.days_to_sched !== null && j.days_to_sched < 0 && j.status !== 'Received';
+  if (filter === 'today')    return j.days_to_sched === 0 && j.status !== 'Received';
+  return true;
 }}
 
-function fmtDate(iso) {{
-  if (!iso) return '—';
-  const d = new Date(iso + 'T00:00:00');
-  return d.toLocaleDateString('en-US', {{month:'short', day:'numeric', year:'2-digit'}});
+function matchesSearch(j) {{
+  if (!search) return true;
+  const hay = [
+    j.customer, j.job_num, j.supplier, j.bunit, j.status,
+    ...(j.extra_tags || []),
+    ...(j.pos || []).flatMap(p => [p.vendorName, p.number, ...(p.parts || []).map(x => x.desc)])
+  ].join(' ').toLowerCase();
+  return hay.includes(search);
 }}
 
-function countdown(days, status) {{
-  if (status === 'Received') return ['At Shop', 'accent-green'];
-  if (days === null)  return ['No Date', ''];
-  if (days < 0)  return [`${{Math.abs(days)}}d Overdue`, 'accent-red'];
-  if (days === 0) return ['TODAY', 'accent-yellow'];
-  if (days === 1) return ['Tomorrow', 'accent-purple'];
-  if (days <= 3)  return [`In ${{days}} days`, 'accent-blue'];
-  return [`In ${{days}} days`, ''];
+function sortVal(j) {{
+  if (sortKey === 'status') return STATUS_RANK[j.status] ?? 9;
+  return j[sortKey];
 }}
 
-function waitLabel(days) {{
-  if (!days || days === 0) return ['Ordered today', ''];
-  const hrs = days * 24;
-  if (days >= 5) return [`${{days}}d / ${{hrs}}h`, 'accent-red'];
-  if (days >= 3) return [`${{days}}d / ${{hrs}}h`, 'accent-orange'];
-  if (days >= 2) return [`${{days}}d / ${{hrs}}h`, 'accent-yellow'];
-  return [`${{days}}d`, ''];
+function visible() {{
+  const out = JOBS.filter(j => matchesFilter(j) && matchesSearch(j));
+  const dir = sortDir === 'asc' ? 1 : -1;
+  // Blanks (null, undefined, empty string) always sort to the bottom,
+  // whichever direction the column is sorted — an empty cell is never
+  // the thing you clicked a column to see.
+  const blank = v => v === null || v === undefined || v === '';
+  out.sort((a, b) => {{
+    const x = sortVal(a), y = sortVal(b);
+    if (blank(x) && blank(y)) return 0;
+    if (blank(x)) return 1;
+    if (blank(y)) return -1;
+    if (typeof x === 'string') return x.localeCompare(y) * dir;
+    return (x - y) * dir;
+  }});
+  return out;
 }}
 
-function badgeHTML(status) {{
-  const map = {{
-    NTO:      ['badge-nto',      'NTO'],
-    Ordered:  ['badge-ordered',  'Ordered'],
-    Received: ['badge-received', 'Received'],
-  }};
-  const [cls, label] = map[status] || ['badge-unknown', status];
-  return `<span class="badge ${{cls}}">${{label}}</span>`;
+function waitCls(d) {{ return d >= 14 ? 'w-hot' : d >= 7 ? 'w-warm' : 'w-ok'; }}
+
+function schedCell(j) {{
+  if (!j.sched_date) return '<span class="muted">&mdash;</span>';
+  const d = j.days_to_sched;
+  const nice = new Date(j.sched_date + 'T00:00:00')
+    .toLocaleDateString('en-US', {{ month:'short', day:'numeric' }});
+  if (d < 0 && j.status !== 'Received') return `<span class="sched-late">${{nice}} &middot; ${{Math.abs(d)}}d late</span>`;
+  if (d === 0) return `<span class="sched-now">${{nice}} &middot; today</span>`;
+  if (d === 1) return `<span class="sched-now">${{nice}} &middot; tomorrow</span>`;
+  return `<span class="num">${{nice}}</span>`;
 }}
 
-function renderCards(key) {{
-  const filtered = JOBS.filter(j => applyFilter(key, j));
-  const meta = FILTER_META[key];
-  const container = document.getElementById('fp-cards');
+function badge(s) {{
+  const c = {{ NTO:'b-nto', Ordered:'b-ordered', Received:'b-received' }}[s] || 'b-unknown';
+  return `<span class="badge ${{c}}">${{s}}</span>`;
+}}
 
-  if (filtered.length === 0) {{
-    container.innerHTML = `<div class="fp-empty">No jobs match this filter.</div>`;
+function poDetail(j) {{
+  if (!j.pos || !j.pos.length) return '<div class="no-po">No purchase orders linked to this job.</div>';
+  return j.pos.map(p => `
+    <div class="po">
+      <div class="po-h">
+        <a class="po-n" href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/${{p.id}}" target="_blank">PO #${{p.number}}</a>
+        ${{badge(p.status === 'Received' || p.status === 'Exported' ? 'Received' : p.status === 'Pending' ? 'NTO' : 'Ordered')}}
+        <span class="po-v">${{p.vendorName || 'Unknown vendor'}}${{p.typeName ? ' &middot; ' + p.typeName : ''}}</span>
+        <span class="po-t">${{money(p.total)}}</span>
+      </div>
+      ${{(p.parts || []).map(x => `
+        <div class="part"><span class="d">${{x.desc || 'Part'}}</span><span class="q">${{x.qty}} &times; ${{money(x.cost)}}</span></div>
+      `).join('')}}
+    </div>`).join('');
+}}
+
+function render() {{
+  // Header
+  document.getElementById('hdr').innerHTML = COLS.map(c => {{
+    const on = c.key === sortKey;
+    const arw = on ? (sortDir === 'asc' ? '&#9650;' : '&#9660;') : '&#9660;';
+    return `<th class="${{on ? 'sorted' : ''}}" onclick="sortBy('${{c.key}}')">${{c.label}}<span class="arw">${{arw}}</span></th>`;
+  }}).join('');
+
+  const rows = visible();
+  const body = document.getElementById('body');
+
+  document.getElementById('cnt').textContent =
+    rows.length === JOBS.length ? `${{JOBS.length}} jobs` : `${{rows.length}} of ${{JOBS.length}} jobs`;
+
+  if (!rows.length) {{
+    body.innerHTML = '<tr><td colspan="8"><div class="empty">No jobs match.</div></td></tr>';
     return;
   }}
 
-  // sort: overdue first, then by sched date, then by wait time desc
-  filtered.sort((a, b) => {{
-    if (a.days_to_sched !== null && b.days_to_sched !== null) return a.days_to_sched - b.days_to_sched;
-    if (a.days_to_sched === null) return 1;
-    if (b.days_to_sched === null) return -1;
-    return 0;
-  }});
-
-  container.innerHTML = filtered.map(job => {{
-    const [cdLabel, cdCls] = countdown(job.days_to_sched, job.status);
-    const [waitLbl, waitCls] = waitLabel(job.days_since_ord);
-    const tags = (job.extra_tags || []).map(t => `<span class="tag">${{t}}</span>`).join('');
-    const supplier = job.supplier ? `<span class="tag" style="color:var(--text-2);border-color:var(--border2)">${{job.supplier}}</span>` : '';
-    const bunit = job.bunit ? `<div class="fp-bunit">🏢 ${{job.bunit}}</div>` : '';
-    const soldBy = job.sold_by ? `<div class="fp-sold">👤 Sold by ${{job.sold_by}}</div>` : '';
-
+  body.innerHTML = rows.map(j => {{
+    const w = j.days_since_ord;
+    const detail = open_ === j.job_num
+      ? `<tr class="det"><td colspan="8"><div class="det-in">${{poDetail(j)}}</div></td></tr>` : '';
     return `
-    <div class="fp-card ${{meta.cls}}">
-      <div class="fp-card-top">
-        <div class="fp-customer">${{job.customer}}</div>
-        <a href="https://go.servicetitan.com/#/Job/Index/${{job.job_num}}" target="_blank" class="fp-job-link">#${{job.job_num}}</a>
-      </div>
-      <div class="fp-badges">
-        ${{badgeHTML(job.status)}}      </div>
-      <div class="fp-grid">
-        <div class="fp-field">
-          <div class="fp-field-label">Ordered</div>
-          <div class="fp-field-value">${{fmtDate(job.created_date)}}</div>
-        </div>
-        <div class="fp-field">
-          <div class="fp-field-label">Scheduled</div>
-          <div class="fp-field-value">${{fmtDate(job.sched_date)}}</div>
-        </div>
-        <div class="fp-field">
-          <div class="fp-field-label">Countdown</div>
-          <div class="fp-field-value ${{cdCls}}">${{cdLabel}}</div>
-        </div>
-        <div class="fp-field">
-          <div class="fp-field-label">Waiting</div>
-          <div class="fp-field-value ${{waitCls}}">${{waitLbl}}</div>
-        </div>
-${{job.revenue > 0 ? `
-        <div class="fp-field" style="grid-column:1/-1;border-color:rgba(52,211,153,.25);background:rgba(52,211,153,.06)">
-          <div class="fp-field-label" style="color:#6ee7b7">Revenue</div>
-          <div class="fp-field-value" style="color:#34d399;font-size:16px">${{job.revenue.toLocaleString('en-US',{{style:'currency',currency:'USD'}})}}</div>
-        </div>` : ''}}
-      </div>
-      <div class="fp-tags">${{supplier}}${{tags}}</div>
-      ${{bunit}}
-      ${{soldBy}}
-      ${{(job.pos && job.pos.length > 0) ? job.pos.map(po => {{
-        const poStatusCls = ({{Pending:'badge-nto',Sent:'badge-ordered',PartiallyReceived:'badge-ordered',Received:'badge-received',Exported:'badge-received'}})[po.status] || 'badge-unknown';
-        const typeBadge = po.typeName ? `<span class="po-type-badge">${{po.typeName}}</span>` : '';
-        const partLines = po.parts.filter(p => p.desc).map(p =>
-          `<div class="po-part-line">${{p.desc}}${{p.qty && p.qty !== 1 ? ' &times;'+Math.round(p.qty) : ''}}${{p.cost ? ' <span style="color:var(--accent-green)">$'+p.cost.toLocaleString('en-US',{{minimumFractionDigits:2}})+'</span>' : ''}}</div>`
-        ).join('');
-        return `<div class="po-card-block">
-          <div class="po-card-header">
-            ${{typeBadge}}
-            <a href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/${{po.id}}" target="_blank" class="po-num">PO#${{po.number}}</a>
-            <span class="badge ${{poStatusCls}}" style="font-size:9px;padding:2px 6px">${{po.status}}</span>
-          </div>
-          <div class="po-vendor-cost-row">
-            <span class="po-vendor-line">${{po.vendorName}}</span>
-            <span class="po-cost">${{po.total ? '$'+po.total.toLocaleString('en-US',{{minimumFractionDigits:2}}) : '—'}}</span>
-          </div>
-          ${{partLines}}
-          <div class="po-dates">Ordered: ${{po.date || '—'}}${{po.receivedOn ? ' &middot; Received: '+po.receivedOn : ' &middot; Not yet received'}}</div>
-        </div>`;
-      }}).join('') : ''}}
-    </div>`;
+      <tr class="job" onclick="toggle('${{j.job_num}}')">
+        <td>${{badge(j.status)}}</td>
+        <td><a class="jlink" href="https://go.servicetitan.com/#/Job/Index/${{j.job_num}}" target="_blank" onclick="event.stopPropagation()">${{j.job_num}}</a></td>
+        <td><div class="cust">${{j.customer || '&mdash;'}}</div><div class="bu">${{j.bunit || ''}}</div></td>
+        <td>${{w === null ? '<span class="muted">&mdash;</span>' : `<span class="wait ${{waitCls(w)}}">${{w}}d</span>`}}</td>
+        <td>${{schedCell(j)}}</td>
+        <td class="muted">${{j.supplier || '&mdash;'}}</td>
+        <td class="num">${{j.po_count ? j.po_count + ' &middot; ' + money(j.po_cost) : '<span class="muted">&mdash;</span>'}}</td>
+        <td class="num">${{money(j.revenue)}}</td>
+      </tr>${{detail}}`;
   }}).join('');
 }}
 
-function filterJobs(key) {{
-  const panel = document.getElementById('filter-panel');
-  const titleEl = document.getElementById('fp-title');
-  const meta = FILTER_META[key];
-
-  // toggle off if clicking same tile
-  if (activeFilter === key) {{
-    closeFilter();
-    return;
+function sortBy(k) {{
+  if (sortKey === k) {{
+    sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  }} else {{
+    sortKey = k;
+    // Numbers are most useful high-first; text reads better A-Z.
+    const col = COLS.find(c => c.key === k);
+    sortDir = col && col.num ? 'desc' : 'asc';
   }}
-
-  activeFilter = key;
-
-  // update tile highlights
-  document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('tile-active'));
-  const tileMap = {{nto:'stat-nto', ordered:'stat-ordered', received:'stat-received',
-                    overdue:'stat-overdue', today:'stat-today', tomorrow:'stat-tomorrow',
-                    all:'stat-total', pending_rev:'stat-rev'}};
-  const tileEl = document.querySelector('.' + tileMap[key]);
-  if (tileEl) tileEl.classList.add('tile-active');
-
-  const filtered = JOBS.filter(j => applyFilter(key, j));
-  const totalRev = filtered.reduce((s, j) => s + (j.revenue || 0), 0);
-  const revNote = totalRev > 0
-    ? ` <span style="color:#34d399;font-weight:700;font-size:13px;">· ${{totalRev.toLocaleString('en-US',{{style:'currency',currency:'USD',maximumFractionDigits:0}})}}</span>`
-    : '';
-  titleEl.innerHTML = `${{meta.label}}${{revNote}} <span style="color:var(--text-3);font-weight:500;font-size:12px;margin-left:8px;">— click tile again to close</span>`;
-  renderCards(key);
-  panel.style.display = '';
-
-  // smooth scroll to panel
-  setTimeout(() => panel.scrollIntoView({{behavior: 'smooth', block: 'start'}}), 50);
+  render();
 }}
 
-function closeFilter() {{
-  activeFilter = null;
-  document.getElementById('filter-panel').style.display = 'none';
-  document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('tile-active'));
+function toggle(n) {{ open_ = (open_ === n) ? null : n; render(); }}
+
+function setFilter(f, el) {{
+  filter = f;
+  document.querySelectorAll('.tile').forEach(t => t.classList.remove('on'));
+  if (f !== 'all' && el) el.classList.add('on');
+  open_ = null;
+  render();
 }}
 
-/* ── VIEW TOGGLE ───────────────────────────────── */
-function setView(v) {{
-  document.getElementById('view-rows').style.display  = v === 'rows'  ? '' : 'none';
-  document.getElementById('view-lanes').style.display = v === 'lanes' ? '' : 'none';
-  document.getElementById('btn-rows').classList.toggle('active',  v === 'rows');
-  document.getElementById('btn-lanes').classList.toggle('active', v === 'lanes');
-  localStorage.setItem('tl-view', v);
+function resetAll() {{
+  filter = 'all'; search = ''; open_ = null;
+  document.getElementById('q').value = '';
+  document.querySelectorAll('.tile').forEach(t => t.classList.remove('on'));
+  render();
 }}
-// restore last choice
-(function() {{ const s = localStorage.getItem('tl-view'); if (s) setView(s); }})();
 
-const todayStr = '{today.isoformat()}';
+document.querySelectorAll('.tile').forEach(t =>
+  t.addEventListener('click', () => setFilter(t.dataset.f, t)));
 
-/* ── BAR CHART ─────────────────────────────────── */
-const barLabels = {chart_labels};
-const barData   = {chart_data};
-
-const barColors = barLabels.map(l => {{
-  if (l < todayStr) return 'rgba(239,68,68,0.75)';
-  if (l === todayStr) return 'rgba(245,158,11,0.85)';
-  const diff = (new Date(l) - new Date(todayStr)) / 86400000;
-  if (diff === 1) return 'rgba(167,139,250,0.8)';
-  if (diff <= 3) return 'rgba(59,130,246,0.75)';
-  return 'rgba(34,211,238,0.5)';
+document.getElementById('q').addEventListener('input', e => {{
+  search = e.target.value.trim().toLowerCase();
+  open_ = null;
+  render();
 }});
 
-new Chart(document.getElementById('dateChart').getContext('2d'), {{
-  type: 'bar',
-  data: {{
-    labels: barLabels.map(l => {{
-      const d = new Date(l + 'T00:00:00');
-      return d.toLocaleDateString('en-US', {{weekday:'short', month:'short', day:'numeric'}});
-    }}),
-    datasets: [{{
-      label: 'Jobs',
-      data: barData,
-      backgroundColor: barColors,
-      borderRadius: 8,
-      borderSkipped: false,
-    }}]
-  }},
-  options: {{
-    responsive: true, maintainAspectRatio: false,
-    plugins: {{
-      legend: {{ display: false }},
-      tooltip: {{
-        backgroundColor: '#0e1420',
-        borderColor: '#1c2840',
-        borderWidth: 1,
-        titleColor: '#e8edf5',
-        bodyColor: '#8899b4',
-        callbacks: {{ label: c => ` ${{c.raw}} job${{c.raw !== 1 ? 's' : ''}}` }}
-      }}
-    }},
-    scales: {{
-      x: {{ grid: {{ color: '#1c2840' }}, ticks: {{ color: '#4a5878', font: {{ size: 11, family: 'Inter' }} }} }},
-      y: {{ grid: {{ color: '#1c2840' }}, ticks: {{ color: '#4a5878', stepSize: 1, font: {{ size: 11 }} }}, beginAtZero: true }}
-    }}
-  }}
-}});
-
-/* ── DONUT CHART ───────────────────────────────── */
-const nto = {nto_count}, ordered = {ordered_count}, received = {received_count};
-new Chart(document.getElementById('donutChart').getContext('2d'), {{
-  type: 'doughnut',
-  data: {{
-    labels: ['Need to Order', 'Ordered', 'Received'],
-    datasets: [{{
-      data: [nto, ordered, received],
-      backgroundColor: ['rgba(249,115,22,.8)', 'rgba(59,130,246,.8)', 'rgba(34,197,94,.8)'],
-      borderColor: ['#f97316', '#3b82f6', '#22c55e'],
-      borderWidth: 1,
-      hoverOffset: 6,
-    }}]
-  }},
-  options: {{
-    responsive: true,
-    cutout: '68%',
-    plugins: {{
-      legend: {{
-        position: 'bottom',
-        labels: {{ color: '#8899b4', font: {{ size: 11, family: 'Inter' }}, padding: 12, boxWidth: 10, boxHeight: 10 }}
-      }},
-      tooltip: {{
-        backgroundColor: '#0e1420',
-        borderColor: '#1c2840',
-        borderWidth: 1,
-        titleColor: '#e8edf5',
-        bodyColor: '#8899b4',
-      }}
-    }}
-  }}
-}});
-
-/* ── VENDOR CHART ──────────────────────────────── */
-new Chart(document.getElementById('vendorChart').getContext('2d'), {{
-  type: 'bar',
-  data: {{
-    labels: {tv_labels},
-    datasets: [{{
-      label: 'Spend ($)',
-      data: {tv_data},
-      backgroundColor: 'rgba(59,130,246,.7)',
-      borderColor: '#3b82f6',
-      borderWidth: 1,
-      borderRadius: 4,
-    }}]
-  }},
-  options: {{
-    indexAxis: 'y',
-    responsive: true,
-    plugins: {{
-      legend: {{ display: false }},
-      tooltip: {{
-        backgroundColor: '#0e1420',
-        borderColor: '#1c2840',
-        borderWidth: 1,
-        titleColor: '#e8edf5',
-        bodyColor: '#8899b4',
-        callbacks: {{ label: ctx => ' $' + ctx.raw.toLocaleString('en-US', {{minimumFractionDigits:2}}) }}
-      }}
-    }},
-    scales: {{
-      x: {{ grid: {{ color: '#1c2840' }}, ticks: {{ color: '#4a5878', callback: v => '$' + (v/1000).toFixed(0) + 'k' }} }},
-      y: {{ grid: {{ color: '#1c2840' }}, ticks: {{ color: '#8899b4', font: {{ size: 11 }} }} }}
-    }}
-  }}
-}});
+render();
 </script>
-
 </body>
-</html>"""
-    return html
+</html>
+"""
 
 
 def main():
@@ -1686,6 +616,7 @@ def main():
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"\nDashboard saved to: {OUTPUT_FILE}")
+
 
 if __name__ == "__main__":
     main()
