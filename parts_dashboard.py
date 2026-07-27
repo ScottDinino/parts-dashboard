@@ -255,7 +255,12 @@ def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
     today_count    = sum(1 for r in rows if r["days_to_sched"] == 0 and r["status"] != "Received")
     rev_pending    = sum(r["revenue"] for r in rows if r["status"] in ("NTO", "Ordered"))
 
-    stamp = po_fetched_at[:16].replace("T", " ") if po_fetched_at else today.isoformat()
+    # fetchedAt is UTC. The no-JS fallback text says so explicitly — an unlabelled
+    # UTC clock reads as "future-dated / broken" to anyone east of Greenwich's west.
+    # With JS, the header is rewritten into the viewer's own timezone plus a live
+    # "Nm ago", so a stalled deploy is visible instead of ambiguous.
+    stamp_iso = po_fetched_at or ""
+    stamp = (po_fetched_at[:16].replace("T", " ") + " UTC") if po_fetched_at else today.isoformat()
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -290,6 +295,10 @@ h1 {{
   background-clip:text; display:inline-block;
 }}
 .sub {{ color:var(--text-3); font-size:12px; margin-top:4px; }}
+/* Deploys land every ~1.4h on average (GitHub drops most scheduled runs), so
+   colour the age once it drifts past what a normal gap looks like. */
+.sub .aging {{ color:var(--yellow); }}
+.sub .stale {{ color:var(--red); font-weight:600; }}
 
 /* ── Tiles ── */
 .tiles {{
@@ -396,7 +405,8 @@ tr.det > td {{ padding:0; background:#0a0f1a; }}
 
 <header>
   <h1>Parts Dashboard</h1>
-  <div class="sub">RTR jobs on hold &middot; Coral Springs + Plumbing &middot; updated {stamp}</div>
+  <div class="sub">RTR jobs on hold &middot; Coral Springs + Plumbing &middot;
+    updated <span id="stamp" data-iso="{stamp_iso}">{stamp}</span><span id="age"></span></div>
 </header>
 
 <div class="tiles">
@@ -598,6 +608,33 @@ document.getElementById('q').addEventListener('input', e => {{
   open_ = null;
   render();
 }});
+
+// ── Freshness clock ───────────────────────────────────────────────
+// Rewrites the build's UTC stamp into the viewer's own timezone and keeps a
+// live "how old is this" counter, so a missed deploy is obvious on sight.
+(function () {{
+  const el  = document.getElementById('stamp');
+  const age = document.getElementById('age');
+  const t   = el && el.dataset.iso ? new Date(el.dataset.iso) : null;
+  if (!t || isNaN(t)) return;   // keep the server-rendered "... UTC" fallback
+
+  function tick() {{
+    const mins = Math.floor((Date.now() - t.getTime()) / 60000);
+    const opts = {{ hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }};
+    if (mins >= 720) {{ opts.month = 'short'; opts.day = 'numeric'; }}
+    el.textContent = t.toLocaleString([], opts);
+
+    let s;
+    if (mins < 1)       s = 'just now';
+    else if (mins < 60) s = mins + 'm ago';
+    else                s = Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm ago';
+    age.textContent = ' \\u00b7 ' + s;
+    age.className   = mins >= 180 ? 'stale' : mins >= 90 ? 'aging' : '';
+  }}
+
+  tick();
+  setInterval(tick, 30000);
+}})();
 
 render();
 </script>
