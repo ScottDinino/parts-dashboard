@@ -1,44 +1,105 @@
 name: Deploy Dashboard
+
+# WHY THIS IS A LOOP AND NOT JUST A CRON
+# GitHub's `schedule:` is best-effort and drops most runs. Measured 2026-07-27
+# over a full week: at "*/6 * * * *" it asked 1,620 times and GitHub ran it 100
+# times (6%), median gap 84 min, worst 3.7 h. Short crons get clamped to roughly
+# one run per hour no matter how often you ask, so no cron value reaches 6 min.
+#
+# Instead: one long-lived job that refreshes on its own timer for ~5h40m. The
+# schedule below is only a *restarter* — it needs to land once every ~5h, which
+# even a heavily-dropped cron does comfortably. The concurrency group keeps at
+# most one run pending behind the active one, so when a loop ends the queued run
+# takes over and coverage stays continuous.
 "on":
   workflow_dispatch:
-  # GitHub's scheduler is best-effort and drops most runs: at "0 * * * *" this
-  # actually fired every 1.5-3h, not hourly. Asking every 6 min means even a
-  # heavily-dropped schedule lands often. 6 (not 5) keeps us at 10 builds/hour,
-  # the soft limit for branch-based Pages deploys.
   schedule:
     - cron: "*/6 * * * *"
   push:
     paths:
       - fetch_st_data.py
       - parts_dashboard.py
+      - .github/workflows/deploy.yml
+
 permissions:
   contents: write
-# One deploy at a time — overlapping runs would race on the gh-pages force-push.
+
 concurrency:
   group: deploy-dashboard
   cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Hard ceiling for a job is 6h; stop short so the queued run starts cleanly.
+    timeout-minutes: 350
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - run: pip install -r requirements.txt
-      - name: Fetch PO data from ServiceTitan
-        run: python fetch_st_data.py
+
+      - name: Refresh and publish every 6 minutes
         env:
           ST_TENANT_ID:     ${{ secrets.ST_TENANT_ID }}
           ST_CLIENT_ID:     ${{ secrets.ST_CLIENT_ID }}
           ST_CLIENT_SECRET: ${{ secrets.ST_CLIENT_SECRET }}
           ST_APP_KEY:       ${{ secrets.ST_APP_KEY }}
-      - run: python parts_dashboard.py
-      - uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
-          publish_branch: gh-pages
-          # Publish a single orphan commit instead of appending history —
-          # at ~240 deploys/day the branch would otherwise grow without bound.
-          force_orphan: true
+          GH_TOKEN:         ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -uo pipefail
+
+          # 6 minutes, not 5: branch-based Pages deploys carry a soft limit of
+          # 10 builds/hour, and 6 min == exactly 10/hr. Going faster requires
+          # switching Pages to build_type=workflow, which is exempt.
+          INTERVAL=360
+          DEADLINE=$(( $(date +%s) + 340 * 60 ))
+          ok=0; fail=0
+
+          while [ "$(date +%s)" -lt "$DEADLINE" ]; do
+            if python fetch_st_data.py && python parts_dashboard.py; then
+              # Publish ONLY index.html. The page inlines all of its data, so it
+              # needs nothing else — and this keeps fetch_st_data.py and the raw
+              # ST json off the public site. The old `publish_dir: ./` served the
+              # whole repo, which is how the API secret leaked back in March.
+              rm -rf /tmp/pub && mkdir -p /tmp/pub
+              cp index.html /tmp/pub/
+              touch /tmp/pub/.nojekyll   # carried over; skips Jekyll processing
+
+              if (
+                cd /tmp/pub
+                git init -q -b gh-pages
+                git config user.name  "github-actions[bot]"
+                git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                git add -A
+                git commit -qm "deploy $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+                # Orphan force-push: one commit, always. At 240 deploys/day a
+                # real history would balloon the branch.
+                git push -q --force \
+                  "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+                  gh-pages
+              ); then
+                ok=$((ok+1))
+              else
+                fail=$((fail+1)); echo "::warning::publish failed"
+              fi
+            else
+              fail=$((fail+1))
+              echo "::warning::refresh failed at $(date -u +%H:%M:%SZ) — retrying next cycle"
+            fi
+
+            echo "--- cycle done: ${ok} ok / ${fail} failed ---"
+
+            # Sleep to the next wall-clock boundary so deploys land on a
+            # predictable rhythm regardless of how long the build took.
+            now=$(date +%s)
+            [ "$now" -ge "$DEADLINE" ] && break
+            next=$(( (now / INTERVAL + 1) * INTERVAL ))
+            sleep $(( next - now ))
+          done
+
+          echo "Loop finished: ${ok} successful deploys, ${fail} failures."
+          # Only fail the run if nothing at all worked — transient ST API errors
+          # shouldn't kill a 5-hour loop.
+          [ "$ok" -gt 0 ]
