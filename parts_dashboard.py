@@ -8,6 +8,7 @@ a standalone HTML dashboard.  Run fetch_st_data.py first to refresh the data.
 import os
 import json
 from datetime import datetime, date, timedelta
+from zoneinfo import ZoneInfo
 
 JOBS_DATA_FILE = "data/jobs.json"
 PO_DATA_FILE   = "data/po_data.json"
@@ -255,12 +256,21 @@ def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
     today_count    = sum(1 for r in rows if r["days_to_sched"] == 0 and r["status"] != "Received")
     rev_pending    = sum(r["revenue"] for r in rows if r["status"] in ("NTO", "Ordered"))
 
-    # fetchedAt is UTC. The no-JS fallback text says so explicitly — an unlabelled
-    # UTC clock reads as "future-dated / broken" to anyone east of Greenwich's west.
-    # With JS, the header is rewritten into the viewer's own timezone plus a live
-    # "Nm ago", so a stalled deploy is visible instead of ambiguous.
+    # fetchedAt is UTC (the runner's clock). Printing it unlabelled made the header
+    # read as future-dated in Florida, which is how "dashboard isn't updating" got
+    # reported. Render the fallback in Eastern with an explicit zone label; JS then
+    # replaces it with the same Eastern time plus a live "Nm ago".
     stamp_iso = po_fetched_at or ""
-    stamp = (po_fetched_at[:16].replace("T", " ") + " UTC") if po_fetched_at else today.isoformat()
+    stamp = today.isoformat()
+    if po_fetched_at:
+        try:
+            _et = datetime.fromisoformat(po_fetched_at).astimezone(
+                ZoneInfo("America/New_York"))
+            stamp = _et.strftime("%b %-d, %-I:%M %p %Z")
+        except Exception:
+            # Missing tzdata or an unparseable stamp — better a labelled UTC
+            # string than a bare one.
+            stamp = po_fetched_at[:16].replace("T", " ") + " UTC"
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -268,16 +278,46 @@ def build_html(rows, today, pos=None, job_po_map=None, po_fetched_at=""):
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Parts Dashboard</title>
+<script>
+// Runs before first paint so the page never flashes the wrong theme.
+// Saved choice wins; otherwise follow the OS.
+(function () {{
+  var t;
+  try {{ t = localStorage.getItem('pd-theme'); }} catch (e) {{}}
+  if (t !== 'light' && t !== 'dark') {{
+    t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }}
+  document.documentElement.dataset.theme = t;
+}})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* Dark is the base palette; [data-theme="light"] overrides it. An inline script
+   in <head> stamps data-theme before first paint, so there's no flash. */
 :root {{
   --bg:      #080b12;  --surface:  #0e1420;  --surface2: #131b2a;
   --border:  #1c2840;  --border2:  #243050;
   --text:    #e8edf5;  --text-2:   #8899b4;  --text-3:   #4a5878;
   --red:     #ef4444;  --orange:   #f97316;  --yellow:   #f59e0b;
   --green:   #22c55e;  --blue:     #3b82f6;
+  --det-bg:  #0a0f1a;
+  --h1-grad: linear-gradient(90deg,#e8edf5 0%,#93c5fd 100%);
+  --badge-a: .14;
+}}
+:root[data-theme="light"] {{
+  --bg:      #f5f7fb;  --surface:  #ffffff;  --surface2: #eef2f8;
+  --border:  #e2e8f2;  --border2:  #cbd6e6;
+  /* text-3 is darker than the dark-theme equivalent would suggest: it carries the
+     "last updated" line, and #8c98ad on this bg is only ~2.7:1. */
+  --text:    #0f172a;  --text-2:   #55637a;  --text-3:   #5f6b7f;
+  /* Accents darkened — the dark-mode values fail contrast on white. */
+  --red:     #dc2626;  --orange:   #ea580c;  --yellow:   #b45309;
+  --green:   #15803d;  --blue:     #2563eb;
+  --det-bg:  #f0f4fa;
+  --h1-grad: linear-gradient(90deg,#0f172a 0%,#2563eb 100%);
+  --badge-a: .13;
 }}
 * {{ margin:0; padding:0; box-sizing:border-box; }}
 body {{
@@ -287,13 +327,23 @@ body {{
 .wrap {{ max-width:1500px; margin:0 auto; }}
 
 /* ── Header ── */
-header {{ margin-bottom:20px; }}
+header {{
+  margin-bottom:20px; display:flex; align-items:flex-start;
+  justify-content:space-between; gap:16px;
+}}
 h1 {{
   font-size:24px; font-weight:800; letter-spacing:-.4px;
-  background:linear-gradient(90deg,#e8edf5 0%,#93c5fd 100%);
+  background:var(--h1-grad);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent;
   background-clip:text; display:inline-block;
 }}
+#theme {{
+  flex:none; background:var(--surface); border:1px solid var(--border2);
+  color:var(--text-2); border-radius:9px; padding:8px 12px; cursor:pointer;
+  font-family:inherit; font-size:12px; font-weight:600; line-height:1;
+  display:flex; align-items:center; gap:6px; transition:.15s;
+}}
+#theme:hover {{ color:var(--text); border-color:var(--blue); }}
 .sub {{ color:var(--text-3); font-size:12px; margin-top:4px; }}
 /* Deploys land every ~1.4h on average (GitHub drops most scheduled runs), so
    colour the age once it drifts past what a normal gap looks like. */
@@ -364,10 +414,10 @@ tr.job:last-child td {{ border-bottom:none; }}
   display:inline-block; padding:3px 9px; border-radius:20px;
   font-size:10px; font-weight:700; letter-spacing:.3px; white-space:nowrap;
 }}
-.b-nto      {{ background:rgba(249,115,22,.14); color:var(--orange); }}
-.b-ordered  {{ background:rgba(59,130,246,.14); color:var(--blue); }}
-.b-received {{ background:rgba(34,197,94,.14);  color:var(--green); }}
-.b-unknown  {{ background:rgba(136,153,180,.12); color:var(--text-2); }}
+.b-nto      {{ background:rgba(249,115,22,var(--badge-a)); color:var(--orange); }}
+.b-ordered  {{ background:rgba(59,130,246,var(--badge-a)); color:var(--blue); }}
+.b-received {{ background:rgba(34,197,94,var(--badge-a));  color:var(--green); }}
+.b-unknown  {{ background:rgba(136,153,180,var(--badge-a)); color:var(--text-2); }}
 
 .wait {{ font-weight:700; font-variant-numeric:tabular-nums; }}
 .w-hot  {{ color:var(--red); }}
@@ -377,7 +427,7 @@ tr.job:last-child td {{ border-bottom:none; }}
 .sched-now  {{ color:var(--yellow); font-weight:600; }}
 
 /* ── Expanded PO detail ── */
-tr.det > td {{ padding:0; background:#0a0f1a; }}
+tr.det > td {{ padding:0; background:var(--det-bg); }}
 .det-in {{ padding:14px 18px; border-bottom:1px solid var(--border); }}
 .po {{
   background:var(--surface); border:1px solid var(--border2); border-radius:10px;
@@ -404,9 +454,12 @@ tr.det > td {{ padding:0; background:#0a0f1a; }}
 <div class="wrap">
 
 <header>
-  <h1>Parts Dashboard</h1>
-  <div class="sub">RTR jobs on hold &middot; Coral Springs + Plumbing &middot;
-    updated <span id="stamp" data-iso="{stamp_iso}">{stamp}</span><span id="age"></span></div>
+  <div>
+    <h1>Parts Dashboard</h1>
+    <div class="sub">RTR jobs on hold &middot; Coral Springs + Plumbing &middot;
+      updated <span id="stamp" data-iso="{stamp_iso}">{stamp}</span><span id="age"></span></div>
+  </div>
+  <button id="theme" type="button" title="Switch between light and dark"></button>
 </header>
 
 <div class="tiles">
@@ -620,9 +673,16 @@ document.getElementById('q').addEventListener('input', e => {{
 
   function tick() {{
     const mins = Math.floor((Date.now() - t.getTime()) / 60000);
-    const opts = {{ hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }};
-    if (mins >= 720) {{ opts.month = 'short'; opts.day = 'numeric'; }}
-    el.textContent = t.toLocaleString([], opts);
+    // Pinned to Eastern, not the viewer's zone — this is a Florida operation and
+    // the times must line up with ST and the office clock no matter who's looking.
+    // The IANA zone handles EDT/EST switching on its own; timeZoneName spells out
+    // which one is in effect. Date is always shown: "3:00 PM" alone is ambiguous
+    // once a deploy is a day stale, which is exactly when you need to notice.
+    el.textContent = t.toLocaleString('en-US', {{
+      timeZone: 'America/New_York',
+      month: 'short', day: 'numeric',
+      hour: 'numeric', minute: '2-digit', timeZoneName: 'short',
+    }});
 
     let s;
     if (mins < 1)       s = 'just now';
@@ -634,6 +694,41 @@ document.getElementById('q').addEventListener('input', e => {{
 
   tick();
   setInterval(tick, 30000);
+}})();
+
+// ── Theme toggle ──────────────────────────────────────────────────
+// <head> already picked the initial theme; this only labels the button
+// and handles switching. Explicit choice is remembered and stops the
+// page from following later OS changes.
+(function () {{
+  const btn = document.getElementById('theme');
+  const root = document.documentElement;
+  if (!btn) return;
+
+  const label = () => {{
+    const dark = root.dataset.theme === 'dark';
+    // Show the destination, not the current state.
+    btn.textContent = dark ? '\\u2600\\ufe0f Light' : '\\ud83c\\udf19 Dark';
+    btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+  }};
+
+  btn.addEventListener('click', () => {{
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try {{ localStorage.setItem('pd-theme', next); }} catch (e) {{}}
+    label();
+  }});
+
+  // Track the OS only while the user hasn't chosen for themselves.
+  matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {{
+    let saved = null;
+    try {{ saved = localStorage.getItem('pd-theme'); }} catch (err) {{}}
+    if (saved === 'light' || saved === 'dark') return;
+    root.dataset.theme = e.matches ? 'light' : 'dark';
+    label();
+  }});
+
+  label();
 }})();
 
 render();
