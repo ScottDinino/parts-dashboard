@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parts Dashboard</title>
+<script>
+// Runs before first paint so the page never flashes the wrong theme.
+// Saved choice wins; otherwise follow the OS.
+(function () {
+  var t;
+  try { t = localStorage.getItem('pd-theme'); } catch (e) {}
+  if (t !== 'light' && t !== 'dark') {
+    t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+  document.documentElement.dataset.theme = t;
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Dark is the base palette; [data-theme="light"] overrides it. An inline script
+   in <head> stamps data-theme before first paint, so there's no flash. */
+:root {
+  --bg:      #080b12;  --surface:  #0e1420;  --surface2: #131b2a;
+  --border:  #1c2840;  --border2:  #243050;
+  --text:    #e8edf5;  --text-2:   #8899b4;  --text-3:   #4a5878;
+  --red:     #ef4444;  --orange:   #f97316;  --yellow:   #f59e0b;
+  --green:   #22c55e;  --blue:     #3b82f6;
+  --det-bg:  #0a0f1a;
+  --h1-grad: linear-gradient(90deg,#e8edf5 0%,#93c5fd 100%);
+  --badge-a: .14;
+}
+:root[data-theme="light"] {
+  --bg:      #f5f7fb;  --surface:  #ffffff;  --surface2: #eef2f8;
+  --border:  #e2e8f2;  --border2:  #cbd6e6;
+  /* text-3 is darker than the dark-theme equivalent would suggest: it carries the
+     "last updated" line, and #8c98ad on this bg is only ~2.7:1. */
+  --text:    #0f172a;  --text-2:   #55637a;  --text-3:   #5f6b7f;
+  /* Accents darkened — the dark-mode values fail contrast on white. */
+  --red:     #dc2626;  --orange:   #ea580c;  --yellow:   #b45309;
+  --green:   #15803d;  --blue:     #2563eb;
+  --det-bg:  #f0f4fa;
+  --h1-grad: linear-gradient(90deg,#0f172a 0%,#2563eb 100%);
+  --badge-a: .13;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'Inter',-apple-system,sans-serif; background:var(--bg);
+  color:var(--text); min-height:100vh; padding:24px; font-size:14px;
+}
+.wrap { max-width:1500px; margin:0 auto; }
+
+/* ── Header ── */
+header {
+  margin-bottom:20px; display:flex; align-items:flex-start;
+  justify-content:space-between; gap:16px;
+}
+h1 {
+  font-size:24px; font-weight:800; letter-spacing:-.4px;
+  background:var(--h1-grad);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text; display:inline-block;
+}
+#theme {
+  flex:none; background:var(--surface); border:1px solid var(--border2);
+  color:var(--text-2); border-radius:9px; padding:8px 12px; cursor:pointer;
+  font-family:inherit; font-size:12px; font-weight:600; line-height:1;
+  display:flex; align-items:center; gap:6px; transition:.15s;
+}
+#theme:hover { color:var(--text); border-color:var(--blue); }
+.sub { color:var(--text-3); font-size:12px; margin-top:4px; }
+/* Deploys land every ~1.4h on average (GitHub drops most scheduled runs), so
+   colour the age once it drifts past what a normal gap looks like. */
+.sub .aging { color:var(--yellow); }
+.sub .stale { color:var(--red); font-weight:600; }
+
+/* ── Tiles ── */
+.tiles {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:10px; margin-bottom:18px;
+}
+.tile {
+  background:var(--surface); border:1px solid var(--border);
+  border-top:2px solid var(--c,var(--border2)); border-radius:12px;
+  padding:14px 16px; cursor:pointer; transition:.15s;
+}
+.tile:hover { background:var(--surface2); border-color:var(--border2); transform:translateY(-1px); }
+.tile.on { background:var(--surface2); box-shadow:0 0 0 1px var(--c,var(--blue)) inset; }
+.tile .v { font-size:26px; font-weight:800; color:var(--c,var(--text)); line-height:1.1; }
+.tile .l { font-size:11px; color:var(--text-2); font-weight:600; margin-top:3px; letter-spacing:.2px; }
+
+/* ── Controls ── */
+.controls { display:flex; gap:10px; margin-bottom:12px; align-items:center; flex-wrap:wrap; }
+#q {
+  flex:1; min-width:220px; background:var(--surface); border:1px solid var(--border2);
+  border-radius:9px; padding:10px 14px; color:var(--text); font-size:13px;
+  font-family:inherit; outline:none;
+}
+#q:focus { border-color:var(--blue); }
+#q::placeholder { color:var(--text-3); }
+.count { color:var(--text-3); font-size:12px; white-space:nowrap; }
+.clear {
+  background:var(--surface2); border:1px solid var(--border2); color:var(--text-2);
+  border-radius:8px; padding:9px 14px; font-size:12px; cursor:pointer;
+  font-family:inherit; font-weight:600;
+}
+.clear:hover { color:var(--text); border-color:var(--blue); }
+
+/* ── Table ── */
+.tbl-wrap {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; overflow:hidden;
+}
+.scroll { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; min-width:1000px; }
+th {
+  text-align:left; font-size:11px; font-weight:700; color:var(--text-2);
+  text-transform:uppercase; letter-spacing:.5px; padding:12px 14px;
+  border-bottom:1px solid var(--border2); cursor:pointer;
+  user-select:none; white-space:nowrap; background:var(--surface2);
+}
+th:hover { color:var(--text); }
+th .arw { opacity:.35; margin-left:4px; font-size:9px; }
+th.sorted { color:var(--blue); }
+th.sorted .arw { opacity:1; }
+td { padding:11px 14px; border-bottom:1px solid var(--border); vertical-align:middle; }
+tr.job { cursor:pointer; transition:background .1s; }
+tr.job:hover { background:var(--surface2); }
+tr.job:last-child td { border-bottom:none; }
+.cust { font-weight:600; }
+.bu { color:var(--text-3); font-size:11px; }
+.muted { color:var(--text-3); }
+.jlink { color:var(--blue); text-decoration:none; font-weight:600; font-variant-numeric:tabular-nums; }
+.jlink:hover { text-decoration:underline; }
+.num { font-variant-numeric:tabular-nums; }
+
+.badge {
+  display:inline-block; padding:3px 9px; border-radius:20px;
+  font-size:10px; font-weight:700; letter-spacing:.3px; white-space:nowrap;
+}
+.b-nto      { background:rgba(249,115,22,var(--badge-a)); color:var(--orange); }
+.b-ordered  { background:rgba(59,130,246,var(--badge-a)); color:var(--blue); }
+.b-received { background:rgba(34,197,94,var(--badge-a));  color:var(--green); }
+.b-unknown  { background:rgba(136,153,180,var(--badge-a)); color:var(--text-2); }
+
+.wait { font-weight:700; font-variant-numeric:tabular-nums; }
+.w-hot  { color:var(--red); }
+.w-warm { color:var(--orange); }
+.w-ok   { color:var(--text-2); }
+.sched-late { color:var(--red); font-weight:600; }
+.sched-now  { color:var(--yellow); font-weight:600; }
+
+/* ── Expanded PO detail ── */
+tr.det > td { padding:0; background:var(--det-bg); }
+.det-in { padding:14px 18px; border-bottom:1px solid var(--border); }
+.po {
+  background:var(--surface); border:1px solid var(--border2); border-radius:10px;
+  padding:12px 14px; margin-bottom:8px;
+}
+.po:last-child { margin-bottom:0; }
+.po-h { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:8px; }
+.po-n { color:var(--blue); text-decoration:none; font-weight:700; font-size:12px; }
+.po-n:hover { text-decoration:underline; }
+.po-v { color:var(--text-2); font-size:12px; }
+.po-t { margin-left:auto; font-weight:700; font-variant-numeric:tabular-nums; }
+.part {
+  display:flex; gap:10px; font-size:12px; color:var(--text-2);
+  padding:4px 0; border-top:1px dashed var(--border);
+}
+.part .d { flex:1; }
+.part .q { color:var(--text-3); white-space:nowrap; }
+.no-po { color:var(--text-3); font-size:12px; font-style:italic; }
+.empty { padding:50px; text-align:center; color:var(--text-3); }
+@media (max-width:700px) { body { padding:12px; } .tile .v { font-size:22px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <h1>Parts Dashboard</h1>
+    <div class="sub">RTR jobs on hold &middot; Coral Springs + Plumbing &middot;
+      updated <span id="stamp" data-iso="2026-08-08T20:06:52.748717+00:00">Aug 8, 4:06 PM EDT</span><span id="age"></span></div>
+  </div>
+  <button id="theme" type="button" title="Switch between light and dark"></button>
+</header>
+
+<div class="tiles">
+  <div class="tile" data-f="all"      style="--c:var(--text)"><div class="v">47</div><div class="l">All Jobs</div></div>
+  <div class="tile" data-f="nto"      style="--c:var(--orange)"><div class="v">3</div><div class="l">Need To Order</div></div>
+  <div class="tile" data-f="ordered"  style="--c:var(--blue)"><div class="v">22</div><div class="l">Parts Ordered</div></div>
+  <div class="tile" data-f="received" style="--c:var(--green)"><div class="v">15</div><div class="l">Parts Received</div></div>
+  <div class="tile" data-f="overdue"  style="--c:var(--red)"><div class="v">8</div><div class="l">Overdue</div></div>
+  <div class="tile" data-f="today"    style="--c:var(--yellow)"><div class="v">2</div><div class="l">Scheduled Today</div></div>
+  <div class="tile" data-f="all"      style="--c:var(--text-2)"><div class="v">$16,334</div><div class="l">Revenue Pending</div></div>
+</div>
+
+<div class="controls">
+  <input id="q" type="text" placeholder="Search customer, job number, vendor, part&hellip;" autocomplete="off">
+  <button class="clear" onclick="resetAll()">Reset</button>
+  <span class="count" id="cnt"></span>
+</div>
+
+<div class="tbl-wrap">
+  <div class="scroll">
+    <table>
+      <thead><tr id="hdr"></tr></thead>
+      <tbody id="body"></tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+<script>
+const JOBS = [{"job_num": "463158467", "customer": "GRACEFFO, GENE", "status": "Unknown", "supplier": "Carrier enterprise", "extra_tags": ["PLM", "10-Year Labor", "Club Member"], "sched_date": "2026-08-19", "created_date": "2025-04-16", "days_to_sched": 11, "days_since_ord": 479, "revenue": 502.95, "bunit": "PLM - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "586668443", "customer": "Harry Leiby", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["Club Member"], "sched_date": "2026-08-07", "created_date": "2026-03-18", "days_to_sched": -1, "days_since_ord": 143, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "587921559", "customer": "Odete Sung", "status": "Unknown", "supplier": "Baker Supply", "extra_tags": [], "sched_date": "2026-08-11", "created_date": "2026-03-31", "days_to_sched": 3, "days_since_ord": 130, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 263.24, "po_count": 1, "pos": [{"id": 587940524, "number": "587921559-001", "status": "Received", "typeName": "Material", "vendorName": "Baker - HVAC", "date": "2026-03-31", "receivedOn": "2026-04-03", "total": 263.24, "parts": [{"desc": "22 X 38 Filter back", "qty": 1.0, "cost": 246.02}]}]}, {"job_num": "602768168", "customer": "Phillip Padgett", "status": "Unknown", "supplier": "Carrier enterprise", "extra_tags": ["Club Member", "PLM", "10-Year Labor"], "sched_date": "2026-08-07", "created_date": "2026-05-29", "days_to_sched": -1, "days_since_ord": 71, "revenue": 1139.24, "bunit": "PLM - HVAC - Service - 12", "po_cost": 353.85, "po_count": 1, "pos": [{"id": 602777376, "number": "602768168-001", "status": "Received", "typeName": "Material", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-05-29", "receivedOn": "2026-06-01", "total": 353.85, "parts": [{"desc": "Ecobee - Smart Thermostat Lite", "qty": 2.0, "cost": 151.8}]}]}, {"job_num": "603503569", "customer": "Brett Dias", "status": "Ordered", "supplier": "", "extra_tags": ["Club Member"], "sched_date": "2026-08-07", "created_date": "2026-06-01", "days_to_sched": -1, "days_since_ord": 68, "revenue": 3565.91, "bunit": "CS - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "605518515", "customer": "Matthew Lucas", "status": "Unknown", "supplier": "", "extra_tags": ["Club Member"], "sched_date": "2026-08-30", "created_date": "2026-06-05", "days_to_sched": 22, "days_since_ord": 64, "revenue": 6125.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "606574739", "customer": "Kris Kirer", "status": "Unknown", "supplier": "Gemaire", "extra_tags": ["10-10-10", "Club Member"], "sched_date": "2026-08-10", "created_date": "2026-06-09", "days_to_sched": 2, "days_since_ord": 60, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 331.22, "po_count": 1, "pos": [{"id": 606576315, "number": "606574739-001", "status": "Received", "typeName": "Warranty", "vendorName": "Gemaire Warranty ", "date": "2026-06-09", "receivedOn": "2026-06-10", "total": 331.22, "parts": [{"desc": "warranty valve", "qty": 1.0, "cost": 276.84}]}]}, {"job_num": "608377872", "customer": "Anthony Barbieri", "status": "Received", "supplier": "Baker Supply", "extra_tags": ["Club Member"], "sched_date": "2026-07-24", "created_date": "2026-06-16", "days_to_sched": -15, "days_since_ord": 53, "revenue": 310.0, "bunit": "PLM - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "613432113", "customer": "Lori Gunther", "status": "Ordered", "supplier": "", "extra_tags": ["10-Year Labor"], "sched_date": "2026-08-11", "created_date": "2026-06-27", "days_to_sched": 3, "days_since_ord": 42, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 3524.72, "po_count": 1, "pos": [{"id": 613444233, "number": "613432113-001", "status": "Sent", "typeName": "Material", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-06-27", "receivedOn": "", "total": 3524.72, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 3524.72}]}]}, {"job_num": "618701200", "customer": "Christine Semenza", "status": "Ordered", "supplier": "Goodman distribution", "extra_tags": ["Club Member", "5 YEAR WARRANTY"], "sched_date": "2026-08-10", "created_date": "2026-07-13", "days_to_sched": 2, "days_since_ord": 26, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 0, "po_count": 1, "pos": [{"id": 618898751, "number": "618701200-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Goodman Distribution, Inc", "date": "2026-07-14", "receivedOn": "", "total": 0, "parts": [{"desc": "warranty board", "qty": 1.0, "cost": 0}, {"desc": "warranty harnes", "qty": 1.0, "cost": 0}]}]}, {"job_num": "618840630", "customer": "Chistopher Malcom", "status": "Received", "supplier": "Trane Supply", "extra_tags": [], "sched_date": "2026-07-16", "created_date": "2026-07-14", "days_to_sched": -23, "days_since_ord": 25, "revenue": 834.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 772.37, "po_count": 1, "pos": [{"id": 619365047, "number": "618840630-001", "status": "Received", "typeName": "Material", "vendorName": "Trane Parts", "date": "2026-07-15", "receivedOn": "2026-07-16", "total": 772.37, "parts": [{"desc": "Blower Motor", "qty": 1.0, "cost": 721.84}]}]}, {"job_num": "618877449", "customer": "John Nettles", "status": "Unknown", "supplier": "", "extra_tags": [], "sched_date": "2026-08-30", "created_date": "2026-07-14", "days_to_sched": 22, "days_since_ord": 25, "revenue": 4500.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "620200064", "customer": "William Thompson", "status": "Received", "supplier": "Goodman distribution", "extra_tags": ["2-YR Labor Warranty", "Club Member"], "sched_date": "2026-08-03", "created_date": "2026-07-18", "days_to_sched": -5, "days_since_ord": 21, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 0, "po_count": 1, "pos": [{"id": 620373462, "number": "620200064-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Goodman Distribution, Inc", "date": "2026-07-20", "receivedOn": "", "total": 0, "parts": [{"desc": "warranty valve", "qty": 1.0, "cost": 0}]}]}, {"job_num": "620247959", "customer": "WYMAN, SHELDON", "status": "Received", "supplier": "", "extra_tags": ["PLM", "Club Member"], "sched_date": "2026-08-13", "created_date": "2026-07-19", "days_to_sched": 5, "days_since_ord": 20, "revenue": 1606.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 11.51, "po_count": 1, "pos": [{"id": 621151041, "number": "620247959-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Ferguson", "date": "2026-07-22", "receivedOn": "", "total": 11.51, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 11.51}]}]}, {"job_num": "620601257", "customer": "Peter dennerline", "status": "Ordered", "supplier": "Gemaire", "extra_tags": [], "sched_date": "2026-08-07", "created_date": "2026-07-20", "days_to_sched": -1, "days_since_ord": 19, "revenue": 1668.0, "bunit": "PLM - HVAC - Service - 12", "po_cost": 0, "po_count": 1, "pos": [{"id": 621210816, "number": "620601257-001", "status": "Sent", "typeName": "Material", "vendorName": "Gemaire Distributors", "date": "2026-07-22", "receivedOn": "", "total": 0, "parts": [{"desc": "warranty board", "qty": 1.0, "cost": 0}, {"desc": "warranty board", "qty": 1.0, "cost": 0}]}]}, {"job_num": "621461848", "customer": "Holly Lockley", "status": "Received", "supplier": "", "extra_tags": ["Club Member"], "sched_date": "2026-07-23", "created_date": "2026-07-23", "days_to_sched": -16, "days_since_ord": 16, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "621462827", "customer": "Paul Ruffini", "status": "Ordered", "supplier": "Trane Supply", "extra_tags": ["Club Member"], "sched_date": "2026-08-07", "created_date": "2026-07-23", "days_to_sched": -1, "days_since_ord": 16, "revenue": 1300.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 2458.7, "po_count": 1, "pos": [{"id": 621467685, "number": "621462827-001", "status": "Received", "typeName": "Warranty", "vendorName": "Trane Parts", "date": "2026-07-23", "receivedOn": "2026-07-31", "total": 2458.7, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 2297.85}]}]}, {"job_num": "621484110", "customer": "Skyler Briggs", "status": "Unknown", "supplier": "", "extra_tags": [], "sched_date": "2026-08-30", "created_date": "2026-07-23", "days_to_sched": 22, "days_since_ord": 16, "revenue": 834.0, "bunit": "PLM - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "622027346", "customer": "Mark Finkentey", "status": "Ordered", "supplier": "", "extra_tags": [], "sched_date": "2026-08-19", "created_date": "2026-07-25", "days_to_sched": 11, "days_since_ord": 14, "revenue": 3129.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 624052245, "number": "622027346-001", "status": "Sent", "typeName": "Material", "vendorName": "Ferguson", "date": "2026-07-29", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Heat Exchanger", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "624145308", "customer": "Roy McCarty", "status": "Ordered", "supplier": "", "extra_tags": [], "sched_date": "2026-08-10", "created_date": "2026-07-30", "days_to_sched": 2, "days_since_ord": 9, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "624180027", "customer": "TILTON, LYNN", "status": "Received", "supplier": "", "extra_tags": ["Club Member", "PLM"], "sched_date": "2026-08-03", "created_date": "2026-07-30", "days_to_sched": -5, "days_since_ord": 9, "revenue": 1606.0, "bunit": "PLM - HVAC - Service - 12", "po_cost": 1466.41, "po_count": 1, "pos": [{"id": 624322314, "number": "624180027-001", "status": "Received", "typeName": "Warranty", "vendorName": "Trane Parts", "date": "2026-07-30", "receivedOn": "2026-08-03", "total": 1466.41, "parts": [{"desc": "warranty harnes", "qty": 1.0, "cost": 0}, {"desc": "Warranty Motor", "qty": 1.0, "cost": 194.67}, {"desc": "40AMP 24V COIL CONTACTOR DOUBLE POLE - 2POLE/40AMP", "qty": 1.0, "cost": 19.13}, {"desc": "Warrant Compressor", "qty": 1.0, "cost": 1156.68}]}]}, {"job_num": "624297105", "customer": "Ronald Williams", "status": "Received", "supplier": "", "extra_tags": ["Club Member", "PLM", "10-Year Labor"], "sched_date": "2026-08-06", "created_date": "2026-07-30", "days_to_sched": -2, "days_since_ord": 9, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 624572714, "number": "624297105-001", "status": "Sent", "typeName": "Material", "vendorName": "Ferguson", "date": "2026-07-31", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Back Plate", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "624524566", "customer": "Patricia Spencer", "status": "Ordered", "supplier": "Gemaire", "extra_tags": ["10-10-10"], "sched_date": "2026-08-07", "created_date": "2026-07-31", "days_to_sched": -1, "days_since_ord": 8, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "po_cost": 605.45, "po_count": 1, "pos": [{"id": 624555151, "number": "624524566-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Gemaire Warranty ", "date": "2026-07-31", "receivedOn": "", "total": 605.45, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 533.13}]}]}, {"job_num": "624770055", "customer": "Jake Berk", "status": "Ordered", "supplier": "", "extra_tags": [], "sched_date": "2026-08-10", "created_date": "2026-08-01", "days_to_sched": 2, "days_since_ord": 7, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 626094079, "number": "624770055-001", "status": "Sent", "typeName": "Material", "vendorName": "Refricenter", "date": "2026-08-05", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "624770682", "customer": "Donna Eugene", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["2-YR Labor Warranty"], "sched_date": "2026-08-07", "created_date": "2026-08-01", "days_to_sched": -1, "days_since_ord": 7, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 1540.54, "po_count": 1, "pos": [{"id": 624903199, "number": "624770682-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-08-03", "receivedOn": "", "total": 1540.54, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 1191.71}, {"desc": "warranty valve", "qty": 1.0, "cost": 220.94}]}]}, {"job_num": "624889404", "customer": "Stella Frenchak ", "status": "Ordered", "supplier": "", "extra_tags": ["Club Member"], "sched_date": "2026-08-10", "created_date": "2026-08-03", "days_to_sched": 2, "days_since_ord": 5, "revenue": 3459.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 625066447, "number": "624889404-001", "status": "Pending", "typeName": "Equipment", "vendorName": "GOODMAN POMPANO", "date": "2026-08-03", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "625053044", "customer": "OVALLES, CESAR", "status": "Ordered", "supplier": "", "extra_tags": ["PLM"], "sched_date": "2026-08-10", "created_date": "2026-08-03", "days_to_sched": 2, "days_since_ord": 5, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "625054619", "customer": "Alfonzo Crespo", "status": "Received", "supplier": "", "extra_tags": ["10-Year Labor"], "sched_date": "2026-08-03", "created_date": "2026-08-03", "days_to_sched": -5, "days_since_ord": 5, "revenue": 344.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "625154509", "customer": "Victor Karpov", "status": "Received", "supplier": "", "extra_tags": ["Club Member"], "sched_date": "2026-08-03", "created_date": "2026-08-03", "days_to_sched": -5, "days_since_ord": 5, "revenue": 1783.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "625154557", "customer": "Claudia Harde-Meyer", "status": "Ordered", "supplier": "Trane Supply", "extra_tags": ["10-10-10"], "sched_date": "2026-08-11", "created_date": "2026-08-03", "days_to_sched": 3, "days_since_ord": 5, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 1.0, "po_count": 1, "pos": [{"id": 625217496, "number": "625154557-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Trane Parts", "date": "2026-08-04", "receivedOn": "", "total": 1.0, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 1.0}]}]}, {"job_num": "625676699", "customer": "Jorge Charry", "status": "Received", "supplier": "", "extra_tags": ["Club Member"], "sched_date": "2026-08-04", "created_date": "2026-08-04", "days_to_sched": -4, "days_since_ord": 4, "revenue": 310.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "625731176", "customer": "Nancy Smith", "status": "Received", "supplier": "Gemaire", "extra_tags": [], "sched_date": "2026-08-06", "created_date": "2026-08-04", "days_to_sched": -2, "days_since_ord": 4, "revenue": 751.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 331.07, "po_count": 1, "pos": [{"id": 626084504, "number": "625731176-001", "status": "Received", "typeName": "Warranty", "vendorName": "Gemaire Warranty ", "date": "2026-08-05", "receivedOn": "2026-08-05", "total": 331.07, "parts": [{"desc": "warranty valve", "qty": 1.0, "cost": 276.7}]}]}, {"job_num": "625769781", "customer": "Nayla VBasluianu", "status": "Received", "supplier": "", "extra_tags": [], "sched_date": "2026-08-04", "created_date": "2026-08-04", "days_to_sched": -4, "days_since_ord": 4, "revenue": 1585.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "625771039", "customer": "Patricia Vilcherres", "status": "NTO", "supplier": "", "extra_tags": [], "sched_date": "2026-08-04", "created_date": "2026-08-04", "days_to_sched": -4, "days_since_ord": 4, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "626425851", "customer": "Margaret Laria", "status": "Received", "supplier": "", "extra_tags": ["5 YEAR WARRANTY", "Club Member"], "sched_date": "2026-08-06", "created_date": "2026-08-06", "days_to_sched": -2, "days_since_ord": 2, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "626427848", "customer": "VILLAGE ANIMAL CLINIC", "status": "Received", "supplier": "", "extra_tags": ["PLM", "2-YR Labor Warranty"], "sched_date": "2026-08-06", "created_date": "2026-08-06", "days_to_sched": -2, "days_since_ord": 2, "revenue": 751.0, "bunit": "PLM - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "626457955", "customer": "Mark Thompson", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["PLM", "10-Year Labor"], "sched_date": "2026-08-12", "created_date": "2026-08-06", "days_to_sched": 4, "days_since_ord": 2, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "po_cost": 2662.38, "po_count": 1, "pos": [{"id": 626559416, "number": "626457955-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-08-06", "receivedOn": "", "total": 2662.38, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 2461.1}]}]}, {"job_num": "626554374", "customer": "Myrna Lippman", "status": "Ordered", "supplier": "Trane Supply", "extra_tags": ["Club Member"], "sched_date": "2026-08-10", "created_date": "2026-08-07", "days_to_sched": 2, "days_since_ord": 1, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 0, "po_count": 1, "pos": [{"id": 626735626, "number": "626554374-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Trane Parts", "date": "2026-08-07", "receivedOn": "", "total": 0, "parts": [{"desc": "warranty pan", "qty": 1.0, "cost": 0}]}]}, {"job_num": "626573205", "customer": "Charles Wagner", "status": "Ordered", "supplier": "Gemaire", "extra_tags": ["Club Member"], "sched_date": "2026-08-13", "created_date": "2026-08-06", "days_to_sched": 5, "days_since_ord": 2, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "po_cost": 43.31, "po_count": 1, "pos": [{"id": 626554299, "number": "626573205-001", "status": "Sent", "typeName": "Material", "vendorName": "Gemaire Distributors", "date": "2026-08-06", "receivedOn": "", "total": 43.31, "parts": [{"desc": "Drain Pan", "qty": 1.0, "cost": 7.77}]}]}, {"job_num": "626701263", "customer": "Darby O'Connor", "status": "Ordered", "supplier": "Gemaire", "extra_tags": ["Club Member"], "sched_date": "2026-08-10", "created_date": "2026-08-07", "days_to_sched": 2, "days_since_ord": 1, "revenue": 1605.6, "bunit": "CS - HVAC - Service - 12", "po_cost": 1177.96, "po_count": 1, "pos": [{"id": 626735464, "number": "626701263-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Gemaire Warranty ", "date": "2026-08-07", "receivedOn": "", "total": 1177.96, "parts": [{"desc": "Warrant Compressor", "qty": 1.0, "cost": 1048.98}, {"desc": "warranty harnes", "qty": 1.0, "cost": 19.21}]}]}, {"job_num": "626701330", "customer": "Cynthia Smith", "status": "Ordered", "supplier": "Goodman distribution", "extra_tags": ["Club Member"], "sched_date": "2026-08-10", "created_date": "2026-08-07", "days_to_sched": 2, "days_since_ord": 1, "revenue": 1606.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 11.51, "po_count": 1, "pos": [{"id": 626732301, "number": "626701330-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Goodman Distribution, Inc", "date": "2026-08-07", "receivedOn": "", "total": 11.51, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 11.51}]}]}, {"job_num": "626705012", "customer": "Melissa Ryan ", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["2-YR Labor Warranty", "Club Member"], "sched_date": "2026-08-10", "created_date": "2026-08-07", "days_to_sched": 2, "days_since_ord": 1, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 149.91, "po_count": 1, "pos": [{"id": 626866197, "number": "626705012-001", "status": "Sent", "typeName": "Material", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-08-07", "receivedOn": "", "total": 149.91, "parts": [{"desc": "Material Item for PO", "qty": 1.0, "cost": 113.0}]}]}, {"job_num": "626743638", "customer": "Neli Jolly", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["Club Member"], "sched_date": "2026-08-13", "created_date": "2026-08-07", "days_to_sched": 5, "days_since_ord": 1, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 3387.99, "po_count": 1, "pos": [{"id": 626783436, "number": "626743638-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-08-07", "receivedOn": "", "total": 3387.99, "parts": [{"desc": "Warranty Coil", "qty": 1.0, "cost": 3139.24}]}]}, {"job_num": "626878029", "customer": "Matthieu Poulard", "status": "Received", "supplier": "", "extra_tags": ["10-Year Labor"], "sched_date": "2026-08-07", "created_date": "2026-08-07", "days_to_sched": -1, "days_since_ord": 1, "revenue": 1606.0, "bunit": "PLM - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "626889228", "customer": "Igor Didkovsky", "status": "Ordered", "supplier": "Carrier enterprise", "extra_tags": ["PLM", "10-Year Labor"], "sched_date": "2026-08-10", "created_date": "2026-08-07", "days_to_sched": 2, "days_since_ord": 1, "revenue": 0.0, "bunit": "CS - HVAC - Service - 12", "po_cost": 1701.71, "po_count": 1, "pos": [{"id": 626889279, "number": "626889228-001", "status": "Sent", "typeName": "Warranty", "vendorName": "Carrier Sales And Distrubution, LLC", "date": "2026-08-07", "receivedOn": "", "total": 1701.71, "parts": [{"desc": "Warranty Motor", "qty": 1.0, "cost": 1563.28}]}]}, {"job_num": "626974879", "customer": "Robert Schiavi", "status": "NTO", "supplier": "", "extra_tags": ["PLM", "5 YEAR WARRANTY", "Club Member"], "sched_date": "2026-08-08", "created_date": "2026-08-08", "days_to_sched": 0, "days_since_ord": 0, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}, {"job_num": "627003897", "customer": "Judy Sluder", "status": "NTO", "supplier": "", "extra_tags": ["Club Member", "10-10-10"], "sched_date": "2026-08-08", "created_date": "2026-08-08", "days_to_sched": 0, "days_since_ord": 0, "revenue": 0.0, "bunit": "PLM - HVAC - Service - 12", "po_cost": 0, "po_count": 0, "pos": []}];
+
+// Columns: key = field to sort on, num = numeric sort, nulls sort last.
+const COLS = [
+  { key:'status',         label:'Status'    },
+  { key:'job_num',        label:'Job #'     },
+  { key:'customer',       label:'Customer'  },
+  { key:'days_since_ord', label:'Waiting',   num:true },
+  { key:'sched_date',     label:'Scheduled' },
+  { key:'supplier',       label:'Supplier'  },
+  { key:'po_count',       label:'POs',       num:true },
+  { key:'revenue',        label:'Revenue',   num:true },
+];
+
+// Default: longest-waiting first — the page opens as an action list.
+let sortKey = 'days_since_ord', sortDir = 'desc', filter = 'all', search = '', open_ = null;
+
+const STATUS_RANK = { NTO:0, Ordered:1, Received:2, Unknown:3 };
+
+function money(n) { return '$' + (n || 0).toLocaleString('en-US', {maximumFractionDigits:0}); }
+
+function matchesFilter(j) {
+  if (filter === 'all')      return true;
+  if (filter === 'nto')      return j.status === 'NTO';
+  if (filter === 'ordered')  return j.status === 'Ordered';
+  if (filter === 'received') return j.status === 'Received';
+  if (filter === 'overdue')  return j.days_to_sched !== null && j.days_to_sched < 0 && j.status !== 'Received';
+  if (filter === 'today')    return j.days_to_sched === 0 && j.status !== 'Received';
+  return true;
+}
+
+function matchesSearch(j) {
+  if (!search) return true;
+  const hay = [
+    j.customer, j.job_num, j.supplier, j.bunit, j.status,
+    ...(j.extra_tags || []),
+    ...(j.pos || []).flatMap(p => [p.vendorName, p.number, ...(p.parts || []).map(x => x.desc)])
+  ].join(' ').toLowerCase();
+  return hay.includes(search);
+}
+
+function sortVal(j) {
+  if (sortKey === 'status') return STATUS_RANK[j.status] ?? 9;
+  return j[sortKey];
+}
+
+function visible() {
+  const out = JOBS.filter(j => matchesFilter(j) && matchesSearch(j));
+  const dir = sortDir === 'asc' ? 1 : -1;
+  // Blanks (null, undefined, empty string) always sort to the bottom,
+  // whichever direction the column is sorted — an empty cell is never
+  // the thing you clicked a column to see.
+  const blank = v => v === null || v === undefined || v === '';
+  out.sort((a, b) => {
+    const x = sortVal(a), y = sortVal(b);
+    if (blank(x) && blank(y)) return 0;
+    if (blank(x)) return 1;
+    if (blank(y)) return -1;
+    if (typeof x === 'string') return x.localeCompare(y) * dir;
+    return (x - y) * dir;
+  });
+  return out;
+}
+
+function waitCls(d) { return d >= 14 ? 'w-hot' : d >= 7 ? 'w-warm' : 'w-ok'; }
+
+function schedCell(j) {
+  if (!j.sched_date) return '<span class="muted">&mdash;</span>';
+  const d = j.days_to_sched;
+  const nice = new Date(j.sched_date + 'T00:00:00')
+    .toLocaleDateString('en-US', { month:'short', day:'numeric' });
+  if (d < 0 && j.status !== 'Received') return `<span class="sched-late">${nice} &middot; ${Math.abs(d)}d late</span>`;
+  if (d === 0) return `<span class="sched-now">${nice} &middot; today</span>`;
+  if (d === 1) return `<span class="sched-now">${nice} &middot; tomorrow</span>`;
+  return `<span class="num">${nice}</span>`;
+}
+
+function badge(s) {
+  const c = { NTO:'b-nto', Ordered:'b-ordered', Received:'b-received' }[s] || 'b-unknown';
+  return `<span class="badge ${c}">${s}</span>`;
+}
+
+function poDetail(j) {
+  if (!j.pos || !j.pos.length) return '<div class="no-po">No purchase orders linked to this job.</div>';
+  return j.pos.map(p => `
+    <div class="po">
+      <div class="po-h">
+        <a class="po-n" href="https://go.servicetitan.com/#/Inventory/PurchaseOrder/View/${p.id}" target="_blank">PO #${p.number}</a>
+        ${badge(p.status === 'Received' || p.status === 'Exported' ? 'Received' : p.status === 'Pending' ? 'NTO' : 'Ordered')}
+        <span class="po-v">${p.vendorName || 'Unknown vendor'}${p.typeName ? ' &middot; ' + p.typeName : ''}</span>
+        <span class="po-t">${money(p.total)}</span>
+      </div>
+      ${(p.parts || []).map(x => `
+        <div class="part"><span class="d">${x.desc || 'Part'}</span><span class="q">${x.qty} &times; ${money(x.cost)}</span></div>
+      `).join('')}
+    </div>`).join('');
+}
+
+function render() {
+  // Header
+  document.getElementById('hdr').innerHTML = COLS.map(c => {
+    const on = c.key === sortKey;
+    const arw = on ? (sortDir === 'asc' ? '&#9650;' : '&#9660;') : '&#9660;';
+    return `<th class="${on ? 'sorted' : ''}" onclick="sortBy('${c.key}')">${c.label}<span class="arw">${arw}</span></th>`;
+  }).join('');
+
+  const rows = visible();
+  const body = document.getElementById('body');
+
+  document.getElementById('cnt').textContent =
+    rows.length === JOBS.length ? `${JOBS.length} jobs` : `${rows.length} of ${JOBS.length} jobs`;
+
+  if (!rows.length) {
+    body.innerHTML = '<tr><td colspan="8"><div class="empty">No jobs match.</div></td></tr>';
+    return;
+  }
+
+  body.innerHTML = rows.map(j => {
+    const w = j.days_since_ord;
+    const detail = open_ === j.job_num
+      ? `<tr class="det"><td colspan="8"><div class="det-in">${poDetail(j)}</div></td></tr>` : '';
+    return `
+      <tr class="job" onclick="toggle('${j.job_num}')">
+        <td>${badge(j.status)}</td>
+        <td><a class="jlink" href="https://go.servicetitan.com/#/Job/Index/${j.job_num}" target="_blank" onclick="event.stopPropagation()">${j.job_num}</a></td>
+        <td><div class="cust">${j.customer || '&mdash;'}</div><div class="bu">${j.bunit || ''}</div></td>
+        <td>${w === null ? '<span class="muted">&mdash;</span>' : `<span class="wait ${waitCls(w)}">${w}d</span>`}</td>
+        <td>${schedCell(j)}</td>
+        <td class="muted">${j.supplier || '&mdash;'}</td>
+        <td class="num">${j.po_count ? j.po_count + ' &middot; ' + money(j.po_cost) : '<span class="muted">&mdash;</span>'}</td>
+        <td class="num">${money(j.revenue)}</td>
+      </tr>${detail}`;
+  }).join('');
+}
+
+function sortBy(k) {
+  if (sortKey === k) {
+    sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortKey = k;
+    // Numbers are most useful high-first; text reads better A-Z.
+    const col = COLS.find(c => c.key === k);
+    sortDir = col && col.num ? 'desc' : 'asc';
+  }
+  render();
+}
+
+function toggle(n) { open_ = (open_ === n) ? null : n; render(); }
+
+function setFilter(f, el) {
+  filter = f;
+  document.querySelectorAll('.tile').forEach(t => t.classList.remove('on'));
+  if (f !== 'all' && el) el.classList.add('on');
+  open_ = null;
+  render();
+}
+
+function resetAll() {
+  filter = 'all'; search = ''; open_ = null;
+  document.getElementById('q').value = '';
+  document.querySelectorAll('.tile').forEach(t => t.classList.remove('on'));
+  render();
+}
+
+document.querySelectorAll('.tile').forEach(t =>
+  t.addEventListener('click', () => setFilter(t.dataset.f, t)));
+
+document.getElementById('q').addEventListener('input', e => {
+  search = e.target.value.trim().toLowerCase();
+  open_ = null;
+  render();
+});
+
+// ── Freshness clock ───────────────────────────────────────────────
+// Rewrites the build's UTC stamp into the viewer's own timezone and keeps a
+// live "how old is this" counter, so a missed deploy is obvious on sight.
+(function () {
+  const el  = document.getElementById('stamp');
+  const age = document.getElementById('age');
+  const t   = el && el.dataset.iso ? new Date(el.dataset.iso) : null;
+  if (!t || isNaN(t)) return;   // keep the server-rendered "... UTC" fallback
+
+  function tick() {
+    const mins = Math.floor((Date.now() - t.getTime()) / 60000);
+    // Pinned to Eastern, not the viewer's zone — this is a Florida operation and
+    // the times must line up with ST and the office clock no matter who's looking.
+    // The IANA zone handles EDT/EST switching on its own; timeZoneName spells out
+    // which one is in effect. Date is always shown: "3:00 PM" alone is ambiguous
+    // once a deploy is a day stale, which is exactly when you need to notice.
+    el.textContent = t.toLocaleString('en-US', {
+      timeZone: 'America/New_York',
+      month: 'short', day: 'numeric',
+      hour: 'numeric', minute: '2-digit', timeZoneName: 'short',
+    });
+
+    let s;
+    if (mins < 1)       s = 'just now';
+    else if (mins < 60) s = mins + 'm ago';
+    else                s = Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm ago';
+    age.textContent = ' \u00b7 ' + s;
+    age.className   = mins >= 180 ? 'stale' : mins >= 90 ? 'aging' : '';
+  }
+
+  tick();
+  setInterval(tick, 30000);
+})();
+
+// ── Theme toggle ──────────────────────────────────────────────────
+// <head> already picked the initial theme; this only labels the button
+// and handles switching. Explicit choice is remembered and stops the
+// page from following later OS changes.
+(function () {
+  const btn = document.getElementById('theme');
+  const root = document.documentElement;
+  if (!btn) return;
+
+  const label = () => {
+    const dark = root.dataset.theme === 'dark';
+    // Show the destination, not the current state.
+    btn.textContent = dark ? '\u2600\ufe0f Light' : '\ud83c\udf19 Dark';
+    btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+  };
+
+  btn.addEventListener('click', () => {
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try { localStorage.setItem('pd-theme', next); } catch (e) {}
+    label();
+  });
+
+  // Track the OS only while the user hasn't chosen for themselves.
+  matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
+    let saved = null;
+    try { saved = localStorage.getItem('pd-theme'); } catch (err) {}
+    if (saved === 'light' || saved === 'dark') return;
+    root.dataset.theme = e.matches ? 'light' : 'dark';
+    label();
+  });
+
+  label();
+})();
+
+render();
+</script>
+</body>
+</html>
